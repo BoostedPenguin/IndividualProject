@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Home from '../components/home'
 import Login from '../components/auth/login/LoginComponent'
 import Register from '../components/auth/register/RegisterComponent'
+import NotFound from '../components/misc/NotFound'
 
 Vue.use(Router)
 
@@ -11,7 +12,12 @@ const router = new Router({
     base: process.env.BASE_URL,
     routes: [
     {
-        path: '',
+        path: '*',
+        name: 'notfound',
+        component: NotFound
+    },
+    {
+        path: '/',
         name: 'index',
         component: Home
     },
