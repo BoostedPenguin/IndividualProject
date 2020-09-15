@@ -3,6 +3,7 @@ import App from './App.vue'
 import * as firebase from "firebase";
 import router from "./routes/index"
 import store from "./store";
+import axios from 'axios';
 
 import '@/components'
 
@@ -30,5 +31,6 @@ firebase.auth().onAuthStateChanged(user => {
 new Vue({
   router,
   store,
+  axios,
   render: h => h(App),
 }).$mount('#app')
