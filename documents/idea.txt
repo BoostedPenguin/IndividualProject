@@ -1,0 +1,82 @@
+trip planner
+
+create an account to start creating a plan
+a plan can contain multiple locations
+
+
+
+Summary: A tripadvisor website with these features:
+
+
+1. Information on location && suggestions
+2. Google maps integration
+3. Weather / temperature on location integration
+4. Trips 
+5. Day planner
+6. Review system
+7. Calendar integration
+8. Admin panel
+9. Color modes
+10. SPA
+
+user searches for a location (city sightseeing etc.)
+	-> gives an information page
+		* images pulled up from google (places api)
+		* reviews pulled up from google (possible geolocation && place_id     https://developers.google.com/places/web-service/details review)
+		* most relevant information regarding the location (wikipedia)
+		https://stackoverflow.com/questions/8555320/is-there-a-wikipedia-api-just-for-retrieve-content-summary
+		https://en.wikipedia.org/api/rest_v1/#/Page_content/get_page_summary_title
+	-> gives nearby interesting locations (places api rankby ??? )
+	-> 
+
+
+maps
+	-> google maps for drawing the whole routes and calculating distance / time
+	https://developers.google.com/maps/documentation/javascript/directions
+	-> optimize route and waypoints
+
+weather information
+	-> use api to give an idea what's the weather for the trip
+	https://openweathermap.org/current
+
+trips
+	-> cancel system
+	-> can change on the spot
+	-> shows accurate distance and timing
+
+day planner
+	-> user needs to enter start point and endpoint (issue by google maps)
+	-> calculates total travel time from locations + 'average time for sightseeing'
+	-> notifies user if he's falling behind schedule or if he's going ahead
+	-> if he has more time give additional suggestions for sightseeing
+	-> if he has less time than anticipated suggest nearby hotels
+	-> user can manually set their 'average time for sightseeking'
+	-> takes into account means of transportation???
+
+review system for trip
+	-> overall score of the trip
+	-> trip per location
+	-> share on facebook integration?
+
+a calendar system
+	-> can have multiple trips planned
+	-> can't overlap
+	-> notifies when date approaches (email etc.)
+
+public api
+	-> most viewed / visited etc. places
+	-> total amount of distance traveled by users
+	-> most busy months
+
+admin panel
+	-> charts for user data, trips etc.
+	https://madewithvuejs.com/x-chart
+	-> user control
+
+color mode:
+	-> dark mode
+	-> light mode
+
+
+C# Json convert
+https://stackoverflow.com/questions/62725876/how-to-implement-google-place-api-in-c-net
