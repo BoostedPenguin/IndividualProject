@@ -21,6 +21,8 @@ jobs:
       working-directory: ./demos/entity-azure-connection
       run: dotnet restore
     - name: Build
+      working-directory: ./demos/entity-azure-connection
       run: dotnet build --configuration Release --no-restore
     - name: Test
+      working-directory: ./demos/entity-azure-connection
       run: dotnet test --no-restore --verbosity normal
