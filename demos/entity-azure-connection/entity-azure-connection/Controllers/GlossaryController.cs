@@ -52,17 +52,13 @@ namespace entity_azure_connection.Controllers
 
                 using (_context)
                 {
-                    var user = _context.Blogs.Where(x => x.UserId == userId).FirstOrDefault();
-                    if (user == null)
+                    var user = new Blog()
                     {
-                        user = new Blog()
-                        {
-                            Urls = "Created a new user since last one was shit lol",
-                            UserId = userId,
-                        };
-                        _context.Add<Blog>(user);
-                        _context.SaveChanges();
-                    }
+                        Urls = "Created a new user since last one was shit lol",
+                        UserId = userId,
+                    };
+                    _context.Add<Blog>(user);
+                    _context.SaveChanges();
 
                     return Ok(user);
                 }
