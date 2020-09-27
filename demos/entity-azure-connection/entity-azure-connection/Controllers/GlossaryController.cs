@@ -50,18 +50,26 @@ namespace entity_azure_connection.Controllers
             {
                 //string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                using (_context)
+                try
                 {
-                    var user = new Blog()
+                    using (_context)
                     {
-                        Urls = "Please work",
-                        UserId = "5",
-                    };
-                    _context.Add<Blog>(user);
-                    _context.SaveChanges();
+                        var user = new Blog()
+                        {
+                            Urls = "Please work",
+                            UserId = "5",
+                        };
+                        _context.Add<Blog>(user);
+                        _context.SaveChanges();
 
-                    return Ok(user);
+                        return Ok(user);
+                    }
                 }
+                catch(Exception ex)
+                {
+                    return Ok(ex);
+                }
+
                 //var list = new List<GlossaryItem>() { new GlossaryItem() { Term = "This is a term", Definition = "This is a definition" }, new GlossaryItem() { Term = "This is a 2", Definition = "This is a 2" } };
 
                 //return Ok(list);
@@ -85,6 +93,12 @@ namespace entity_azure_connection.Controllers
                     var resourceUrl = Path.Combine(Request.Path.ToString(), Uri.EscapeUriString(glossaryItem.Term));
                     return Created(resourceUrl, glossaryItem);
                 }
+            }
+
+            [HttpGet("{id}")]
+            public IActionResult GetItem(int id)
+            {
+                return Ok(id);
             }
 
 
