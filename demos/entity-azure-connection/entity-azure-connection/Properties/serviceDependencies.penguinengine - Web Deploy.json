@@ -1,9 +1,8 @@
 {
   "dependencies": {
-    "mssql1": {
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroup')]/providers/Microsoft.Sql/servers/individualproject/databases/IndividualProject",
-      "type": "mssql.azure",
-      "connectionId": "DefaultAzureConnection",
+    "mssql2": {
+      "type": "mssql.onprem",
+      "connectionId": "Database",
       "secretStore": "AzureAppSettings"
     }
   }

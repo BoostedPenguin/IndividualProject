@@ -48,14 +48,14 @@ namespace entity_azure_connection.Controllers
             [HttpGet]
             public ActionResult<List<GlossaryItem>> Get()
             {
-                string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                //string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 using (_context)
                 {
                     var user = new Blog()
                     {
-                        Urls = "Created a new user since last one was shit lol",
-                        UserId = userId,
+                        Urls = "Please work",
+                        UserId = "5",
                     };
                     _context.Add<Blog>(user);
                     _context.SaveChanges();
