@@ -26,7 +26,7 @@ export default {
       const token = await this.$auth.getTokenSilently();
 
       // Use Axios to make a call to the API
-      await axios.get("https://localhost:5001/api/glossary", {
+      await axios.get("https://penguinengine.azurewebsites.net/api/glossary", {
         headers: {
           Authorization: `Bearer ${token}`    // send the access token through the 'Authorization' header
         }
