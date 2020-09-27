@@ -51,22 +51,30 @@ namespace entity_azure_connection.Controllers
             {
                 string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                using (_context)
+                try
                 {
-                    var user = await _context.Blogs.Where(x => x.UserId == userId).FirstOrDefaultAsync();
-                    if (user == null)
+                    using (_context)
                     {
-                        user = new Blog()
+                        var user = await _context.Blogs.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+                        if (user == null)
                         {
-                            Urls = "Created a new user since last one was shit lol",
-                            UserId = userId,
-                        };
-                        _context.Add<Blog>(user);
-                        await _context.SaveChangesAsync();
-                    }
+                            user = new Blog()
+                            {
+                                Urls = "Created a new user since last one was shit lol",
+                                UserId = userId,
+                            };
+                            _context.Add<Blog>(user);
+                            await _context.SaveChangesAsync();
+                        }
 
-                    return Ok(user);
+                        return Ok(user);
+                    }
                 }
+                catch(Exception ex)
+                {
+                    return BadRequest(ex);
+                }
+
                 //var list = new List<GlossaryItem>() { new GlossaryItem() { Term = "This is a term", Definition = "This is a definition" }, new GlossaryItem() { Term = "This is a 2", Definition = "This is a 2" } };
 
                 //return Ok(list);
