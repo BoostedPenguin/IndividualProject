@@ -22,11 +22,11 @@ jobs:
 
     - name: Build with dotnet
       working-directory: ./demos/entity-azure-connection
-      run: dotnet build --configuration Release
+      run: dotnet build --configuration Debug
 
     - name: dotnet publish
       working-directory: ./demos/entity-azure-connection
-      run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      run: dotnet publish -c Debug -o ${{env.DOTNET_ROOT}}/myapp
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
