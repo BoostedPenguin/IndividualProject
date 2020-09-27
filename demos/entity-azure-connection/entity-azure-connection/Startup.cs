@@ -46,7 +46,7 @@ namespace entity_azure_connection
 
 
             services.AddDbContext<BloggingContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultAzureConnection"));
+                options.UseSqlServer("Server=tcp:individualproject.database.windows.net,1433;Initial Catalog=IndividualProject;Persist Security Info=False;User ID=penguinmaster;Password=bh4aebszmYFKj7D;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             });
 
             services.AddControllers();
