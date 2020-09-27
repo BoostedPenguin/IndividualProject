@@ -46,13 +46,13 @@ namespace entity_azure_connection.Controllers
             }
 
             [HttpGet]
-            public async Task<ActionResult<List<GlossaryItem>>> Get()
+            public ActionResult<List<GlossaryItem>> Get()
             {
                 string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 using (_context)
                 {
-                    var user = await _context.Blogs.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+                    var user = _context.Blogs.Where(x => x.UserId == userId).FirstOrDefault();
                     if (user == null)
                     {
                         user = new Blog()
@@ -61,7 +61,7 @@ namespace entity_azure_connection.Controllers
                             UserId = userId,
                         };
                         _context.Add<Blog>(user);
-                        await _context.SaveChangesAsync();
+                        _context.SaveChanges();
                     }
 
                     return Ok(user);
