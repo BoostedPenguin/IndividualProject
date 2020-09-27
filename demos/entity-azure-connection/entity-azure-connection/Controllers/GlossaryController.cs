@@ -46,29 +46,29 @@ namespace entity_azure_connection.Controllers
             }
 
             [HttpGet]
-            public ActionResult<List<GlossaryItem>> Get()
+            public async Task<ActionResult<List<GlossaryItem>>> Get()
             {
-                //string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                //using(_context)
-                //{
-                //    var user = await _context.Blogs.Where(x => x.UserId == userId).FirstOrDefaultAsync();
-                //    if(user == null)
-                //    {
-                //        user = new Blog()
-                //        {
-                //            Urls = "Created a new user since last one was shit lol",
-                //            UserId = userId,
-                //        };
-                //        _context.Add<Blog>(user);
-                //        await _context.SaveChangesAsync();
-                //    }
+                using (_context)
+                {
+                    var user = await _context.Blogs.Where(x => x.UserId == userId).FirstOrDefaultAsync();
+                    if (user == null)
+                    {
+                        user = new Blog()
+                        {
+                            Urls = "Created a new user since last one was shit lol",
+                            UserId = userId,
+                        };
+                        _context.Add<Blog>(user);
+                        await _context.SaveChangesAsync();
+                    }
 
-                //    return Ok(user);
-                //}
-                var list = new List<GlossaryItem>() { new GlossaryItem() { Term = "This is a term", Definition = "This is a definition" }, new GlossaryItem() { Term = "This is a 2", Definition = "This is a 2" } };
+                    return Ok(user);
+                }
+                //var list = new List<GlossaryItem>() { new GlossaryItem() { Term = "This is a term", Definition = "This is a definition" }, new GlossaryItem() { Term = "This is a 2", Definition = "This is a 2" } };
 
-                return Ok(list);
+                //return Ok(list);
             }
 
 
