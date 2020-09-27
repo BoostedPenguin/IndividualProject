@@ -46,8 +46,7 @@ namespace entity_azure_connection.Controllers
             }
 
             [HttpGet]
-            [Authorize]
-            public async Task<ActionResult<List<GlossaryItem>>> Get()
+            public ActionResult<List<GlossaryItem>> Get()
             {
                 //string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
@@ -67,8 +66,9 @@ namespace entity_azure_connection.Controllers
 
                 //    return Ok(user);
                 //}
+                var list = new List<GlossaryItem>() { new GlossaryItem() { Term = "This is a term", Definition = "This is a definition" }, new GlossaryItem() { Term = "This is a 2", Definition = "This is a 2" } };
 
-                return Ok(new GlossaryItem() { Term = "This is a term", Definition = "This is a definition" });
+                return Ok(list);
             }
 
 
