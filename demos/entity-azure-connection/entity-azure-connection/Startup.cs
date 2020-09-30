@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using entity_azure_connection.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,23 +34,26 @@ namespace entity_azure_connection
                                                             .AllowAnyMethod()
                                                              .AllowAnyHeader()));
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.Authority = "https://dev-3sn-ksqj.eu.auth0.com/";
                 options.Audience = "https://localhost:5001/api";
+
+                // If the access token does not have a `sub` claim, `User.Identity.Name` will be `null`. Map it to a different claim by setting the NameClaimType below.
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = ClaimTypes.NameIdentifier
+                };
             });
-            services.AddControllers();
 
-
-            services.AddDbContext<BloggingContext>(options => {
+            services.AddDbContext<IndividualProjectContext>(options =>
+            {
                 options.UseSqlServer(Configuration.GetConnectionString("SQLCONNSTR_Database"));
             });
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
