@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace net_core_backend.Models
 {
-    public partial class UserKeywords
+    public partial class UserKeywords : DefaultModel
     {
-        public int KeywordId { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string Keyword { get; set; }
         public DateTime? CreatedAt { get; set; }
 

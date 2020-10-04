@@ -22,14 +22,12 @@ namespace net_core_backend.Controllers
     {
         private readonly ILogger<ExampleController> _logger;
         private readonly IndividualProjectContext _context;
-        private readonly RandomGenerator _random;
 
 
-        public ExampleController(ILogger<ExampleController> logger, IndividualProjectContext context, RandomGenerator random)
+        public ExampleController(ILogger<ExampleController> logger, IndividualProjectContext context)
         {
             _logger = logger;
             _context = context;
-            _random = random;
         }
 
 
@@ -42,7 +40,7 @@ namespace net_core_backend.Controllers
             try
             {
                 var items = await _context.SupportTicket.Include(x => x.TicketChat).ToListAsync();
-                return Ok(_random.GetRandomItem(items.ToArray()));
+                return Ok();
             }
             catch (Exception ex)
             {

@@ -3,15 +3,14 @@ using System.Collections.Generic;
 
 namespace net_core_backend.Models
 {
-    public partial class WishList
+    public partial class WishList : DefaultModel
     {
         public WishList()
         {
             WishListLocations = new HashSet<WishListLocations>();
         }
 
-        public int WishlistId { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string Name { get; set; }
         public int? TransportationId { get; set; }
         public int? Distance { get; set; }

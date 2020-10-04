@@ -3,15 +3,14 @@ using System.Collections.Generic;
 
 namespace net_core_backend.Models
 {
-    public partial class UserTrips
+    public partial class UserTrips : DefaultModel
     {
         public UserTrips()
         {
             UserTripLocations = new HashSet<UserTripLocations>();
         }
 
-        public int TripId { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string Name { get; set; }
         public int TransporationId { get; set; }
         public int? Distance { get; set; }

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace net_core_backend.Models
 {
-    public partial class UserTripLocations
+    public partial class UserTripLocations : DefaultModel
     {
-        public int LocationId { get; set; }
         public int TripId { get; set; }
         public string Name { get; set; }
         public double Lang { get; set; }

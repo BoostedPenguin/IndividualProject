@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace net_core_backend.Models
 {
-    public partial class Transportation
+    public partial class Transportation : DefaultModel
     {
         public Transportation()
         {
@@ -11,7 +11,6 @@ namespace net_core_backend.Models
             WishList = new HashSet<WishList>();
         }
 
-        public int TransportId { get; set; }
         public string Name { get; set; }
 
         public virtual ICollection<UserTrips> UserTrips { get; set; }

@@ -26,14 +26,15 @@ namespace net_core_backend.Models
         public virtual DbSet<WishList> WishList { get; set; }
         public virtual DbSet<WishListLocations> WishListLocations { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Roles>(entity =>
             {
-                entity.HasKey(e => e.RoleId);
-
-                entity.Property(e => e.RoleId).HasColumnName("role_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -43,9 +44,7 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<SupportTicket>(entity =>
             {
-                entity.HasKey(e => e.TicketId);
-
-                entity.Property(e => e.TicketId).HasColumnName("ticket_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
@@ -66,10 +65,7 @@ namespace net_core_backend.Models
                     .HasColumnName("updated_at")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasColumnName("user_id")
-                    .HasMaxLength(100);
+                entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.SupportTicket)
@@ -80,18 +76,14 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<TicketChat>(entity =>
             {
-                entity.HasKey(e => e.ChatId);
-
-                entity.Property(e => e.ChatId).HasColumnName("chat_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.CreatorId)
-                    .HasColumnName("creator_id")
-                    .HasMaxLength(100);
+                entity.Property(e => e.CreatorId).HasColumnName("creator_id");
 
                 entity.Property(e => e.Message)
                     .HasColumnName("message")
@@ -108,9 +100,7 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<Transportation>(entity =>
             {
-                entity.HasKey(e => e.TransportId);
-
-                entity.Property(e => e.TransportId).HasColumnName("transport_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -120,9 +110,7 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<UserKeywords>(entity =>
             {
-                entity.HasKey(e => e.KeywordId);
-
-                entity.Property(e => e.KeywordId).HasColumnName("keyword_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
@@ -134,10 +122,7 @@ namespace net_core_backend.Models
                     .HasColumnName("keyword")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasColumnName("user_id")
-                    .HasMaxLength(100);
+                entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserKeywords)
@@ -148,9 +133,7 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<UserTripLocations>(entity =>
             {
-                entity.HasKey(e => e.LocationId);
-
-                entity.Property(e => e.LocationId).HasColumnName("location_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
@@ -177,9 +160,7 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<UserTrips>(entity =>
             {
-                entity.HasKey(e => e.TripId);
-
-                entity.Property(e => e.TripId).HasColumnName("trip_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
@@ -201,10 +182,7 @@ namespace net_core_backend.Models
                     .HasColumnName("updated_at")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasColumnName("user_id")
-                    .HasMaxLength(100);
+                entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.HasOne(d => d.Transporation)
                     .WithMany(p => p.UserTrips)
@@ -221,10 +199,11 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<Users>(entity =>
             {
-                entity.HasKey(e => e.UserId);
+                entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.UserId)
-                    .HasColumnName("user_id")
+                entity.Property(e => e.Auth)
+                    .IsRequired()
+                    .HasColumnName("auth")
                     .HasMaxLength(100);
 
                 entity.Property(e => e.City)
@@ -268,12 +247,13 @@ namespace net_core_backend.Models
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Users_Roles");
             });
 
             modelBuilder.Entity<WishList>(entity =>
             {
-                entity.Property(e => e.WishlistId).HasColumnName("wishlist_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Distance).HasColumnName("distance");
 
@@ -285,10 +265,7 @@ namespace net_core_backend.Models
 
                 entity.Property(e => e.TransportationId).HasColumnName("transportation_id");
 
-                entity.Property(e => e.UserId)
-                    .IsRequired()
-                    .HasColumnName("user_id")
-                    .HasMaxLength(100);
+                entity.Property(e => e.UserId).HasColumnName("user_id");
 
                 entity.HasOne(d => d.Transportation)
                     .WithMany(p => p.WishList)
@@ -304,9 +281,7 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<WishListLocations>(entity =>
             {
-                entity.HasKey(e => e.LocationId);
-
-                entity.Property(e => e.LocationId).HasColumnName("location_id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")

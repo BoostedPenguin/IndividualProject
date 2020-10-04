@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace net_core_backend.Models
 {
-    public partial class WishListLocations
+    public partial class WishListLocations : DefaultModel
     {
-        public int LocationId { get; set; }
         public int? WishlistId { get; set; }
         public string Name { get; set; }
         public double? Long { get; set; }
