@@ -69,8 +69,8 @@ export default {
   async callTicketsGet() {
     const token = await this.$auth.getTokenSilently();
 
-
-    await axios.get("https://localhost:5001/api/main", {
+    //https://penguinengine.azurewebsites.net/api/glossary
+    await axios.get("https://localhost:5001/api/example", {
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`    // send the access token through the 'Authorization' header
