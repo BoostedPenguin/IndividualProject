@@ -14,8 +14,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using net_core_backend.Context;
 using net_core_backend.Models;
 using net_core_backend.Services;
+using net_core_backend.Services.Interfaces;
 
 namespace net_core_backend
 {
@@ -54,8 +56,14 @@ namespace net_core_backend
                 options.UseSqlServer(Configuration.GetConnectionString("SQLCONNSTR_Database"));
             });
 
+            services.AddSingleton(new ContextFactory(Configuration.GetConnectionString("SQLCONNSTR_Database")));
 
-            services.AddSingleton(new RandomGenerator());
+            //services.AddSingleton<IDataService<Users>, DataService<Users>>();
+            services.AddHttpContextAccessor();
+
+            services.AddSingleton<IAccountService, AccountDataService>();
+
+            services.AddSingleton<ITicketService, TicketDataService>();
 
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
