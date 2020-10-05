@@ -55,9 +55,10 @@ namespace net_core_backend.Controllers
         //}
 
         [HttpPost]
-        public async Task<ActionResult> TestHook(string userId)
+        [Authorize]
+        public async Task<ActionResult> TestHook(Users entity)
         {
-            var a = new Users() { Auth = userId };
+            var a = new Users() { Auth = entity.Auth };
 
             await _context.Create(a);
 
