@@ -40,18 +40,26 @@ namespace net_core_backend.Controllers
             }
         }
 
+        //[HttpPost]
+        //[Authorize]
+        //public async Task<ActionResult> CreateUser(Users entity)
+        //{
+        //    try
+        //    {
+        //        return Ok(await _context.Create(entity));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
         [HttpPost]
-        [Authorize]
-        public async Task<ActionResult> CreateUser(Users entity)
+        public async Task<ActionResult> TestHook(Users entity)
         {
-            try
-            {
-                return Ok(await _context.Create(entity));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            await _context.Create(entity);
+
+            return Ok();
         }
     }
 }
