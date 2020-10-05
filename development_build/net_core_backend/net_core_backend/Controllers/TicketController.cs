@@ -53,7 +53,7 @@ namespace net_core_backend.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("/message")]
         [Authorize]
         public async Task<ActionResult<SupportTicket>> CreateMessage(int ticket_id, TicketChat chat)
         {
@@ -68,5 +68,18 @@ namespace net_core_backend.Controllers
         }
 
 
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<SupportTicket>> CreateTicket(SupportTicket ticket)
+        {
+            try
+            {
+                return Ok(await _context.Create(ticket));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
