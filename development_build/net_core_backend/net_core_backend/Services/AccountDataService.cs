@@ -26,7 +26,7 @@ namespace net_core_backend.Services
 
         public override Task<Users> Create(Users entity)
         {
-            entity.Auth = httpContext.GetCurrentAuth();
+            //entity.Auth = httpContext.GetCurrentAuth();
             entity.RoleId = 1;
 
             return base.Create(entity);
