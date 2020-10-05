@@ -25,17 +25,6 @@ namespace net_core_backend.Controllers
             this._context = _context;
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<SupportTicket>> GetTickets()
-        {
-            string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-            return Ok(await _context.Update(0, new Users() { Country = "BG", RoleId = 2 }));
-
-            //return Ok(await _context.Create(new Users() { Auth = userId }));
-        }
-
 
         [HttpPut]
         [Authorize]
@@ -46,6 +35,20 @@ namespace net_core_backend.Controllers
                 return Ok(await _context.ChangeAddress(entity));
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult> CreateUser(Users entity)
+        {
+            try
+            {
+                return Ok(await _context.Create(entity));
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
