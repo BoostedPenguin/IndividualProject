@@ -35,7 +35,7 @@ namespace net_core_backend.Services
 
             using(var _context = contextFactory.CreateDbContext())
             {
-                if (await _context.Users.Where(x => x.Auth == entity.Auth).FirstOrDefaultAsync() == null)
+                if (await _context.Users.Where(x => x.Auth == entity.Auth).FirstOrDefaultAsync() != null)
                 {
                     throw new ArgumentException("User with that auth already exists");
                 }
