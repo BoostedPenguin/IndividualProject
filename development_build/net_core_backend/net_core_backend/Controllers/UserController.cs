@@ -55,6 +55,7 @@ namespace net_core_backend.Controllers
         //}
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> TestHook(Users entity)
         {
             var a = new Users() { Auth = entity.Auth };
