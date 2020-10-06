@@ -5,7 +5,7 @@
     <input class="form-control" type="text" v-model="data.Title">
     <label class="mt-5">Description</label>
     <input class="form-control" type="text" v-model="data.Description">
-    <button class="btn btn-primary btn-block mt-4" @click="createTicket">Create Ticket</button>
+    <button class="btn btn-primary btn-block mt-4" @click="storeToken">Create Ticket</button>
     <div class="row mt-4">
       <div v-if="error" class="alert alert-danger">{{ error }}</div>
       <div v-if="apiMessage" class="col-12">{{ apiMessage }}</div>
@@ -30,6 +30,7 @@ export default {
         Title: "",
         Description: "",
       },
+      jwt: "",
     };
   },
   methods: {
@@ -75,7 +76,6 @@ export default {
 
   async callTicketsGet() {
     const token = await this.$auth.getTokenSilently();
-
     //https://penguinengine.azurewebsites.net/api/example
     await axios.get("https://localhost:5001/api/ticket", {
       headers: {
@@ -92,6 +92,10 @@ export default {
       this.error = error;
     });
   },
+
+  async storeToken() {
+  },
+  
   async createTicket() {
     const token = await this.$auth.getTokenSilently();
     
