@@ -10,5 +10,6 @@ namespace net_core_backend.Services.Interfaces
     {
         Task<Users> ChangeAddress(Users entity);
         Task<Users> GetAllInformation(int id);
+        Task<Users> ValidateUser(Users entity);
     }
 }

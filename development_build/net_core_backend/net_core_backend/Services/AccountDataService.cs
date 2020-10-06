@@ -26,10 +26,28 @@ namespace net_core_backend.Services
 
         public override Task<Users> Create(Users entity)
         {
-            //entity.Auth = httpContext.GetCurrentAuth();
-            entity.RoleId = 1;
-
             return base.Create(entity);
+        }
+        
+        public async Task<Users> ValidateUser(Users entity)
+        {
+            if (entity.Auth == null) throw new ArgumentException("Empty user auth");
+
+            using(var _context = contextFactory.CreateDbContext())
+            {
+                if (await _context.Users.Where(x => x.Auth == entity.Auth).FirstOrDefaultAsync() == null)
+                {
+                    throw new ArgumentException("User with that auth already exists");
+                }
+
+                //Todo - use an intelligent way to assign roles
+                entity.RoleId = 1;
+
+                await _context.AddAsync(entity);
+                await _context.SaveChangesAsync();
+
+                return entity;
+            }
         }
 
         public async Task<Users> GetAllInformation(int id)
