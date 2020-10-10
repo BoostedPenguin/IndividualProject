@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace net_core_backend.Services.Interfaces
 {
-    public interface ITicketService : IDataService<SupportTicket>
+    public interface ITicketService
     {
         Task<SupportTicket> CreateMessage(int ticket_id, TicketChat chat);
+        Task<SupportTicket> CreateTicket(SupportTicket entity);
         Task<IEnumerable<SupportTicket>> GetAllUserTickets();
+        Task<SupportTicket> GetTicket(int id);
     }
 }

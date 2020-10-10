@@ -23,7 +23,7 @@ namespace net_core_backend.Services
             httpContext = httpContextAccessor;
         }
 
-        public async override Task<SupportTicket> Get(int id)
+        public async Task<SupportTicket> GetTicket(int id)
         {
             using (var _context = contextFactory.CreateDbContext())
             {
@@ -61,7 +61,7 @@ namespace net_core_backend.Services
             }
         }
 
-        public async override Task<SupportTicket> Create(SupportTicket entity)
+        public async Task<SupportTicket> CreateTicket(SupportTicket entity)
         {
             var id = await base.GetUserId(httpContext.GetCurrentAuth());
             entity.UserId = id;
