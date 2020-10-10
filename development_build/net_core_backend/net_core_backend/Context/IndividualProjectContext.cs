@@ -15,7 +15,6 @@ namespace net_core_backend.Models
         {
         }
 
-        public virtual DbSet<Roles> Roles { get; set; }
         public virtual DbSet<SupportTicket> SupportTicket { get; set; }
         public virtual DbSet<TicketChat> TicketChat { get; set; }
         public virtual DbSet<Transportation> Transportation { get; set; }
@@ -25,23 +24,8 @@ namespace net_core_backend.Models
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<WishList> WishList { get; set; }
         public virtual DbSet<WishListLocations> WishListLocations { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Roles>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnName("name")
-                    .HasMaxLength(50);
-            });
-
             modelBuilder.Entity<SupportTicket>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -232,7 +216,11 @@ namespace net_core_backend.Models
                     .HasColumnName("notifications")
                     .HasDefaultValueSql("((1))");
 
-                entity.Property(e => e.RoleId).HasColumnName("role_id");
+                entity.Property(e => e.Role)
+                    .IsRequired()
+                    .HasColumnName("role")
+                    .HasMaxLength(20)
+                    .HasDefaultValueSql("('User')");
 
                 entity.Property(e => e.Suggestions)
                     .IsRequired()
@@ -243,12 +231,6 @@ namespace net_core_backend.Models
                     .HasColumnName("updated_at")
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Users_Roles");
             });
 
             modelBuilder.Entity<WishList>(entity =>

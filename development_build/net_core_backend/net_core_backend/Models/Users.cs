@@ -14,7 +14,7 @@ namespace net_core_backend.Models
         }
 
         public string Auth { get; set; }
-        public int RoleId { get; set; }
+        public string Role { get; set; }
         public string ImageUrl { get; set; }
         public string Name { get; set; }
         public string Country { get; set; }
@@ -22,9 +22,8 @@ namespace net_core_backend.Models
         public bool? Suggestions { get; set; }
         public bool? Notifications { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public DateTime? CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        public virtual Roles Role { get; set; }
         public virtual ICollection<SupportTicket> SupportTicket { get; set; }
         public virtual ICollection<UserKeywords> UserKeywords { get; set; }
         public virtual ICollection<UserTrips> UserTrips { get; set; }
