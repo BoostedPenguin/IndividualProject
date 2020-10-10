@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace net_core_backend.Services.Interfaces
 {
-    public interface IAccountService : IDataService<Users>
+    public interface IAccountService
     {
         Task<Users> ChangeAddress(Users entity);
-        Task<Users> GetAllInformation(int id);
+        Task<Users> GetUserInfo(int id);
         Task<Users> ValidateUser(Users entity);
     }
 }

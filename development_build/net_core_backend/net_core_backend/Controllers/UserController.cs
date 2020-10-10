@@ -41,6 +41,26 @@ namespace net_core_backend.Controllers
         }
 
 
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult> GetUserInfo(int id)
+        {
+            try
+            {
+                return Ok(await _context.GetUserInfo(id));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Gets called on post-registration callback
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         [HttpPost]
         [Authorize]
         public async Task<ActionResult> ValidateUser(Users entity)

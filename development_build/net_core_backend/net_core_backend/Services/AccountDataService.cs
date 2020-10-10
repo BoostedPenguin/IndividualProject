@@ -23,11 +23,6 @@ namespace net_core_backend.Services
             this.contextFactory = contextFactory;
             httpContext = httpContextAccessor;
         }
-
-        public override Task<Users> Create(Users entity)
-        {
-            return base.Create(entity);
-        }
         
         public async Task<Users> ValidateUser(Users entity)
         {
@@ -41,7 +36,6 @@ namespace net_core_backend.Services
                 }
 
                 //Todo - use an intelligent way to assign roles
-                entity.RoleId = 1;
 
                 await _context.AddAsync(entity);
                 await _context.SaveChangesAsync();
@@ -50,7 +44,7 @@ namespace net_core_backend.Services
             }
         }
 
-        public async Task<Users> GetAllInformation(int id)
+        public async Task<Users> GetUserInfo(int id)
         {
             using (var _context = contextFactory.CreateDbContext())
             {

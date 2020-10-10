@@ -30,8 +30,8 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                var a = await _context.Get(id);
-                return Ok(await _context.Get(id));
+                var a = await _context.GetTicket(id);
+                return Ok(a);
             }
             catch(Exception ex)
             {
@@ -74,7 +74,7 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.Create(ticket));
+                return Ok(await _context.CreateTicket(ticket));
             }
             catch(Exception ex)
             {
