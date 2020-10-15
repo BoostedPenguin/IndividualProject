@@ -1,4 +1,4 @@
-using System;
+    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -37,8 +37,6 @@ namespace net_core_backend
                                                             .AllowAnyMethod()
                                                              .AllowAnyHeader()));
 
-
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.Authority = "https://dev-3sn-ksqj.eu.auth0.com/";
@@ -56,9 +54,8 @@ namespace net_core_backend
                 options.UseSqlServer(Configuration.GetConnectionString("SQLCONNSTR_Database"));
             });
 
-            services.AddSingleton(new ContextFactory(Configuration.GetConnectionString("SQLCONNSTR_Database")));
+            services.AddSingleton<IContextFactory>(new ContextFactory(Configuration.GetConnectionString("SQLCONNSTR_Database")));
 
-            //services.AddSingleton<IDataService<Users>, DataService<Users>>();
             services.AddHttpContextAccessor();
 
             services.AddSingleton<IAccountService, AccountDataService>();

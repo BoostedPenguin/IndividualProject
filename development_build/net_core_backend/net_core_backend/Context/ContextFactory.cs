@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace net_core_backend.Context
 {
-    public class ContextFactory : IDesignTimeDbContextFactory<IndividualProjectContext>
+    public class ContextFactory : IDesignTimeDbContextFactory<IndividualProjectContext>, IContextFactory
     {
         private readonly string connectionString;
         public ContextFactory(string connectionString)
         {
             this.connectionString = connectionString;
         }
+
         public IndividualProjectContext CreateDbContext(string[] args = null)
         {
             var options = new DbContextOptionsBuilder<IndividualProjectContext>();

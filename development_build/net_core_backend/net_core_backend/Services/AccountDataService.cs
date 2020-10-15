@@ -14,11 +14,11 @@ namespace net_core_backend.Services
 {
     public class AccountDataService : DataService<Users>, IAccountService
     {
-        private readonly ContextFactory contextFactory;
+        private readonly IContextFactory contextFactory;
         private readonly IHttpContextAccessor httpContext;
 
 
-        public AccountDataService(ContextFactory contextFactory, IHttpContextAccessor httpContextAccessor) : base(contextFactory)
+        public AccountDataService(IContextFactory contextFactory, IHttpContextAccessor httpContextAccessor) : base(contextFactory)
         {
             this.contextFactory = contextFactory;
             httpContext = httpContextAccessor;
@@ -46,6 +46,7 @@ namespace net_core_backend.Services
 
         public async Task<Users> GetUserInfo(int id)
         {
+            var au = httpContext.GetCurrentAuth();
             using (var _context = contextFactory.CreateDbContext())
             {
                 return await _context.Users
