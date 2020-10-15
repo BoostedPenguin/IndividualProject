@@ -1,4 +1,5 @@
-﻿using net_core_backend.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using net_core_backend.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace net_core_backend.Services.Interfaces
     {
         Task<SupportTicket> CreateMessage(int ticket_id, TicketChat chat);
         Task<SupportTicket> CreateTicket(SupportTicket entity);
-        Task<IEnumerable<SupportTicket>> GetAllUserTickets();
+        Task<List<SupportTicket>> GetAllUserTickets();
         Task<SupportTicket> GetTicket(int id);
     }
 }

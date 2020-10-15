@@ -30,8 +30,7 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                var a = await _context.GetTicket(id);
-                return Ok(a);
+                return await _context.GetTicket(id);
             }
             catch(Exception ex)
             {
@@ -41,11 +40,11 @@ namespace net_core_backend.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<SupportTicket>> GetTickets()
+        public async Task<ActionResult<IEnumerable<SupportTicket>>> GetTickets()
         {
             try
             {
-                return Ok(await _context.GetAllUserTickets());
+                return await _context.GetAllUserTickets();
             }
             catch(Exception ex)
             {
@@ -59,7 +58,7 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.CreateMessage(ticket_id, chat));
+                return await _context.CreateMessage(ticket_id, chat);
             }
             catch(Exception ex)
             {
@@ -74,7 +73,7 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.CreateTicket(ticket));
+                return await _context.CreateTicket(ticket);
             }
             catch(Exception ex)
             {

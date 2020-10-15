@@ -41,7 +41,7 @@ namespace net_core_backend.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult> GetUserInfo(int id)
         {
@@ -71,7 +71,7 @@ namespace net_core_backend.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.InnerException);
+                return BadRequest(ex.Message);
             }
 
             return Ok(entity);

@@ -14,10 +14,10 @@ namespace net_core_backend.Services
 {
     public class TicketDataService : DataService<SupportTicket>, ITicketService
     {
-        private readonly ContextFactory contextFactory;
+        private readonly IContextFactory contextFactory;
         private readonly IHttpContextAccessor httpContext;
 
-        public TicketDataService(ContextFactory _contextFactory, IHttpContextAccessor httpContextAccessor) : base(_contextFactory)
+        public TicketDataService(IContextFactory _contextFactory, IHttpContextAccessor httpContextAccessor) : base(_contextFactory)
         {
             contextFactory = _contextFactory;
             httpContext = httpContextAccessor;
@@ -34,7 +34,7 @@ namespace net_core_backend.Services
             }
         }
 
-        public async Task<IEnumerable<SupportTicket>> GetAllUserTickets()
+        public async Task<List<SupportTicket>> GetAllUserTickets()
         {
             using (var _context = contextFactory.CreateDbContext())
             {

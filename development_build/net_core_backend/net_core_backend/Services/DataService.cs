@@ -15,10 +15,10 @@ namespace net_core_backend.Services
     /// <typeparam name="T"></typeparam>
     public class DataService<T> : IDataService<T> where T : DefaultModel
     {
-        private readonly ContextFactory _contextFactory;
+        private readonly IContextFactory _contextFactory;
 
 
-        public DataService(ContextFactory _contextFactory)
+        public DataService(IContextFactory _contextFactory)
         {
             this._contextFactory = _contextFactory;
         }
