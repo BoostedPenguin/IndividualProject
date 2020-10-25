@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace net_core_backend.Models
 {
+    public enum Role
+    {
+        User,
+        Admin
+    }
     public partial class Users : DefaultModel
     {
         public Users()
@@ -14,7 +19,7 @@ namespace net_core_backend.Models
         }
 
         public string Auth { get; set; }
-        public string Role { get; set; }
+        public Role Role { get; set; }
         public string ImageUrl { get; set; }
         public string Name { get; set; }
         public string Country { get; set; }

@@ -27,10 +27,15 @@ namespace net_core_backend.Services
         {
             using (var _context = contextFactory.CreateDbContext())
             {
-                return await _context.SupportTicket
-                    .Where(x => x.Id == id && x.User.Auth == httpContext.GetCurrentAuth())
+                var ticket = await _context.SupportTicket
+                    .Where(x => x.Id == id)
                     .Include(x => x.TicketChat)
+                    .Include(x => x.User)
                     .FirstOrDefaultAsync();
+
+                if (CurrentExtensions.HasPrivileges(ticket.User, httpContext, contextFactory)) return ticket;
+
+                throw new ArgumentException("Access forbidden!");
             }
         }
 
@@ -63,10 +68,26 @@ namespace net_core_backend.Services
 
         public async Task<SupportTicket> CreateTicket(SupportTicket entity)
         {
+            if(await RestrictAdministratorResource())
+            {
+                throw new ArgumentException("Administrators cannot create tickets!");
+            }
+
             var id = await base.GetUserId(httpContext.GetCurrentAuth());
+
             entity.UserId = id;
 
             return await base.Create(entity);
+        }
+
+        private async Task<bool> RestrictAdministratorResource()
+        {
+            using (var _context = contextFactory.CreateDbContext())
+            {
+                var creator = await _context.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                if (creator.Role == Role.Admin) return true;
+                return false;
+            }
         }
     }
 }

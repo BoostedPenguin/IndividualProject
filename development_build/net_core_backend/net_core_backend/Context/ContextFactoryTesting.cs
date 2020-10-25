@@ -7,7 +7,7 @@ namespace net_core_backend.Context
 {
     public class ContextFactoryTesting : IDesignTimeDbContextFactory<IndividualProjectContext>, IContextFactory
     {
-        public IndividualProjectContext CreateDbContext(string[] args)
+        public IndividualProjectContext CreateDbContext(string[] args = null)
         {
             var options = new DbContextOptionsBuilder<IndividualProjectContext>();
             options.UseSqlServer("Data Source=.;Initial Catalog=TestingDatabase;Integrated Security=True;");
