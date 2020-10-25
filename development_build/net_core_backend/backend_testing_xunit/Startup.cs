@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using net_core_backend.Context;
+using net_core_backend.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

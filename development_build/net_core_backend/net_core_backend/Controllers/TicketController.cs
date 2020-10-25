@@ -69,11 +69,11 @@ namespace net_core_backend.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<SupportTicket>> CreateTicket(SupportTicket ticket)
+        public async Task<IActionResult> CreateTicket(SupportTicket ticket)
         {
             try
             {
-                return await _context.CreateTicket(ticket);
+                return CreatedAtAction("action", await _context.CreateTicket(ticket));
             }
             catch(Exception ex)
             {

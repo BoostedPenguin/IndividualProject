@@ -1,34 +1,42 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
 using net_core_backend.Controllers;
 using net_core_backend.Models;
 using net_core_backend.Services.Interfaces;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
-using Microsoft.EntityFrameworkCore;
 using net_core_backend.Context;
 using net_core_backend.Services;
-using System.Collections.Generic;
 using System.Security.Principal;
-using net_core_backend.Services.Extensions;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace backend_testing_xunit
 {
-    public class TicketControllerTest
+    public class TicketControllerTest : DatabaseSeeder
     {
-        private readonly ITicketService service;
-        private readonly TicketController controller;
+        private IHttpContextAccessor http;
+        private ITicketService service;
+        private readonly IContextFactory factory;
+        private TicketController controller;
 
 
-        public TicketControllerTest(IHttpContextAccessor http, IContextFactory factory)
+        public TicketControllerTest(IHttpContextAccessor http, IContextFactory factory) : base(factory)
         {
             //Configure identity
 
-            var identity = new GenericIdentity("George", ClaimTypes.NameIdentifier);
+            this.factory = factory;
+            this.http = http;
+
+            CreateIdentity("George");
+        }
+
+        private void CreateIdentity(string auth)
+        {
+            var identity = new GenericIdentity(auth, ClaimTypes.NameIdentifier);
             var contextUser = new ClaimsPrincipal(identity); //add claims as needed
             var httpContext = new DefaultHttpContext()
             {
@@ -53,7 +61,6 @@ namespace backend_testing_xunit
             };
         }
 
-
         [Fact]
         public async Task CreateTicket()
         {
@@ -64,24 +71,73 @@ namespace backend_testing_xunit
             var result = await controller.CreateTicket(ticket);
 
             // Assert
-            Assert.Equal(ticket.Title, result.Value.Title);
+            Assert.Equal(ticket, ((CreatedAtActionResult)result).Value);
+        }
+
+        [Fact]
+        public async Task CreateTicketAdmin()
+        {
+            // Inject
+            CreateIdentity("SecondAuth");
+
+            // Arrange
+            var ticket = new SupportTicket() { Title = "Gosho", Description = "pesho", UserId = 2, };
+
+            // Act
+            var result = await controller.CreateTicket(ticket);
+
+            // Assert
+            Assert.Equal("Administrators cannot create tickets!", ((BadRequestObjectResult)result).Value);
         }
 
 
 
         [Fact]
-        public async Task GetTickets()
+        public async Task GetTicket()
         {
-            // Arrange
-            await controller.CreateTicket(new SupportTicket() { Title = "First", Description = "FirstDesc" });
-            await controller.CreateTicket(new SupportTicket() { Title = "Second", Description = "SecondDesc" });
-            await controller.CreateTicket(new SupportTicket() { Title = "Third", Description = "ThirdDesc" });
+            SupportTicket addedTicket;
+            using(var a = factory.CreateDbContext())
+            {
+                await a.AddAsync(new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = 1 });
+                await a.SaveChangesAsync();
+
+                addedTicket = await a.SupportTicket.Where(x => x.Title == "Testing get" && x.Description == "Testing get description").Include(x => x.TicketChat).Include(x => x.User).FirstOrDefaultAsync();
+            }
+            
 
             // Act
-            var result = await controller.GetTicket(11);
+            var result = await controller.GetTicket(addedTicket.Id);
 
             // Assert
-            Assert.Equal("Second", result.Value.Title);
+            Assert.Equal(Serialize(addedTicket), Serialize(result.Value));
+        }
+
+        [Fact]
+        public async Task GetTickets()
+        {
+            List<SupportTicket> tickets;
+            using(var a = factory.CreateDbContext())
+            {
+                tickets = await a.SupportTicket
+                                    .Include(x => x.TicketChat)
+                                    .Where(x => x.User.Auth == Users[0].Auth)
+                                    .ToListAsync();
+            }
+
+            // Act
+            var result = await controller.GetTickets();
+
+            // Assert
+            Assert.Equal(Serialize(tickets), Serialize(result.Value));
+        }
+
+        private string Serialize(object entity)
+        {
+            return JsonConvert.SerializeObject(entity, new JsonSerializerSettings()
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                Formatting = Formatting.Indented
+            });
         }
     }
 }
