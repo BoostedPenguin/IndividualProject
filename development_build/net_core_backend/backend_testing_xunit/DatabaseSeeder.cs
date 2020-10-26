@@ -1,7 +1,10 @@
 ﻿using net_core_backend.Models;
 using net_core_backend.Context;
-
-
+using Newtonsoft.Json;
+using System.Security.Principal;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backend_testing_xunit
 {
@@ -11,9 +14,36 @@ namespace backend_testing_xunit
         protected SupportTicket[] SupportTickets { get; private set; }
         protected TicketChat[] SupportChat { get; private set; }
 
-        protected DatabaseSeeder(IContextFactory factory)
+
+        protected IHttpContextAccessor http;
+        protected ControllerContext controllerContext;
+        protected readonly IContextFactory factory;
+
+
+        protected DatabaseSeeder(IHttpContextAccessor http, IContextFactory factory)
         {
+            this.factory = factory;
+            this.http = http;
+
             Seed(factory);
+        }
+
+        protected virtual void CreateIdentity(string auth)
+        {
+            // Configure identity
+            var identity = new GenericIdentity(auth, ClaimTypes.NameIdentifier);
+            var contextUser = new ClaimsPrincipal(identity); //add claims as needed
+            var httpContext = new DefaultHttpContext()
+            {
+                User = contextUser
+            };
+
+            controllerContext = new ControllerContext()
+            {
+                HttpContext = httpContext,
+            };
+
+            http.HttpContext = httpContext;
         }
 
 
@@ -63,6 +93,16 @@ namespace backend_testing_xunit
                 a.AddRange(SupportChat);
                 a.SaveChanges();
             }
+        }
+
+
+        protected string Serialize(object entity)
+        {
+            return JsonConvert.SerializeObject(entity, new JsonSerializerSettings()
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                Formatting = Formatting.Indented
+            });
         }
     }
 }

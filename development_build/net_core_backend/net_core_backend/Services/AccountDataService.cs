@@ -24,6 +24,11 @@ namespace net_core_backend.Services
             httpContext = httpContextAccessor;
         }
         
+        /// <summary>
+        /// Handles post-registration callback
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public async Task<Users> ValidateUser(Users entity)
         {
             if (entity.Auth == null) throw new ArgumentException("Empty user auth");
@@ -35,8 +40,6 @@ namespace net_core_backend.Services
                     throw new ArgumentException("User with that auth already exists");
                 }
 
-                //Todo - use an intelligent way to assign roles
-
                 await _context.AddAsync(entity);
                 await _context.SaveChangesAsync();
 
@@ -46,20 +49,28 @@ namespace net_core_backend.Services
 
         public async Task<Users> GetUserInfo(int id)
         {
-            var au = httpContext.GetCurrentAuth();
             using (var _context = contextFactory.CreateDbContext())
             {
-                return await _context.Users
+                var user = await _context.Users
                     .Include(x => x.SupportTicket)
                     .Include(x => x.WishList)
                     .Include(x => x.UserKeywords)
                     .Include(x => x.UserTrips)
-                    .FirstOrDefaultAsync(x => x.Id == id && x.Auth == httpContext.GetCurrentAuth());
+                    .FirstOrDefaultAsync(x => x.Id == id);
+
+                if (CurrentExtensions.HasPrivileges(user, httpContext, contextFactory)) return user;
+
+                throw new ArgumentException("Access forbidden!");
             }
         }
 
         public async Task<Users> ChangeAddress(Users entity)
         {
+            if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
+            {
+                throw new ArgumentException("Administrators cannot change their address!");
+            }
+
             using (var _context = contextFactory.CreateDbContext())
             {
                 var result = await _context.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
