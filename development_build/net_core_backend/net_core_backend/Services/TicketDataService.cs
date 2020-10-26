@@ -50,11 +50,11 @@ namespace net_core_backend.Services
             }
         }
 
-        public async Task<SupportTicket> CreateMessage(int ticket_id, TicketChat chat)
+        public async Task<TicketChat> CreateMessage(int ticket_id, TicketChat chat)
         {
             using (var _context = contextFactory.CreateDbContext())
             {
-                var ticket = await _context.SupportTicket.Where(x => x.Id == ticket_id && x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var ticket = await _context.SupportTicket.Include(x => x.User).Where(x => x.Id == ticket_id && x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (ticket == null) return null;
 
@@ -62,13 +62,13 @@ namespace net_core_backend.Services
 
                 await _context.SaveChangesAsync();
 
-                return ticket;
+                return chat;
             }
         }
 
         public async Task<SupportTicket> CreateTicket(SupportTicket entity)
         {
-            if(await RestrictAdministratorResource())
+            if(await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
                 throw new ArgumentException("Administrators cannot create tickets!");
             }
@@ -78,16 +78,6 @@ namespace net_core_backend.Services
             entity.UserId = id;
 
             return await base.Create(entity);
-        }
-
-        private async Task<bool> RestrictAdministratorResource()
-        {
-            using (var _context = contextFactory.CreateDbContext())
-            {
-                var creator = await _context.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
-                if (creator.Role == Role.Admin) return true;
-                return false;
-            }
         }
     }
 }

@@ -19,7 +19,7 @@ namespace net_core_backend.Controllers
         private readonly IAccountService _context;
 
 
-        public UserController(ILogger<ExampleController> logger, IAccountService _context)
+        public UserController(IAccountService _context, ILogger<ExampleController> logger)
         {
             this._logger = logger;
             this._context = _context;
@@ -28,7 +28,7 @@ namespace net_core_backend.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<ActionResult> UpdateAddress(Users entity)
+        public async Task<IActionResult> UpdateAddress(Users entity)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace net_core_backend.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult> GetUserInfo(int id)
+        public async Task<IActionResult> GetUserInfo(int id)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace net_core_backend.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> ValidateUser(Users entity)
+        public async Task<IActionResult> ValidateUser(Users entity)
         {
             try
             {

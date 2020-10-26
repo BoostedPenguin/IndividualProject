@@ -64,5 +64,16 @@ namespace net_core_backend.Services.Extensions
 
             return false;
         }
+
+
+        public static async Task<bool> RestrictAdministratorResource(IContextFactory contextFactory, IHttpContextAccessor httpContext)
+        {
+            using (var _context = contextFactory.CreateDbContext())
+            {
+                var creator = await _context.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                if (creator.Role == Role.Admin) return true;
+                return false;
+            }
+        }
     }
 }

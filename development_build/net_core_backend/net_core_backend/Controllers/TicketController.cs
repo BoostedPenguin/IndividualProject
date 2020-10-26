@@ -4,9 +4,6 @@ using Microsoft.Extensions.Logging;
 using net_core_backend.Models;
 using net_core_backend.Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace net_core_backend.Controllers
@@ -26,11 +23,11 @@ namespace net_core_backend.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<SupportTicket>> GetTicket(int id)
+        public async Task<IActionResult> GetTicket(int id)
         {
             try
             {
-                return await _context.GetTicket(id);
+                return Ok(await _context.GetTicket(id));
             }
             catch(Exception ex)
             {
@@ -40,11 +37,11 @@ namespace net_core_backend.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<SupportTicket>>> GetTickets()
+        public async Task<IActionResult> GetAllUserTickets()
         {
             try
             {
-                return await _context.GetAllUserTickets();
+                return Ok(await _context.GetAllUserTickets());
             }
             catch(Exception ex)
             {
@@ -54,13 +51,13 @@ namespace net_core_backend.Controllers
 
         [HttpPost("/message")]
         [Authorize]
-        public async Task<ActionResult<SupportTicket>> CreateMessage(int ticket_id, TicketChat chat)
+        public async Task<IActionResult> CreateMessage(int ticket_id, TicketChat chat)
         {
             try
             {
-                return await _context.CreateMessage(ticket_id, chat);
+                return Ok(await _context.CreateMessage(ticket_id, chat));
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -73,7 +70,7 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return CreatedAtAction("action", await _context.CreateTicket(ticket));
+                return Ok(await _context.CreateTicket(ticket));
             }
             catch(Exception ex)
             {
