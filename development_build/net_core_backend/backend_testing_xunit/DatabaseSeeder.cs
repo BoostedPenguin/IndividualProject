@@ -10,9 +10,9 @@ namespace backend_testing_xunit
 {
     public abstract class DatabaseSeeder
     {
-        protected Users[] Users { get; private set; }
-        protected SupportTicket[] SupportTickets { get; private set; }
-        protected TicketChat[] SupportChat { get; private set; }
+        static protected Users[] Users { get; private set; }
+        static protected SupportTicket[] SupportTickets { get; private set; }
+        static protected TicketChat[] SupportChat { get; private set; }
 
 
         protected IHttpContextAccessor http;
@@ -25,7 +25,7 @@ namespace backend_testing_xunit
             this.factory = factory;
             this.http = http;
 
-            Seed(factory);
+            //Seed(factory);
         }
 
         protected virtual void CreateIdentity(string auth)
@@ -47,14 +47,13 @@ namespace backend_testing_xunit
         }
 
 
-        private void Seed(IContextFactory factory)
+        public static void Seed(IContextFactory factory)
         {
             using (var a = factory.CreateDbContext())
             {
 
                 // Re-creates database
                 a.Database.EnsureDeleted();
-
                 a.Database.EnsureCreated();
 
 

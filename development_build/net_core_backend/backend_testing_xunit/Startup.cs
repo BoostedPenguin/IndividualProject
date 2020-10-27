@@ -14,6 +14,8 @@ namespace backend_testing_xunit
         {
             services.AddHttpContextAccessor();
             services.AddSingleton<IContextFactory>(new ContextFactoryTesting());
+
+            DatabaseSeeder.Seed(new ContextFactoryTesting());
         }
     }
 }

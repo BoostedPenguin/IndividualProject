@@ -89,9 +89,9 @@ namespace net_core_backend.Services
             {
                 var trip = await a.UserTrips
                     .Include(x => x.UserTripLocations)
+                    .Include(x => x.User)
                     .Where(x => x.Id == id)
                     .FirstOrDefaultAsync();
-
 
                 if (CurrentExtensions.HasPrivileges(trip.User, httpContext, contextFactory)) return trip;
 

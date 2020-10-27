@@ -21,7 +21,7 @@ namespace backend_testing_xunit
         public UserControllerTest(IHttpContextAccessor http, IContextFactory factory) : base(http, factory)
         {
             //Configure identity
-            CreateIdentity(base.Users[0].Auth);
+            CreateIdentity(Users[0].Auth);
         }
 
         protected override void CreateIdentity(string auth)
@@ -42,7 +42,7 @@ namespace backend_testing_xunit
         public async Task UpdateAddress()
         {
             // Arrange
-            var user = new Users() { Auth = "NewAuth", City = "Burgas", Country = "BG" };
+            var user = new Users() { Auth = "VeryAverageAuth", City = "Burgas", Country = "BG" };
 
             // Inject
             CreateIdentity(user.Auth);
@@ -58,6 +58,10 @@ namespace backend_testing_xunit
 
             // Act
             var result = await controller.UpdateAddress(user);
+
+            // Data won't be consistant so it should be removed anyway
+            (((Users)((OkObjectResult)result).Value).UpdatedAt) = null;
+            user.UpdatedAt = null;
 
             // Assert
             Assert.Equal(Serialize(user), Serialize(((OkObjectResult)result).Value));

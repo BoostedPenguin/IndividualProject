@@ -25,7 +25,7 @@ namespace backend_testing_xunit
         public TicketControllerTest(IHttpContextAccessor http, IContextFactory factory) : base(http, factory)
         {
             //Configure identity
-            CreateIdentity(base.Users[0].Auth);
+            CreateIdentity(Users[0].Auth);
         }
 
         protected override void CreateIdentity(string auth)
@@ -46,16 +46,16 @@ namespace backend_testing_xunit
         public async Task CreateTicket()
         {
             // Inject
-            CreateIdentity(base.Users[0].Auth);
+            CreateIdentity(Users[0].Auth);
 
             // Arrange
-            var ticket = new SupportTicket() { Title = "Gosho", Description = "pesho", UserId = base.Users[0].Id };
+            var ticket = new SupportTicket() { Title = "Gosho", Description = "pesho", UserId = Users[0].Id };
 
             // Act
             var result = await controller.CreateTicket(ticket);
 
             // Assert
-            Assert.Equal(ticket, ((OkObjectResult)result).Value);
+            Assert.Equal(Serialize(ticket), Serialize(((OkObjectResult)result).Value));
         }
 
 
@@ -63,10 +63,10 @@ namespace backend_testing_xunit
         public async Task CreateTicketAdmin()
         {
             // Inject
-            CreateIdentity(base.Users[1].Auth);
+            CreateIdentity(Users[1].Auth);
 
             // Arrange
-            var ticket = new SupportTicket() { Title = "Gosho", Description = "pesho", UserId = base.Users[1].Id, };
+            var ticket = new SupportTicket() { Title = "Gosho", Description = "pesho", UserId = Users[1].Id, };
 
             // Act
             var result = await controller.CreateTicket(ticket);
@@ -80,10 +80,10 @@ namespace backend_testing_xunit
         public async Task CreateMessage()
         {
             // Inject 
-            CreateIdentity(base.Users[0].Auth);
+            CreateIdentity(Users[0].Auth);
 
             // Arrange
-            var ticket = new SupportTicket() { Title = "Gosho", Description = "pesho", UserId = base.Users[0].Id, };
+            var ticket = new SupportTicket() { Title = "Gosho", Description = "pesho", UserId = Users[0].Id, };
             TicketChat message;
 
             using (var a = factory.CreateDbContext())
@@ -111,13 +111,14 @@ namespace backend_testing_xunit
         public async Task GetTicket()
         {
             // Inject 
-            CreateIdentity(base.Users[0].Auth);
+            CreateIdentity(Users[0].Auth);
 
             // Arrange
             SupportTicket addedTicket;
             using(var a = factory.CreateDbContext())
             {
-                await a.AddAsync(new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = base.Users[0].Id });
+                await a.AddAsync(new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = Users[0].Id });
+                await a.AddAsync(new SupportTicket() { Title = "rawr", Description = "zaw", UserId = Users[0].Id });
                 await a.SaveChangesAsync();
 
                 addedTicket = await a.SupportTicket.Where(x => x.Title == "Testing get" && x.Description == "Testing get description").Include(x => x.TicketChat).Include(x => x.User).FirstOrDefaultAsync();
@@ -135,13 +136,13 @@ namespace backend_testing_xunit
         public async Task GetTicketAdmin()
         {
             // Inject
-            CreateIdentity(base.Users[1].Auth);
+            CreateIdentity(Users[1].Auth);
 
             // Arrange
             SupportTicket addedTicket;
             using (var a = factory.CreateDbContext())
             {
-                await a.AddAsync(new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = base.Users[0].Id });
+                await a.AddAsync(new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = Users[0].Id });
                 await a.SaveChangesAsync();
 
                 addedTicket = await a.SupportTicket.Where(x => x.Title == "Testing get" && x.Description == "Testing get description").Include(x => x.TicketChat).Include(x => x.User).FirstOrDefaultAsync();
@@ -158,7 +159,7 @@ namespace backend_testing_xunit
         public async Task GetAllUserTickets()
         {
             // Inject 
-            CreateIdentity(base.Users[0].Auth);
+            CreateIdentity(Users[0].Auth);
 
             // Arrange
             List<SupportTicket> tickets;

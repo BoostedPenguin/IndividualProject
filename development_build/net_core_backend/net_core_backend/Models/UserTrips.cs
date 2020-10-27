@@ -12,13 +12,12 @@ namespace net_core_backend.Models
 
         public int UserId { get; set; }
         public string Name { get; set; }
-        public int TransporationId { get; set; }
+        public Transportation Transportation { get; set; }
         public int? Distance { get; set; }
         public double? Duration { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public DateTime? CreatedAt { get; set; }
 
-        public virtual Transportation Transporation { get; set; }
         public virtual Users User { get; set; }
         public virtual ICollection<UserTripLocations> UserTripLocations { get; set; }
     }
