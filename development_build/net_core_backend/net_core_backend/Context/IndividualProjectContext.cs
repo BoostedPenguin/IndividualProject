@@ -17,13 +17,13 @@ namespace net_core_backend.Models
 
         public virtual DbSet<SupportTicket> SupportTicket { get; set; }
         public virtual DbSet<TicketChat> TicketChat { get; set; }
-        public virtual DbSet<Transportation> Transportation { get; set; }
         public virtual DbSet<UserKeywords> UserKeywords { get; set; }
         public virtual DbSet<UserTripLocations> UserTripLocations { get; set; }
         public virtual DbSet<UserTrips> UserTrips { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<WishList> WishList { get; set; }
         public virtual DbSet<WishListLocations> WishListLocations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SupportTicket>(entity =>
@@ -80,16 +80,6 @@ namespace net_core_backend.Models
                     .HasForeignKey(d => d.TicketId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TicketChat_SupportTicket");
-            });
-
-            modelBuilder.Entity<Transportation>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnName("name")
-                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<UserKeywords>(entity =>
@@ -160,19 +150,17 @@ namespace net_core_backend.Models
                     .HasColumnName("name")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.TransporationId).HasColumnName("transporation_id");
+                entity.Property(e => e.Transportation)
+                    .IsRequired()
+                    .HasColumnName("transportation")
+                    .HasConversion(x => x.ToString(), x => (Transportation)Enum.Parse(typeof(Transportation), x))
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnName("updated_at")
                     .HasColumnType("datetime");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.Transporation)
-                    .WithMany(p => p.UserTrips)
-                    .HasForeignKey(d => d.TransporationId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_UserTrips_Transportation");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserTrips)
@@ -246,14 +234,12 @@ namespace net_core_backend.Models
                     .HasColumnName("name")
                     .HasMaxLength(50);
 
-                entity.Property(e => e.TransportationId).HasColumnName("transportation_id");
+                entity.Property(e => e.Transportation)
+                    .HasColumnName("transportation")
+                    .HasConversion(x => x.ToString(), x => (Transportation)Enum.Parse(typeof(Transportation), x))
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.Transportation)
-                    .WithMany(p => p.WishList)
-                    .HasForeignKey(d => d.TransportationId)
-                    .HasConstraintName("FK_WishList_Transportation");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.WishList)
