@@ -30,10 +30,9 @@ namespace net_core_backend.Services
                 var ticket = await _context.SupportTicket
                     .Where(x => x.Id == id)
                     .Include(x => x.TicketChat)
-                    .Include(x => x.User)
                     .FirstOrDefaultAsync();
 
-                if (CurrentExtensions.HasPrivileges(ticket.User, httpContext, contextFactory)) return ticket;
+                if (CurrentExtensions.HasPrivileges(ticket.UserId, httpContext, contextFactory)) return ticket;
 
                 throw new ArgumentException("Access forbidden!");
             }

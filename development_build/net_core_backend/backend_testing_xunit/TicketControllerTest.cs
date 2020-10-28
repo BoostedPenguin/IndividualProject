@@ -114,14 +114,13 @@ namespace backend_testing_xunit
             CreateIdentity(Users[0].Auth);
 
             // Arrange
-            SupportTicket addedTicket;
-            using(var a = factory.CreateDbContext())
+            SupportTicket addedTicket = new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = Users[0].Id };
+            using (var a = factory.CreateDbContext())
             {
-                await a.AddAsync(new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = Users[0].Id });
+                await a.AddAsync(addedTicket);
                 await a.AddAsync(new SupportTicket() { Title = "rawr", Description = "zaw", UserId = Users[0].Id });
                 await a.SaveChangesAsync();
 
-                addedTicket = await a.SupportTicket.Where(x => x.Title == "Testing get" && x.Description == "Testing get description").Include(x => x.TicketChat).Include(x => x.User).FirstOrDefaultAsync();
             }
 
             // Act
@@ -139,13 +138,13 @@ namespace backend_testing_xunit
             CreateIdentity(Users[1].Auth);
 
             // Arrange
-            SupportTicket addedTicket;
+            SupportTicket addedTicket = new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = Users[0].Id };
+            SupportTicket addedTicket2 = new SupportTicket() { Title = "Testing get 2", Description = "Testing get description 2", UserId = Users[0].Id };
             using (var a = factory.CreateDbContext())
             {
-                await a.AddAsync(new SupportTicket() { Title = "Testing get", Description = "Testing get description", UserId = Users[0].Id });
+                await a.AddAsync(addedTicket);
+                await a.AddAsync(addedTicket2);
                 await a.SaveChangesAsync();
-
-                addedTicket = await a.SupportTicket.Where(x => x.Title == "Testing get" && x.Description == "Testing get description").Include(x => x.TicketChat).Include(x => x.User).FirstOrDefaultAsync();
             }
 
             // Act

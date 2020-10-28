@@ -89,11 +89,12 @@ namespace net_core_backend.Services
             {
                 var trip = await a.UserTrips
                     .Include(x => x.UserTripLocations)
-                    .Include(x => x.User)
                     .Where(x => x.Id == id)
                     .FirstOrDefaultAsync();
 
-                if (CurrentExtensions.HasPrivileges(trip.User, httpContext, contextFactory)) return trip;
+                //var user = await a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+
+                if (CurrentExtensions.HasPrivileges(trip.UserId, httpContext, contextFactory)) return trip;
 
                 throw new ArgumentException("Access forbidden!");
             }
