@@ -58,7 +58,7 @@ namespace net_core_backend.Services
                     .Include(x => x.UserTrips)
                     .FirstOrDefaultAsync(x => x.Id == id);
 
-                if (CurrentExtensions.HasPrivileges(user, httpContext, contextFactory)) return user;
+                if (CurrentExtensions.HasPrivileges(user.Id, httpContext, contextFactory)) return user;
 
                 throw new ArgumentException("Access forbidden!");
             }

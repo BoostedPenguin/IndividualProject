@@ -77,8 +77,6 @@ namespace backend_testing_xunit
             {
                 await a.AddRangeAsync(trips);
                 await a.SaveChangesAsync();
-
-                trips[0] = await a.UserTrips.Include(x => x.User).Where(x => x.Id == trips[0].Id).FirstOrDefaultAsync();
             }
 
             // Act

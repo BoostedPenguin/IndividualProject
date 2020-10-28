@@ -58,11 +58,16 @@ namespace net_core_backend.Services.Extensions
         /// <param name="httpContext"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
-        public static bool HasPrivileges(Users user, IHttpContextAccessor httpContext, IContextFactory factory)
+        public static bool HasPrivileges(int userId, IHttpContextAccessor httpContext, IContextFactory factory)
         {
-            if (user.Auth == httpContext.GetCurrentAuth() || httpContext.IsAdmin(factory)) return true;
+            using (var _context = factory.CreateDbContext())
+            {
+                var auth = _context.Users.Where(x => x.Id == userId).Select(x => x.Auth).FirstOrDefault();
+                
+                if (auth == httpContext.GetCurrentAuth() || httpContext.IsAdmin(factory)) return true;
 
-            return false;
+                return false;
+            }
         }
 
 
