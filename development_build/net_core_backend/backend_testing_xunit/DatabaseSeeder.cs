@@ -11,6 +11,7 @@ namespace backend_testing_xunit
     public abstract class DatabaseSeeder
     {
         static protected Users[] Users { get; private set; }
+        static protected WishList[] WishLists { get; private set; }
         static protected SupportTicket[] SupportTickets { get; private set; }
         static protected TicketChat[] SupportChat { get; private set; }
 
@@ -66,6 +67,18 @@ namespace backend_testing_xunit
                 };
 
                 a.AddRange(Users);
+                a.SaveChanges();
+
+
+                // Seeds wishlist
+                WishLists = new WishList[3]
+                {
+                    new WishList() {Transportation = Transportation.Bus, UserId = Users[0].Id},
+                    new WishList() {Transportation = Transportation.Car, UserId = Users[1].Id},
+                    new WishList() {Transportation = Transportation.Walk, UserId = Users[2].Id},
+                };
+
+                a.AddRange(WishLists);
                 a.SaveChanges();
 
 

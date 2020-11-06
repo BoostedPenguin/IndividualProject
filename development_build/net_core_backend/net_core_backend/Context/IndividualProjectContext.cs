@@ -15,17 +15,50 @@ namespace net_core_backend.Models
         {
         }
 
+        public virtual DbSet<Locations> Locations { get; set; }
         public virtual DbSet<SupportTicket> SupportTicket { get; set; }
         public virtual DbSet<TicketChat> TicketChat { get; set; }
         public virtual DbSet<UserKeywords> UserKeywords { get; set; }
-        public virtual DbSet<UserTripLocations> UserTripLocations { get; set; }
         public virtual DbSet<UserTrips> UserTrips { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<WishList> WishList { get; set; }
-        public virtual DbSet<WishListLocations> WishListLocations { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Locations>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnName("created_at")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Lang).HasColumnName("lang");
+
+                entity.Property(e => e.Long).HasColumnName("long");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.TripId).HasColumnName("trip_id");
+
+                entity.Property(e => e.WishlistId).HasColumnName("wishlist_id");
+
+                entity.HasOne(d => d.Trip)
+                    .WithMany(p => p.Locations)
+                    .HasForeignKey(d => d.TripId)
+                    .HasConstraintName("FK_Locations_UserTrips");
+
+                entity.HasOne(d => d.Wishlist)
+                    .WithMany(p => p.Locations)
+                    .HasForeignKey(d => d.WishlistId)
+                    .HasConstraintName("FK_Locations_WishList");
+            });
+
             modelBuilder.Entity<SupportTicket>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -105,33 +138,6 @@ namespace net_core_backend.Models
                     .HasConstraintName("FK_UserKeywords_Users");
             });
 
-            modelBuilder.Entity<UserTripLocations>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnName("created_at")
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Lang).HasColumnName("lang");
-
-                entity.Property(e => e.Long).HasColumnName("long");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnName("name")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.TripId).HasColumnName("trip_id");
-
-                entity.HasOne(d => d.Trip)
-                    .WithMany(p => p.UserTripLocations)
-                    .HasForeignKey(d => d.TripId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_UserTripLocations_UserTrips");
-            });
-
             modelBuilder.Entity<UserTrips>(entity =>
             {
                 entity.Property(e => e.Id).HasColumnName("id");
@@ -152,8 +158,8 @@ namespace net_core_backend.Models
 
                 entity.Property(e => e.Transportation)
                     .IsRequired()
-                    .HasColumnName("transportation")
                     .HasConversion(x => x.ToString(), x => (Transportation)Enum.Parse(typeof(Transportation), x))
+                    .HasColumnName("transportation")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.UpdatedAt)
@@ -171,6 +177,10 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<Users>(entity =>
             {
+                entity.HasIndex(e => e.Auth)
+                    .HasName("Auth_Unique")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Auth)
@@ -235,8 +245,8 @@ namespace net_core_backend.Models
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Transportation)
-                    .HasColumnName("transportation")
                     .HasConversion(x => x.ToString(), x => (Transportation)Enum.Parse(typeof(Transportation), x))
+                    .HasColumnName("transportation")
                     .HasMaxLength(50);
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -246,31 +256,6 @@ namespace net_core_backend.Models
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_WishList_Users");
-            });
-
-            modelBuilder.Entity<WishListLocations>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnName("created_at")
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Lang).HasColumnName("lang");
-
-                entity.Property(e => e.Long).HasColumnName("long");
-
-                entity.Property(e => e.Name)
-                    .HasColumnName("name")
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.WishlistId).HasColumnName("wishlist_id");
-
-                entity.HasOne(d => d.Wishlist)
-                    .WithMany(p => p.WishListLocations)
-                    .HasForeignKey(d => d.WishlistId)
-                    .HasConstraintName("FK_WishListLocations_WishList");
             });
 
             OnModelCreatingPartial(modelBuilder);

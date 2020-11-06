@@ -50,10 +50,27 @@ namespace backend_testing_xunit
             UserTrips[] trips = new UserTrips[2];
             trips[0] = new UserTrips() { Distance = 50, Duration = 12, Name = "trip to bg", Transportation = Transportation.Car, UserId = Users[0].Id };
             trips[1] = new UserTrips() { Distance = 510, Duration = 122, Name = "trip to en", Transportation = Transportation.Bus, UserId = Users[0].Id };
+
             using(var a = factory.CreateDbContext())
             {
                 await a.AddRangeAsync(trips);
                 await a.SaveChangesAsync();
+
+                Locations[] loc = new Locations[3];
+
+                loc[0] = new Locations() { Lang = 5, Long = 3, Name = "BS", TripId = trips[0].Id  };
+                loc[1] = new Locations() { Lang = 5, Long = 3, Name = "zaw", TripId = trips[0].Id  };
+                loc[2] = new Locations() { Lang = 5, Long = 3, Name = "awesda", WishlistId = Users[0].Id  };
+
+
+                //Because entity is retarded and inverses order if i dont do this
+                await a.AddAsync(loc[0]);
+                await a.SaveChangesAsync();
+                await a.AddAsync(loc[1]);
+                await a.SaveChangesAsync();
+                await a.AddAsync(loc[2]);
+                await a.SaveChangesAsync();
+
             }
 
             // Act
@@ -76,6 +93,21 @@ namespace backend_testing_xunit
             using (var a = factory.CreateDbContext())
             {
                 await a.AddRangeAsync(trips);
+                await a.SaveChangesAsync();
+
+                Locations[] loc = new Locations[3];
+
+                loc[0] = new Locations() { Lang = 5, Long = 3, Name = "BS", TripId = trips[0].Id };
+                loc[1] = new Locations() { Lang = 5, Long = 3, Name = "zaw", TripId = trips[0].Id };
+                loc[2] = new Locations() { Lang = 5, Long = 3, Name = "awesda", WishlistId = Users[0].Id };
+
+
+                //Because entity is retarded and inverses order if i dont do this
+                await a.AddAsync(loc[0]);
+                await a.SaveChangesAsync();
+                await a.AddAsync(loc[1]);
+                await a.SaveChangesAsync();
+                await a.AddAsync(loc[2]);
                 await a.SaveChangesAsync();
             }
 

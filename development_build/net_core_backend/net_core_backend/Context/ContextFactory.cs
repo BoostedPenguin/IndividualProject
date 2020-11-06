@@ -15,6 +15,14 @@ namespace net_core_backend.Context
         public ContextFactory(string connectionString)
         {
             this.connectionString = connectionString;
+
+
+            var options = new DbContextOptionsBuilder<IndividualProjectContext>();
+            options.UseSqlServer(connectionString);
+
+            var context = new IndividualProjectContext(options.Options);
+            
+            context.Database.EnsureCreated();
         }
 
         public IndividualProjectContext CreateDbContext(string[] args = null)

@@ -7,7 +7,7 @@ namespace net_core_backend.Models
     {
         public WishList()
         {
-            WishListLocations = new HashSet<WishListLocations>();
+            Locations = new HashSet<Locations>();
         }
 
         public int UserId { get; set; }
@@ -17,6 +17,6 @@ namespace net_core_backend.Models
         public int? Duration { get; set; }
 
         public virtual Users User { get; set; }
-        public virtual ICollection<WishListLocations> WishListLocations { get; set; }
+        public virtual ICollection<Locations> Locations { get; set; }
     }
 }
