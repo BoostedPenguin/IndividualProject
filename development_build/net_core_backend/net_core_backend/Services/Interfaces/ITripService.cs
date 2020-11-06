@@ -11,7 +11,7 @@ namespace net_core_backend.Services.Interfaces
         Task<List<UserTrips>> GetUserTrips();
         Task<UserTrips> GetTrip(int id);
         Task<UserTrips> DeleteTrip(int trip_id);
-        Task<UserTripLocations> AddLocation(int trip_id, UserTripLocations location);
-        Task<UserTripLocations> RemoveLocation(int trip_id, int location_id);
+        Task<Locations> AddLocation(int trip_id, Locations location);
+        Task<Locations> RemoveLocation(int trip_id, int location_id);
     }
 }

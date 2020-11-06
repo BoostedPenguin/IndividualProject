@@ -68,7 +68,7 @@ namespace net_core_backend.Controllers
 
         [HttpPatch("/add/{trip_id}")]
         [Authorize]
-        public async Task<IActionResult> AddLocation(int trip_id, UserTripLocations location)
+        public async Task<IActionResult> AddLocation(int trip_id, Locations location)
         {
             try
             {

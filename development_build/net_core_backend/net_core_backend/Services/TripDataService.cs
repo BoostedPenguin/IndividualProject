@@ -23,11 +23,11 @@ namespace net_core_backend.Services
             httpContext = httpContextAccessor;
         }
 
-        public async Task<UserTripLocations> AddLocation(int trip_id, UserTripLocations location)
+        public async Task<Locations> AddLocation(int trip_id, Locations location)
         {
             if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
-                throw new ArgumentException("Administrators cannot create tickets!");
+                throw new ArgumentException("Administrators cannot add locations!");
             }
 
             using (var a = contextFactory.CreateDbContext())
@@ -36,14 +36,19 @@ namespace net_core_backend.Services
 
                 if (trip == null) throw new ArgumentException("There isn't a trip with that id!");
 
-                trip.UserTripLocations.Add(location);
+                //Assign values to make a unique location
+                location.WishlistId = null;
+                location.TripId = trip.Id;
+
+
+                trip.Locations.Add(location);
 
                 await a.SaveChangesAsync();
 
                 return location;
             }
         }
-        public async Task<UserTripLocations> RemoveLocation(int trip_id, int location_id)
+        public async Task<Locations> RemoveLocation(int trip_id, int location_id)
         {
             if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
@@ -56,7 +61,7 @@ namespace net_core_backend.Services
 
                 if (trip == null) throw new ArgumentException("There isn't a trip with that id!");
 
-                var location = await a.UserTripLocations.Where(x => x.Id == location_id).FirstOrDefaultAsync();
+                var location = await a.Locations.Where(x => x.Id == location_id && x.WishlistId == null && x.TripId == trip_id).FirstOrDefaultAsync();
 
                 a.Remove(location);
 
@@ -77,6 +82,9 @@ namespace net_core_backend.Services
 
                 if (trip == null) throw new ArgumentException("There isn't a trip with that id!");
 
+                var locations = await a.Locations.Where(x => x.TripId == trip.Id && x.WishlistId == null).ToListAsync();
+                
+                a.RemoveRange(locations);
                 a.Remove(trip);
 
                 return trip;
@@ -88,11 +96,10 @@ namespace net_core_backend.Services
             using(var a = contextFactory.CreateDbContext())
             {
                 var trip = await a.UserTrips
-                    .Include(x => x.UserTripLocations)
+                    .Include(x => x.Locations)
                     .Where(x => x.Id == id)
                     .FirstOrDefaultAsync();
 
-                //var user = await a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (CurrentExtensions.HasPrivileges(trip.UserId, httpContext, contextFactory)) return trip;
 
@@ -102,10 +109,15 @@ namespace net_core_backend.Services
 
         public async Task<List<UserTrips>> GetUserTrips()
         {
+            if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
+            {
+                throw new ArgumentException("Administrators cannot interact with their own trips!");
+            }
+
             using (var a = contextFactory.CreateDbContext())
             {
                 return await a.UserTrips
-                    .Include(x => x.UserTripLocations)
+                    .Include(x => x.Locations)
                     .Where(x => x.User.Auth == httpContext.GetCurrentAuth())
                     .ToListAsync();
             }

@@ -7,7 +7,7 @@ namespace net_core_backend.Models
     {
         public UserTrips()
         {
-            UserTripLocations = new HashSet<UserTripLocations>();
+            Locations = new HashSet<Locations>();
         }
 
         public int UserId { get; set; }
@@ -19,6 +19,6 @@ namespace net_core_backend.Models
         public DateTime? CreatedAt { get; set; }
 
         public virtual Users User { get; set; }
-        public virtual ICollection<UserTripLocations> UserTripLocations { get; set; }
+        public virtual ICollection<Locations> Locations { get; set; }
     }
 }
