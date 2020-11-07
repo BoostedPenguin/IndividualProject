@@ -41,6 +41,7 @@ namespace net_core_backend.Services
                 }
 
                 await _context.AddAsync(entity);
+                await _context.AddAsync(new WishList() { UserId = entity.Id });
                 await _context.SaveChangesAsync();
 
                 return entity;

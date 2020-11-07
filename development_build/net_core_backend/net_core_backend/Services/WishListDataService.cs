@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace net_core_backend.Services
 {
-    public class WishListService : DataService<WishList>, IWishListService
+    public class WishListDataService : DataService<WishList>, IWishListService
     {
         private readonly IContextFactory contextFactory;
         private readonly IHttpContextAccessor httpContext;
 
-        public WishListService(IContextFactory _contextFactory, IHttpContextAccessor httpContextAccessor) : base(_contextFactory)
+        public WishListDataService(IContextFactory _contextFactory, IHttpContextAccessor httpContextAccessor) : base(_contextFactory)
         {
             contextFactory = _contextFactory;
             httpContext = httpContextAccessor;
@@ -57,7 +57,7 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                var wishList = await a.WishList.Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var wishList = await a.WishList.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
@@ -83,6 +83,8 @@ namespace net_core_backend.Services
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
                 var locations = await a.Locations.Where(x => x.TripId == null && x.WishlistId == wishList.Id).ToListAsync();
+
+                if (locations.Count == 0) throw new ArgumentException("You must have at least 1 location in your wishlist!");
 
                 var trip = new UserTrips() { Distance = wishList.Distance, Duration = wishList.Duration, Transportation = wishList.Transportation, Name = wishList.Name, UserId = wishList.UserId };
                 foreach (var l in locations)
@@ -114,20 +116,20 @@ namespace net_core_backend.Services
             }
         }
 
-        public async Task<Locations> RemoveLocation(int trip_id, int location_id)
+        public async Task<Locations> RemoveLocation(int location_id)
         {
             if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
-                throw new ArgumentException("Administrators cannot create tickets!");
+                throw new ArgumentException("Administrators cannot interact with their own wishlist!");
             }
 
             using (var a = contextFactory.CreateDbContext())
             {
-                var wishList = await a.WishList.Where(x => x.Id == trip_id).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var wishList = await a.WishList.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
-                var location = await a.Locations.Where(x => x.Id == location_id && x.WishlistId == trip_id && x.TripId == null).FirstOrDefaultAsync();
+                var location = await a.Locations.Where(x => x.Id == location_id && x.WishlistId == wishList.Id && x.TripId == null).FirstOrDefaultAsync();
 
                 a.Remove(location);
 
