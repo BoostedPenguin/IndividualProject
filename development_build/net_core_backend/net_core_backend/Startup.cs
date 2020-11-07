@@ -1,4 +1,5 @@
-    using System;
+using System;
+using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -18,6 +19,7 @@ using net_core_backend.Context;
 using net_core_backend.Models;
 using net_core_backend.Services;
 using net_core_backend.Services.Interfaces;
+using net_core_backend.Profiles;
 
 namespace net_core_backend
 {
@@ -36,6 +38,8 @@ namespace net_core_backend
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
                                                             .AllowAnyMethod()
                                                              .AllowAnyHeader()));
+            services.AddAutoMapper(c => c.AddProfile<AutoMapping>(), typeof(Startup));
+
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

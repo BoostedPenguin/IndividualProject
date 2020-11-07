@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using net_core_backend.Models;
@@ -16,12 +17,14 @@ namespace net_core_backend.Controllers
     public class UserController : ControllerBase
     {
         private readonly ILogger<ExampleController> _logger;
+        private readonly IMapper mapper;
         private readonly IAccountService _context;
 
 
-        public UserController(IAccountService _context, ILogger<ExampleController> logger)
+        public UserController(IAccountService _context, ILogger<ExampleController> logger, IMapper mapper)
         {
             this._logger = logger;
+            this.mapper = mapper;
             this._context = _context;
         }
 
@@ -47,7 +50,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.GetUserInfo(id));
+                var result = await _context.GetUserInfo(id);
+
+                var dto = mapper.Map<UsersViewModel>(result);
+
+                return Ok(dto);
             }
             catch(Exception ex)
             {

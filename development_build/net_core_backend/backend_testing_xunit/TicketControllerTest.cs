@@ -13,6 +13,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using AutoMapper;
+using System.Security.Cryptography;
 
 namespace backend_testing_xunit
 {
@@ -20,12 +22,13 @@ namespace backend_testing_xunit
     {
         private ITicketService service;
         private TicketController controller;
+        private readonly IMapper mapper;
 
-
-        public TicketControllerTest(IHttpContextAccessor http, IContextFactory factory) : base(http, factory)
+        public TicketControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper) : base(http, factory)
         {
             //Configure identity
             CreateIdentity(Users[0].Auth);
+            this.mapper = mapper;
         }
 
         protected override void CreateIdentity(string auth)
@@ -36,7 +39,7 @@ namespace backend_testing_xunit
             // Inject
 
             service = new TicketDataService(factory, http);
-            controller = new TicketController(service, null)
+            controller = new TicketController(service, null, mapper)
             {
                 ControllerContext = controllerContext,
             };
@@ -51,11 +54,19 @@ namespace backend_testing_xunit
             // Arrange
             var ticket = new SupportTicket() { Title = "Gosho", Description = "pesho", UserId = Users[0].Id };
 
+            SupportTicket exp;
             // Act
             var result = await controller.CreateTicket(ticket);
 
+            using (var a = factory.CreateDbContext())
+            {
+                exp = await a.SupportTicket.Where(x => x.Title == "Gosho" && x.Description == "pesho").FirstOrDefaultAsync();
+            }
+
+            var expected = mapper.Map<SupportTicketViewModel>(exp);
+
             // Assert
-            Assert.Equal(Serialize(ticket), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
 
 
@@ -98,11 +109,13 @@ namespace backend_testing_xunit
                 ticket = await a.SupportTicket.Include(x => x.User).Where(x => x.Id == ticket.Id).FirstOrDefaultAsync();
             }
 
+            var expected = mapper.Map<TicketChatViewModel>(message);
+
             // Act
             var result = await controller.CreateMessage(ticket.Id, message);
 
             // Assert
-            Assert.Equal(Serialize(message), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
 
 
@@ -120,14 +133,15 @@ namespace backend_testing_xunit
                 await a.AddAsync(addedTicket);
                 await a.AddAsync(new SupportTicket() { Title = "rawr", Description = "zaw", UserId = Users[0].Id });
                 await a.SaveChangesAsync();
-
             }
+
+            var expected = mapper.Map<SupportTicketViewModel>(addedTicket);
 
             // Act
             var result = await controller.GetTicket(addedTicket.Id);
 
             // Assert
-            Assert.Equal(Serialize(addedTicket), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
 
 
@@ -147,11 +161,13 @@ namespace backend_testing_xunit
                 await a.SaveChangesAsync();
             }
 
+            var expected = mapper.Map<SupportTicketViewModel>(addedTicket);
+
             // Act
             var result = await controller.GetTicket(addedTicket.Id);
 
             // Assert
-            Assert.Equal(Serialize(addedTicket), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
 
         [Fact]
@@ -170,11 +186,13 @@ namespace backend_testing_xunit
                                     .ToListAsync();
             }
 
+            var expected = mapper.Map<List<SupportTicketViewModel>>(tickets);
+
             // Act
             var result = await controller.GetAllUserTickets();
 
             // Assert
-            Assert.Equal(Serialize(tickets), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
     }
 }

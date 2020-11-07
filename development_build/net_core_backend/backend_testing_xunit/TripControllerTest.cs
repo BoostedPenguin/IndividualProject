@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using net_core_backend.Context;
@@ -6,6 +7,7 @@ using net_core_backend.Controllers;
 using net_core_backend.Models;
 using net_core_backend.Services;
 using net_core_backend.Services.Interfaces;
+using net_core_backend.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +21,13 @@ namespace backend_testing_xunit
     {
         private ITripService service;
         private TripController controller;
+        private readonly IMapper mapper;
 
-        public TripControllerTest(IHttpContextAccessor http, IContextFactory factory) : base(http, factory)
+        public TripControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper) : base(http, factory)
         {
             //Configure identity
             CreateIdentity(Users[0].Auth);
+            this.mapper = mapper;
         }
 
         protected override void CreateIdentity(string auth)
@@ -34,7 +38,7 @@ namespace backend_testing_xunit
             // Inject
 
             service = new TripDataService(factory, http);
-            controller = new TripController(service, null)
+            controller = new TripController(service, null, mapper)
             {
                 ControllerContext = controllerContext,
             };
@@ -47,11 +51,10 @@ namespace backend_testing_xunit
             CreateIdentity(Users[0].Auth);
 
             // Arrange
-            var expected = UserTrips.Where(x => x.UserId == Users[0].Id).Reverse().ToList();
-            foreach(var e in expected)
-            {
-                e.User = null;
-            }
+            var exp = UserTrips.Where(x => x.UserId == Users[0].Id).Reverse().ToList();
+
+            var expected = mapper.Map<List<UserTripsViewModel>>(exp);
+
 
             // Act
             var result = await controller.GetUserTrips();
@@ -66,12 +69,14 @@ namespace backend_testing_xunit
             // Inject
             CreateIdentity(Users[0].Auth);
 
+            // Arrange
+            var expected = mapper.Map<UserTripsViewModel>(UserTrips[0]);
 
             // Act
             var result = await controller.GetTrip(UserTrips[0].Id);
 
             // Assert
-            Assert.Equal(Serialize(UserTrips[0]), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
 
         [Fact]
@@ -92,11 +97,13 @@ namespace backend_testing_xunit
                 await a.SaveChangesAsync();
             }
 
+            var expected = mapper.Map<UserTripsViewModel>(trip);
+
             // Act
             var result = await controller.DeleteTrip(trip.Id);
 
             // Assert
-            Assert.Equal(Serialize(trip), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
 
         }
 
@@ -120,11 +127,14 @@ namespace backend_testing_xunit
                 await a.SaveChangesAsync();
             }
 
+            var expected = mapper.Map<LocationsViewModel>(locations);
+
+
             // Act
             var result = await controller.AddLocation(trip.Id, locations);
 
             // Assert
-            Assert.Equal(Serialize(locations), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
 
         }
 
@@ -148,11 +158,14 @@ namespace backend_testing_xunit
                 await a.SaveChangesAsync();
             }
 
+            var expected = mapper.Map<LocationsViewModel>(locations);
+
+
             // Act
             var result = await controller.RemoveLocation(trip.Id, locations.Id);
 
             // Assert
-            Assert.Equal(Serialize(locations), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
 
         }
     }

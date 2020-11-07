@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using net_core_backend.Models;
 using net_core_backend.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace net_core_backend.Controllers
@@ -13,12 +15,14 @@ namespace net_core_backend.Controllers
     public class TicketController : ControllerBase
     {
         private readonly ILogger<TicketController> _logger;
+        private readonly IMapper mapper;
         private readonly ITicketService _context;
 
-        public TicketController(ITicketService context, ILogger<TicketController> logger)
+        public TicketController(ITicketService context, ILogger<TicketController> logger, IMapper mapper)
         {
             _context = context;
             _logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet("{id}")]
@@ -27,7 +31,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.GetTicket(id));
+                var result = await _context.GetTicket(id);
+
+                var dto = mapper.Map<SupportTicketViewModel>(result);
+
+                return Ok(dto);
             }
             catch(Exception ex)
             {
@@ -41,7 +49,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.GetAllUserTickets());
+                var result = await _context.GetAllUserTickets();
+
+                var dto = mapper.Map<List<SupportTicketViewModel>>(result);
+
+                return Ok(dto);
             }
             catch(Exception ex)
             {
@@ -55,7 +67,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.CreateMessage(ticket_id, chat));
+                var result = await _context.CreateMessage(ticket_id, chat);
+
+                var dto = mapper.Map<TicketChatViewModel>(result);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -70,7 +86,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.CreateTicket(ticket));
+                var result = await _context.CreateTicket(ticket);
+
+                var dto = mapper.Map<SupportTicketViewModel>(result);
+
+                return Ok(dto);
             }
             catch(Exception ex)
             {

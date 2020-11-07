@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient.DataClassification;
 using Microsoft.Extensions.Logging;
+using net_core_backend.ViewModel;
 using net_core_backend.Models;
 using net_core_backend.Services.Interfaces;
 using System;
@@ -16,12 +18,14 @@ namespace net_core_backend.Controllers
     public class TripController : ControllerBase
     {
         private readonly ILogger<TicketController> _logger;
+        private readonly IMapper mapper;
         private readonly ITripService _context;
 
-        public TripController(ITripService context, ILogger<TicketController> logger)
+        public TripController(ITripService context, ILogger<TicketController> logger, IMapper mapper)
         {
             _context = context;
             _logger = logger;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -30,7 +34,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.GetUserTrips());
+                var trips = await _context.GetUserTrips();
+
+                var dto = mapper.Map<List<UserTripsViewModel>>(trips);
+
+                return Ok(dto);
             }
             catch(Exception ex)
             {
@@ -44,7 +52,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.GetTrip(id));
+                var trip = await _context.GetTrip(id);
+
+                var dto = mapper.Map<UserTripsViewModel>(trip);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -58,7 +70,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.DeleteTrip(trip_id));
+                var trip = await _context.DeleteTrip(trip_id);
+
+                var dto = mapper.Map<UserTripsViewModel>(trip);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -72,7 +88,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.AddLocation(trip_id, location));
+                var result = await _context.AddLocation(trip_id, location);
+
+                var dto = mapper.Map<LocationsViewModel>(result);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -86,7 +106,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.RemoveLocation(trip_id, location_id));
+                var result = await _context.RemoveLocation(trip_id, location_id);
+
+                var dto = mapper.Map<LocationsViewModel>(result);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
