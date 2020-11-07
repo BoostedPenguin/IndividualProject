@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using net_core_backend.Models;
 using net_core_backend.Services.Interfaces;
+using net_core_backend.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +18,14 @@ namespace net_core_backend.Controllers
     public class WishListController : ControllerBase
     {
         private readonly ILogger<TicketController> _logger;
+        private readonly IMapper mapper;
         private readonly IWishListService _context;
 
-        public WishListController(IWishListService context, ILogger<TicketController> logger)
+        public WishListController(IWishListService context, ILogger<TicketController> logger, IMapper mapper)
         {
             _context = context;
             _logger = logger;
+            this.mapper = mapper;
         }
 
 
@@ -31,7 +35,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.GetWishlist());
+                var result = await _context.GetWishlist();
+
+                var dto = mapper.Map<WishListViewModel>(result);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -45,7 +53,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.ClearWishlist());
+                var result = await _context.ClearWishlist();
+
+                var dto = mapper.Map<WishListViewModel>(result);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -59,7 +71,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.AddLocation(location));
+                var result = await _context.AddLocation(location);
+
+                var dto = mapper.Map<LocationsViewModel>(result);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -73,7 +89,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.RemoveLocation(location_id));
+                var result = await _context.RemoveLocation(location_id);
+
+                var dto = mapper.Map<LocationsViewModel>(result);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -87,7 +107,11 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                return Ok(await _context.CreateTrip());
+                var result = await _context.CreateTrip();
+
+                var dto = mapper.Map<UserTripsViewModel>(result);
+
+                return Ok(dto);
             }
             catch (Exception ex)
             {

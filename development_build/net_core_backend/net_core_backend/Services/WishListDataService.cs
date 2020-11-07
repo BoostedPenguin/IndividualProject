@@ -57,13 +57,13 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                var wishList = await a.WishList.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var wishList = await a.WishList.Include(x => x.Locations).Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
-                var locations = await a.Locations.Where(x => x.TripId == null && x.WishlistId == wishList.Id).ToListAsync();
+                a.RemoveRange(wishList.Locations);
 
-                a.RemoveRange(locations);
+                await a.SaveChangesAsync();
 
                 return wishList;
             }
