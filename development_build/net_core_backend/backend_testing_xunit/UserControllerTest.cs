@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using net_core_backend.Context;
 using net_core_backend.Controllers;
@@ -17,11 +18,13 @@ namespace backend_testing_xunit
     {
         private IAccountService service;
         private UserController controller;
+        private readonly IMapper mapper;
 
-        public UserControllerTest(IHttpContextAccessor http, IContextFactory factory) : base(http, factory)
+        public UserControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper) : base(http, factory)
         {
             //Configure identity
             CreateIdentity(Users[0].Auth);
+            this.mapper = mapper;
         }
 
         protected override void CreateIdentity(string auth)
@@ -32,7 +35,7 @@ namespace backend_testing_xunit
             // Inject
 
             service = new AccountDataService(factory, http);
-            controller = new UserController(service, null)
+            controller = new UserController(service, null, mapper)
             {
                 ControllerContext = controllerContext,
             };
@@ -93,6 +96,8 @@ namespace backend_testing_xunit
                 await a.SaveChangesAsync();
             }
 
+            var expected = mapper.Map<UsersViewModel>(user);
+
             // Inject
             CreateIdentity(user.Auth);
 
@@ -100,7 +105,7 @@ namespace backend_testing_xunit
             var result = await controller.GetUserInfo(user.Id);
 
             // Assert
-            Assert.Equal(Serialize(user), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
     }
 }
