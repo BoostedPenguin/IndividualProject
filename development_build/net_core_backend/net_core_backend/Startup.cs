@@ -62,6 +62,10 @@ namespace net_core_backend
 
             services.AddSingleton<ITicketService, TicketDataService>();
 
+            services.AddSingleton<ITripService, TripDataService>();
+
+            services.AddSingleton<IWishListService, WishListDataService>();
+
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 

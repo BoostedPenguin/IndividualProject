@@ -47,37 +47,17 @@ namespace backend_testing_xunit
             CreateIdentity(Users[0].Auth);
 
             // Arrange
-            UserTrips[] trips = new UserTrips[2];
-            trips[0] = new UserTrips() { Distance = 50, Duration = 12, Name = "trip to bg", Transportation = Transportation.Car, UserId = Users[0].Id };
-            trips[1] = new UserTrips() { Distance = 510, Duration = 122, Name = "trip to en", Transportation = Transportation.Bus, UserId = Users[0].Id };
-
-            using(var a = factory.CreateDbContext())
+            var expected = UserTrips.Where(x => x.UserId == Users[0].Id).Reverse().ToList();
+            foreach(var e in expected)
             {
-                await a.AddRangeAsync(trips);
-                await a.SaveChangesAsync();
-
-                Locations[] loc = new Locations[3];
-
-                loc[0] = new Locations() { Lang = 5, Long = 3, Name = "BS", TripId = trips[0].Id  };
-                loc[1] = new Locations() { Lang = 5, Long = 3, Name = "zaw", TripId = trips[0].Id  };
-                loc[2] = new Locations() { Lang = 5, Long = 3, Name = "awesda", WishlistId = Users[0].Id  };
-
-
-                //Because entity is retarded and inverses order if i dont do this
-                await a.AddAsync(loc[0]);
-                await a.SaveChangesAsync();
-                await a.AddAsync(loc[1]);
-                await a.SaveChangesAsync();
-                await a.AddAsync(loc[2]);
-                await a.SaveChangesAsync();
-
+                e.User = null;
             }
 
             // Act
             var result = await controller.GetUserTrips();
 
             // Assert
-            Assert.Equal(Serialize(trips), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
 
         [Fact]
@@ -86,63 +66,94 @@ namespace backend_testing_xunit
             // Inject
             CreateIdentity(Users[0].Auth);
 
-            // Arrange
-            UserTrips[] trips = new UserTrips[2];
-            trips[0] = new UserTrips() { Distance = 50, Duration = 12, Name = "trip to bg", Transportation = Transportation.Car, UserId = Users[0].Id };
-            trips[1] = new UserTrips() { Distance = 510, Duration = 122, Name = "trip to en", Transportation = Transportation.Bus, UserId = Users[0].Id };
-            using (var a = factory.CreateDbContext())
-            {
-                await a.AddRangeAsync(trips);
-                await a.SaveChangesAsync();
-
-                Locations[] loc = new Locations[3];
-
-                loc[0] = new Locations() { Lang = 5, Long = 3, Name = "BS", TripId = trips[0].Id };
-                loc[1] = new Locations() { Lang = 5, Long = 3, Name = "zaw", TripId = trips[0].Id };
-                loc[2] = new Locations() { Lang = 5, Long = 3, Name = "awesda", WishlistId = Users[0].Id };
-
-
-                //Because entity is retarded and inverses order if i dont do this
-                await a.AddAsync(loc[0]);
-                await a.SaveChangesAsync();
-                await a.AddAsync(loc[1]);
-                await a.SaveChangesAsync();
-                await a.AddAsync(loc[2]);
-                await a.SaveChangesAsync();
-            }
 
             // Act
-            var result = await controller.GetTrip(trips[0].Id);
+            var result = await controller.GetTrip(UserTrips[0].Id);
 
             // Assert
-            Assert.Equal(Serialize(trips[0]), Serialize(((OkObjectResult)result).Value));
+            Assert.Equal(Serialize(UserTrips[0]), Serialize(((OkObjectResult)result).Value));
         }
 
         [Fact]
         public async Task DeleteTrip()
         {
             // Inject
+            CreateIdentity(Users[0].Auth);
+
             // Arrange
+            UserTrips trip;
+            using(var a = factory.CreateDbContext())
+            {
+                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere", Transportation = Transportation.Bus };
+                trip.Locations.Add(new Locations() { WishlistId = null, TripId = trip.Id, Name = "kfg", Lang = 5, Long = 3 });
+                trip.Locations.Add(new Locations() { WishlistId = null, TripId = trip.Id, Name = "aweawe", Lang = 15, Long = 33 });
+
+                await a.AddAsync(trip);
+                await a.SaveChangesAsync();
+            }
+
             // Act
+            var result = await controller.DeleteTrip(trip.Id);
+
             // Assert
+            Assert.Equal(Serialize(trip), Serialize(((OkObjectResult)result).Value));
+
         }
 
         [Fact]
         public async Task AddLocation()
         {
             // Inject
+            CreateIdentity(Users[0].Auth);
+
             // Arrange
+            UserTrips trip;
+            Locations locations;
+            using (var a = factory.CreateDbContext())
+            {
+                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere 2", Transportation = Transportation.Bus };
+
+                locations = new Locations() { Lang = 5, Long = 3, Name = "aweawezsS", TripId = trip.Id };
+                trip.Locations.Add(locations);
+
+                await a.AddAsync(trip);
+                await a.SaveChangesAsync();
+            }
+
             // Act
+            var result = await controller.AddLocation(trip.Id, locations);
+
             // Assert
+            Assert.Equal(Serialize(locations), Serialize(((OkObjectResult)result).Value));
+
         }
 
         [Fact]
         public async Task RemoveLocation()
         {
             // Inject
+            CreateIdentity(Users[0].Auth);
+
             // Arrange
+            UserTrips trip;
+            Locations locations;
+            using (var a = factory.CreateDbContext())
+            {
+                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere 2", Transportation = Transportation.Bus };
+
+                locations = new Locations() { Lang = 5, Long = 3, Name = "aweawezsS", TripId = trip.Id };
+                trip.Locations.Add(locations);
+
+                await a.AddAsync(trip);
+                await a.SaveChangesAsync();
+            }
+
             // Act
+            var result = await controller.RemoveLocation(trip.Id, locations.Id);
+
             // Assert
+            Assert.Equal(Serialize(locations), Serialize(((OkObjectResult)result).Value));
+
         }
     }
 }

@@ -116,10 +116,13 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                return await a.UserTrips
+                var z = await a.UserTrips
                     .Include(x => x.Locations)
+                    .Include(x => x.User)
                     .Where(x => x.User.Auth == httpContext.GetCurrentAuth())
                     .ToListAsync();
+
+                return z;
             }
         }
     }

@@ -14,6 +14,8 @@ namespace backend_testing_xunit
         static protected WishList[] WishLists { get; private set; }
         static protected SupportTicket[] SupportTickets { get; private set; }
         static protected TicketChat[] SupportChat { get; private set; }
+        static protected UserTrips[] UserTrips { get; private set; }
+        static protected Locations[] Locations { get; private set; }
 
 
         protected IHttpContextAccessor http;
@@ -59,11 +61,12 @@ namespace backend_testing_xunit
 
 
                 // Seeds users
-                Users = new Users[3]
+                Users = new Users[4]
                 {
                 new Users() {Auth = "George"},
                 new Users() {Auth = "SecondAuth", Role = Role.Admin},
                 new Users() {Auth = "ThirdAuth"},
+                new Users() {Auth = "auth0|5f955e7b9b8822006ee06870", Name = "RealAccount"},
                 };
 
                 a.AddRange(Users);
@@ -104,6 +107,38 @@ namespace backend_testing_xunit
 
                 a.AddRange(SupportChat);
                 a.SaveChanges();
+
+                UserTrips = new UserTrips[3]
+                {
+                new UserTrips() { Distance = 50, Duration = 12, Name = "trip to bg", Transportation = Transportation.Car, UserId = Users[0].Id },
+                new UserTrips() { Distance = 510, Duration = 122, Name = "trip to en", Transportation = Transportation.Bus, UserId = Users[0].Id },
+                new UserTrips() { Distance = 540, Duration = 1222, Name = "trip to nl", Transportation = Transportation.Walk, UserId = Users[1].Id },
+                };
+
+
+                a.AddRange(UserTrips);
+                a.SaveChanges();
+
+                Locations = new Locations[4]
+                {
+                new Locations() { Lang = 5, Long = 3, Name = "BS", TripId = UserTrips[0].Id },
+                new Locations() { Lang = 5, Long = 3, Name = "zaw", TripId = UserTrips[0].Id },
+                new Locations() { Lang = 5, Long = 3, Name = "awesda", WishlistId = Users[0].Id },
+                new Locations() { Lang = 5, Long = 3, Name = "awesda", TripId = UserTrips[2].Id },
+                };
+
+
+                //Because entity is retarded and inverses order if i dont do this
+                a.Add(Locations[0]);
+                a.SaveChanges();
+                a.Add(Locations[1]);
+                a.SaveChanges();
+                a.Add(Locations[2]);
+                a.SaveChanges();
+                a.Add(Locations[3]);
+                a.SaveChanges();
+
+
             }
         }
 
