@@ -39,6 +39,7 @@ namespace net_core_backend
                                                             .AllowAnyMethod()
                                                              .AllowAnyHeader()));
             services.AddAutoMapper(c => c.AddProfile<AutoMapping>(), typeof(Startup));
+            GoogleDataService.GoogleKey = Configuration.GetValue<string>("AppIdentitySettings:GoogleApiKey");
 
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -69,6 +70,10 @@ namespace net_core_backend
             services.AddSingleton<ITripService, TripDataService>();
 
             services.AddSingleton<IWishListService, WishListDataService>();
+
+            services.AddSingleton<IGoogleService, GoogleDataService>();
+
+            services.AddHttpClient();
 
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }

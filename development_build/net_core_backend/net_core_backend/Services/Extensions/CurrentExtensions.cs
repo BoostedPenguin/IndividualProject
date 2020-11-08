@@ -80,5 +80,21 @@ namespace net_core_backend.Services.Extensions
                 return false;
             }
         }
+
+        public static string SetTransportation(this Transportation transportation)
+        {
+            switch (transportation)
+            {
+                case Transportation.Bus:
+                    return "driving";
+
+                case Transportation.Car:
+                    return "driving";
+
+                case Transportation.Walk:
+                    return "walking";
+            }
+            return null;
+        }
     }
 }
