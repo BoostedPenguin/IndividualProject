@@ -107,5 +107,32 @@ namespace backend_testing_xunit
             // Assert
             Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
+
+        [Fact]
+        public async Task AddKeyword()
+        {
+            // Inject
+            var user = new Users() { Auth = "AddKeyword", City = "Burgas", Country = "BG" };
+            CreateIdentity(user.Auth);
+
+
+            // Arrange
+            var keywords = new List<UserKeywords>()
+            {
+                new UserKeywords() { Keyword = "Paris", UserId = user.Id}, 
+                new UserKeywords() { Keyword = "BG", UserId = user.Id},
+                new UserKeywords() { Keyword = "Somewhere where I definitely Want to go", UserId = user.Id},
+                new UserKeywords() { Keyword = "MaybeImDumbAndCant Seperate the words", UserId = user.Id},
+            };
+
+            using(var a = factory.CreateDbContext())
+            {
+                await a.AddRangeAsync(keywords);
+                await a.SaveChangesAsync();
+            }
+
+            // Act
+            // Assert
+        }
     }
 }
