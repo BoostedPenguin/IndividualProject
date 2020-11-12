@@ -48,6 +48,67 @@ namespace net_core_backend.Services
             }
         }
 
+        //public async Task AddKeyword(string keyword)
+        //{
+        //    if (keyword == null) throw new ArgumentException("Keyword was empty");
+
+        //    var keywords = keyword.Split(null);
+
+        //    List<string> keywordsLog = new List<string>();
+
+        //    keywordsLog.AddRange(keywords.Where(x => x.Length < 15).ToArray());
+
+        //    using(var a = contextFactory.CreateDbContext())
+        //    {
+        //        var currentKeywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToListAsync();
+
+        //        var userId = await GetUserId(httpContext.GetCurrentAuth());
+
+        //        var newKeywords = keywordsLog.Where(x => currentKeywords.All(y => y.Keyword.ToLower() != x.ToLower()));
+
+        //        List<UserKeywords> toBeAdded = new List<UserKeywords>();
+
+        //        foreach(var b in newKeywords)
+        //        {
+        //            toBeAdded.Add(new UserKeywords() { Keyword = b, UserId = userId });
+        //        }
+
+        //        await a.UserKeywords.AddRangeAsync(toBeAdded);
+        //        await a.SaveChangesAsync();
+        //    }
+        //}
+
+        public async Task AddKeyword(string keyword)
+        {
+            if (keyword == null) throw new ArgumentException("Keyword was empty");
+
+            if (keyword.Length > 20) throw new ArgumentException("Keyword is too large");
+
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var currentKeywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToListAsync();
+
+                var userId = await GetUserId(httpContext.GetCurrentAuth());
+
+                if (currentKeywords.Any(x => x.Keyword.ToLower() == keyword.ToLower())) throw new ArgumentException("Keywords already in system");
+
+                await a.AddAsync(new UserKeywords() { Keyword = keyword, UserId = userId });
+                await a.SaveChangesAsync();
+            }
+        }
+
+        public async Task ClearKeywords()
+        {
+            using(var a = contextFactory.CreateDbContext())
+            {
+                var currentKeywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToListAsync();
+
+                a.RemoveRange(currentKeywords);
+
+                await a.SaveChangesAsync();
+            }
+        }
+
         public async Task<Users> GetUserInfo(int id)
         {
             using (var _context = contextFactory.CreateDbContext())

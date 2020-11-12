@@ -8,8 +8,8 @@ namespace net_core_backend.Services.Interfaces
 {
     public interface IGoogleService
     {
-        Task<double[]> CoordinatesFromLocation(string location);
-        Task<string[]> DistanceDurationBetweenLocations(string location1, string location2, Transportation transportation);
-        Task<string[]> DistanceDurationBetweenLocations(double[] location1, double[] location2, Transportation transportation);
+        Task<GoogleDataObject> CoordinatesFromLocation(string location);
+        Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2, Transportation transportation);
+        Task<GoogleDataObject> DistanceDurationBetweenLocations(GoogleDataObject latLngLocation1, GoogleDataObject latLngLocation2, Transportation transportation);
     }
 }
