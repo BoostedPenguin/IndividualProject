@@ -33,7 +33,35 @@ namespace backend_testing_xunit
             var expected = new GoogleDataObject() { Latitude = 42.504792599999988, Longitude = 27.4626361 };
 
             // Act
-            var result = await service.CoordinatesFromLocation("Eiffel Tower");
+            var result = await service.CoordinatesFromLocation("Burgas");
+
+            // Assert
+            Assert.Equal(Serialize(expected), Serialize(result));
+        }
+
+
+        [Fact]
+        public async Task LocationFromCoordinates()
+        {
+            // Inject
+            // Arrange
+            var coordinates = new GoogleDataObject() { Latitude = 42.513361, Longitude = 27.465091 };
+            var expected = new GoogleDataObject() { City = "Burgas", Country = "Bulgaria", Latitude = 42.5133555, Longitude = 27.4650935, CountryCode = "BG", Types = { "establishment", "health", "hospital", "point_of_interest" } };
+            // Act
+            var result = await service.LocationFromCoordinates(coordinates);
+
+            // Assert
+            Assert.Equal(Serialize(expected), Serialize(result));
+        }
+
+        [Fact]
+        public async Task LocationFromLandmark()
+        {
+            // Inject
+            // Arrange
+            var expected = new GoogleDataObject() { City = "Burgas", Country = "Bulgaria", CountryCode = "BG", Latitude = 42.5138584, Longitude = 27.469502, Types = { "establishment", "point_of_interest", "school"} };
+            // Act
+            var result = await service.LocationFromLandmark("NEG \"Goethe \"");
 
             // Assert
             Assert.Equal(Serialize(expected), Serialize(result));

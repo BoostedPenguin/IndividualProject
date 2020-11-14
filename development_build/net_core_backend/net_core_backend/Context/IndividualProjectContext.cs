@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using net_core_backend.Models;
 
 namespace net_core_backend.Models
 {
@@ -15,6 +16,8 @@ namespace net_core_backend.Models
         {
         }
 
+        public virtual DbSet<KeywordAddress> KeywordAddress { get; set; }
+        public virtual DbSet<KeywordType> KeywordType { get; set; }
         public virtual DbSet<Locations> Locations { get; set; }
         public virtual DbSet<SupportTicket> SupportTicket { get; set; }
         public virtual DbSet<TicketChat> TicketChat { get; set; }
@@ -23,11 +26,63 @@ namespace net_core_backend.Models
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<WishList> WishList { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<KeywordAddress>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.City)
+                    .HasColumnName("city")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CityAlt)
+                    .HasColumnName("city_alt")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Country)
+                    .HasColumnName("country")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CountryCode)
+                    .HasColumnName("country_code")
+                    .HasMaxLength(20);
+
+                entity.Property(e => e.KeywordId).HasColumnName("keyword_id");
+
+                entity.Property(e => e.Latitude).HasColumnName("latitude");
+
+                entity.Property(e => e.Longitude).HasColumnName("longitude");
+
+                entity.HasOne(d => d.Keyword)
+                    .WithMany(p => p.KeywordAddress)
+                    .HasForeignKey(d => d.KeywordId)
+                    .HasConstraintName("FK_KeywordAddress_UserKeywords");
+            });
+
+            modelBuilder.Entity<KeywordType>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.KeywordId).HasColumnName("keyword_id");
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasColumnName("type")
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Keyword)
+                    .WithMany(p => p.KeywordType)
+                    .HasForeignKey(d => d.KeywordId)
+                    .HasConstraintName("FK_KeywordType_UserKeywords");
+            });
+
             modelBuilder.Entity<Locations>(entity =>
             {
+                entity.HasIndex(e => e.TripId);
+
+                entity.HasIndex(e => e.WishlistId);
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -61,6 +116,8 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<SupportTicket>(entity =>
             {
+                entity.HasIndex(e => e.UserId);
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -87,12 +144,13 @@ namespace net_core_backend.Models
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.SupportTicket)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SupportTicket_Users");
             });
 
             modelBuilder.Entity<TicketChat>(entity =>
             {
+                entity.HasIndex(e => e.TicketId);
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -111,12 +169,13 @@ namespace net_core_backend.Models
                 entity.HasOne(d => d.Ticket)
                     .WithMany(p => p.TicketChat)
                     .HasForeignKey(d => d.TicketId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TicketChat_SupportTicket");
             });
 
             modelBuilder.Entity<UserKeywords>(entity =>
             {
+                entity.HasIndex(e => e.UserId);
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -134,12 +193,13 @@ namespace net_core_backend.Models
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserKeywords)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserKeywords_Users");
             });
 
             modelBuilder.Entity<UserTrips>(entity =>
             {
+                entity.HasIndex(e => e.UserId);
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.CreatedAt)
@@ -171,7 +231,6 @@ namespace net_core_backend.Models
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserTrips)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserTrips_Users");
             });
 
@@ -234,6 +293,8 @@ namespace net_core_backend.Models
 
             modelBuilder.Entity<WishList>(entity =>
             {
+                entity.HasIndex(e => e.UserId);
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Distance).HasColumnName("distance");
@@ -254,7 +315,6 @@ namespace net_core_backend.Models
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.WishList)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_WishList_Users");
             });
 
