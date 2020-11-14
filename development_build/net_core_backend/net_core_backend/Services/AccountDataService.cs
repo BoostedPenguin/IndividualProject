@@ -16,12 +16,13 @@ namespace net_core_backend.Services
     {
         private readonly IContextFactory contextFactory;
         private readonly IHttpContextAccessor httpContext;
+        private readonly IGoogleService googleService;
 
-
-        public AccountDataService(IContextFactory contextFactory, IHttpContextAccessor httpContextAccessor) : base(contextFactory)
+        public AccountDataService(IContextFactory contextFactory, IHttpContextAccessor httpContextAccessor, IGoogleService googleService) : base(contextFactory)
         {
             this.contextFactory = contextFactory;
             httpContext = httpContextAccessor;
+            this.googleService = googleService;
         }
         
         /// <summary>
@@ -48,54 +49,39 @@ namespace net_core_backend.Services
             }
         }
 
-        //public async Task AddKeyword(string keyword)
-        //{
-        //    if (keyword == null) throw new ArgumentException("Keyword was empty");
-
-        //    var keywords = keyword.Split(null);
-
-        //    List<string> keywordsLog = new List<string>();
-
-        //    keywordsLog.AddRange(keywords.Where(x => x.Length < 15).ToArray());
-
-        //    using(var a = contextFactory.CreateDbContext())
-        //    {
-        //        var currentKeywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToListAsync();
-
-        //        var userId = await GetUserId(httpContext.GetCurrentAuth());
-
-        //        var newKeywords = keywordsLog.Where(x => currentKeywords.All(y => y.Keyword.ToLower() != x.ToLower()));
-
-        //        List<UserKeywords> toBeAdded = new List<UserKeywords>();
-
-        //        foreach(var b in newKeywords)
-        //        {
-        //            toBeAdded.Add(new UserKeywords() { Keyword = b, UserId = userId });
-        //        }
-
-        //        await a.UserKeywords.AddRangeAsync(toBeAdded);
-        //        await a.SaveChangesAsync();
-        //    }
-        //}
 
         public async Task AddKeyword(string keyword)
         {
             if (keyword == null) throw new ArgumentException("Keyword was empty");
 
-            if (keyword.Length > 20) throw new ArgumentException("Keyword is too large");
+            var result = await googleService.LocationFromLandmark(keyword);
 
-            using (var a = contextFactory.CreateDbContext())
+            using(var a = contextFactory.CreateDbContext())
             {
-                var currentKeywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToListAsync();
+                var address = new KeywordAddress()
+                {
+                    City = result.City,
+                    CityAlt = result.CityAlt,
+                    Country = result.Country,
+                    CountryCode = result.CountryCode,
+                    Latitude = result.Latitude,
+                    Longitude = result.Longitude
+                };
 
-                var userId = await GetUserId(httpContext.GetCurrentAuth());
+                var types = new List<KeywordType>();
 
-                if (currentKeywords.Any(x => x.Keyword.ToLower() == keyword.ToLower())) throw new ArgumentException("Keywords already in system");
+                foreach(var r in result.Types)
+                {
+                    types.Add(new KeywordType() { Type = r });
+                }
 
-                await a.AddAsync(new UserKeywords() { Keyword = keyword, UserId = userId });
+                var key = new UserKeywords() { UserId = await base.GetUserId(httpContext.GetCurrentAuth()), Keyword = keyword, KeywordAddress = { address }, KeywordType = types };
+
+                await a.UserKeywords.AddAsync(key);
                 await a.SaveChangesAsync();
             }
         }
+
 
         public async Task ClearKeywords()
         {

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using net_core_backend.Context;
 using net_core_backend.Controllers;
 using net_core_backend.Models;
@@ -8,6 +9,7 @@ using net_core_backend.Services;
 using net_core_backend.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -19,12 +21,14 @@ namespace backend_testing_xunit
         private IAccountService service;
         private UserController controller;
         private readonly IMapper mapper;
+        private readonly IGoogleService googleService;
 
-        public UserControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper) : base(http, factory)
+        public UserControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper, IGoogleService googleService) : base(http, factory)
         {
             //Configure identity
             CreateIdentity(Users[0].Auth);
             this.mapper = mapper;
+            this.googleService = googleService;
         }
 
         protected override void CreateIdentity(string auth)
@@ -34,7 +38,7 @@ namespace backend_testing_xunit
 
             // Inject
 
-            service = new AccountDataService(factory, http);
+            service = new AccountDataService(factory, http, googleService);
             controller = new UserController(service, null, mapper)
             {
                 ControllerContext = controllerContext,
@@ -113,25 +117,26 @@ namespace backend_testing_xunit
         {
             // Inject
             var user = new Users() { Auth = "AddKeyword", City = "Burgas", Country = "BG" };
+
+            using(var a = factory.CreateDbContext())
+            {
+                await a.AddAsync(user);
+                await a.SaveChangesAsync();
+            }
+
             CreateIdentity(user.Auth);
 
 
             // Arrange
-            var keywords = new List<UserKeywords>()
-            {
-                new UserKeywords() { Keyword = "Paris", UserId = user.Id}, 
-                new UserKeywords() { Keyword = "BG", UserId = user.Id},
-                new UserKeywords() { Keyword = "Somewhere where I definitely Want to go", UserId = user.Id},
-                new UserKeywords() { Keyword = "MaybeImDumbAndCant Seperate the words", UserId = user.Id},
-            };
+            string keyword = "Eiffel Tower, Paris";
+
+            // Act
+            await service.AddKeyword(keyword);
 
             using(var a = factory.CreateDbContext())
             {
-                await a.AddRangeAsync(keywords);
-                await a.SaveChangesAsync();
+                var result = await a.UserKeywords.Include(x => x.KeywordAddress).Include(x => x.KeywordType).Where(x => x.UserId == user.Id).ToListAsync();
             }
-
-            // Act
             // Assert
         }
     }
