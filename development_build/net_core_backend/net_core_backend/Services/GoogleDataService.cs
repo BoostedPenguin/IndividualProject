@@ -38,6 +38,7 @@ namespace net_core_backend.Services
             return new GoogleDataObject() { Latitude = lat, Longitude = lng };
         }
 
+
         public async Task<GoogleDataObject> LocationFromLandmark(string landmark)
         {
             if (landmark == null) throw new ArgumentException("Empty string");
@@ -179,6 +180,30 @@ namespace net_core_backend.Services
             string duration = result.rows[0].elements[0].duration.text;
 
             return new GoogleDataObject() { Distance = distance, Duration = duration };
+        }
+
+
+        public async Task NearbyPlaceShift(GoogleDataObject input, UserKeywords keyword)
+        {
+            //location lng ltd
+            // DOnt include radius if rankby DISTANCE exists
+            // keyword - name type address etc.
+            // rankny prominence
+            // type - ONLY ONE TYPE MAY BE SUPPLIED
+
+            if (input.Latitude == null || input.Longitude == null) throw new ArgumentException("You must supply coordinates");
+
+
+
+            string type = input.MainType != null ? $"&type={input.MainType}" : "";
+
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={input.Latitude},{input.Longitude}&rankby=prominence&radius=10000{type}");
+
+            dynamic result = JsonConvert.DeserializeObject(responseBody);
+
+            if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
+
+            var data = new GoogleDataObject();
         }
 
 

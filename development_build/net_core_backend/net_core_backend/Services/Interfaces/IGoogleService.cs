@@ -13,5 +13,6 @@ namespace net_core_backend.Services.Interfaces
         Task<GoogleDataObject> DistanceDurationBetweenLocations(GoogleDataObject latLngLocation1, GoogleDataObject latLngLocation2, Transportation transportation);
         Task<GoogleDataObject> LocationFromCoordinates(GoogleDataObject coordinates);
         Task<GoogleDataObject> LocationFromLandmark(string landmark);
+        Task NearbyPlaceShift(GoogleDataObject input, UserKeywords keyword);
     }
 }

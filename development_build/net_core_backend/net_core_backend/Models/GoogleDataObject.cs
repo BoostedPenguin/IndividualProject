@@ -28,5 +28,6 @@ namespace net_core_backend.Models
 
         // Location types
         public List<string> Types { get; set; }
+        public string MainType { get; set; }
     }
 }

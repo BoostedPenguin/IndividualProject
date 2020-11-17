@@ -72,7 +72,7 @@ namespace backend_testing_xunit
         {
             // Inject
             // Arrange
-            var expected = new GoogleDataObject() { Distance = "130 km", Duration = "2 hours 8 mins" };
+            var expected = new GoogleDataObject() { Distance = "130 km", Duration = "2 hours 4 mins" };
 
 
             // Act
@@ -87,7 +87,7 @@ namespace backend_testing_xunit
         {
             // Inject
             // Arrange
-            var expected = new GoogleDataObject() { Distance = "130 km", Duration = "2 hours 8 mins" };
+            var expected = new GoogleDataObject() { Distance = "130 km", Duration = "2 hours 4 mins" };
 
             var loc1 = new GoogleDataObject() { Latitude = 42.504792599999988, Longitude = 27.4626361 };
             var loc2 = new GoogleDataObject() { Latitude = 43.2140504, Longitude = 27.9147333 };
@@ -98,6 +98,16 @@ namespace backend_testing_xunit
 
             // Assert
             Assert.Equal(Serialize(expected), Serialize(result));
+        }
+
+        [Fact]
+        public async Task Testing()
+        {
+            // Inject
+
+            // Act
+            //await service.NearbyPlaceShift(new GoogleDataObject() { Latitude = 42.513361, Longitude = 27.465091, MainType = "school" });
+
         }
     }
 }
