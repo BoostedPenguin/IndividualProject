@@ -7,16 +7,16 @@ namespace net_core_backend.Models
     {
         public UserKeywords()
         {
-            KeywordAddress = new HashSet<KeywordAddress>();
             KeywordType = new HashSet<KeywordType>();
         }
 
         public int UserId { get; set; }
         public string Keyword { get; set; }
+        
         public DateTime? CreatedAt { get; set; }
 
         public virtual Users User { get; set; }
-        public virtual ICollection<KeywordAddress> KeywordAddress { get; set; }
+        public virtual KeywordAddress KeywordAddress { get; set; }
         public virtual ICollection<KeywordType> KeywordType { get; set; }
     }
 }

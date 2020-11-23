@@ -75,7 +75,7 @@ namespace net_core_backend.Services
                     types.Add(new KeywordType() { Type = r });
                 }
 
-                var key = new UserKeywords() { UserId = await base.GetUserId(httpContext.GetCurrentAuth()), Keyword = keyword, KeywordAddress = { address }, KeywordType = types };
+                var key = new UserKeywords() { UserId = await base.GetUserId(httpContext.GetCurrentAuth()), Keyword = keyword, KeywordAddress = address , KeywordType = types };
 
                 await a.UserKeywords.AddAsync(key);
                 await a.SaveChangesAsync();

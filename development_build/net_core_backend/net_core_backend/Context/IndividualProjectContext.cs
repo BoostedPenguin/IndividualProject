@@ -54,10 +54,6 @@ namespace net_core_backend.Models
 
                 entity.Property(e => e.Longitude).HasColumnName("longitude");
 
-                entity.HasOne(d => d.Keyword)
-                    .WithMany(p => p.KeywordAddress)
-                    .HasForeignKey(d => d.KeywordId)
-                    .HasConstraintName("FK_KeywordAddress_UserKeywords");
             });
 
             modelBuilder.Entity<KeywordType>(entity =>
@@ -189,6 +185,11 @@ namespace net_core_backend.Models
                     .HasMaxLength(50);
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(a => a.KeywordAddress)
+                    .WithOne(b => b.Keyword)
+                    .HasForeignKey<KeywordAddress>(e => e.KeywordId)
+                    .HasConstraintName("FK_KeywordAddress_UserKeywords");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserKeywords)

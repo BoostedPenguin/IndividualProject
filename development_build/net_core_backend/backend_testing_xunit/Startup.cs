@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using net_core_backend.Context;
@@ -39,8 +40,14 @@ namespace backend_testing_xunit
 
             services.AddSingleton<IGoogleService, GoogleDataService>();
 
+            services.AddSingleton<ISuggestionService, SuggestionService>();
+
             GoogleDataService.GoogleKey = Configuration.GetValue<string>("AppIdentitySettings:GoogleApiKey");
 
+
+
+            // Comment this if you don't want to seed the database
+            // WARNING: It may cause unexpected database errors
             DatabaseSeeder.Seed(new ContextFactoryTesting(Configuration.GetConnectionString("Testing_SQLCONNSTR_Database")));
         }
     }

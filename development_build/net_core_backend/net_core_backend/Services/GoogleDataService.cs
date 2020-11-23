@@ -183,27 +183,78 @@ namespace net_core_backend.Services
         }
 
 
-        public async Task NearbyPlaceShift(GoogleDataObject input, UserKeywords keyword)
+        public async Task<List<GooglePlaceObject>> GetNearbyPlaces(UserKeywords input, string type = null, int radius = 10000)
         {
             //location lng ltd
-            // DOnt include radius if rankby DISTANCE exists
+            // Dont include radius if rankby DISTANCE exists
             // keyword - name type address etc.
             // rankny prominence
             // type - ONLY ONE TYPE MAY BE SUPPLIED
 
-            if (input.Latitude == null || input.Longitude == null) throw new ArgumentException("You must supply coordinates");
+
+            if (input.Keyword == null) throw new ArgumentException("Keyword name is missing");
+
+            GoogleDataObject coordinates;
+            if (input.KeywordAddress.Latitude == null || input.KeywordAddress.Longitude == null)
+            {
+                coordinates = await CoordinatesFromLocation(input.Keyword);
+            }
+            else
+            {
+                coordinates = new GoogleDataObject
+                {
+                    Latitude = input.KeywordAddress.Latitude,
+                    Longitude = input.KeywordAddress.Longitude
+                };
+            }
 
 
+            type = type != null ? $"&type={type}" : "";
 
-            string type = input.MainType != null ? $"&type={input.MainType}" : "";
+            //string keyword = input.Keyword != null ? $"&keyword={input.Keyword.Replace(" ", "+")}" : "";
 
-            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={input.Latitude},{input.Longitude}&rankby=prominence&radius=10000{type}");
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&rankby=prominence&radius={radius}{type}");
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 
             if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
 
-            var data = new GoogleDataObject();
+            var output = new List<GooglePlaceObject>();
+
+            foreach (var a in result.results)
+            {
+                output.Add(new GooglePlaceObject()
+                {
+                    BusinessStatus = a.business_status,
+                    Name = a.name,
+                    PlaceId = a.place_id,
+                    Vicinity = a.vicinity,
+                    Latitude = a.geometry.location.lat,
+                    Longtitude = a.geometry.location.lng,
+                    Rating = a.rating,
+                    PhotosWidth = a.photos[0].width,
+                    PhotosHeight = a.photos[0].height,
+                    PhotoReference = a.photos[0].photo_reference,
+                });
+            }
+
+            return output;
+        }
+
+        public class GooglePlaceObject
+        {
+            public string BusinessStatus { get; set; } //Optional
+            public string Name { get; set; }
+            public string PlaceId { get; set; }
+            public string Vicinity { get; set; }
+            public double? Latitude { get; set; }
+            public double? Longtitude { get; set; }
+
+            public double? Rating { get; set; } //Optional
+
+            public int? PhotosHeight { get; set; } //Optional
+            public int? PhotosWidth { get; set; } //Optional
+            public string PhotoReference { get; set; } //Optional
         }
 
 
