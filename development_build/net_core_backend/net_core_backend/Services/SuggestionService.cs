@@ -20,6 +20,7 @@ namespace net_core_backend.Services
         private readonly IContextFactory contextFactory;
         private readonly IHttpContextAccessor httpContext;
         private readonly IGoogleService googleService;
+        private int userId;
         private Random r;
 
         public SuggestionService(IContextFactory contextFactory, IHttpContextAccessor httpContext, IGoogleService googleService) : base(contextFactory)
@@ -32,7 +33,15 @@ namespace net_core_backend.Services
 
         public async Task<GooglePlaceObject[]> Main(string type = null)
         {
+            userId = await base.GetUserId(httpContext.GetCurrentAuth());
+
             var data = await GenerateExistingSuggestions();
+
+            if(data != null)
+            {
+                var c = data.GroupBy(x => x.TimesDisplayed).ToList();
+            }
+
 
             if (data == null)
             {
@@ -40,17 +49,18 @@ namespace net_core_backend.Services
 
                 data = await GenerateExistingSuggestions();
 
+
                 if (data.Count == 0) throw new ArgumentException("Not enough suggestions generated");
 
-                return GetSuggestions(data);
+                return await GetSuggestions(data);
             }
 
-            return GetSuggestions(data);
+            return await GetSuggestions(data);
         }
 
         private async Task<List<GooglePlaceObject>> GenerateExistingSuggestions()
         {
-            var read = await ReadFromDisk(await base.GetUserId(httpContext.GetCurrentAuth()));
+            var read = await ReadFromDisk(userId);
 
             if (read == null) return null;
 
@@ -69,14 +79,12 @@ namespace net_core_backend.Services
             if (keywords.Count == 0)
                 throw new ArgumentException("Not enough keywords to create a suggestion list");
 
-            var userId = keywords[0].UserId;
-
             // This will give only 1, so the suggestions will be only from 1 city
             List<GooglePlaceObject> total = new List<GooglePlaceObject>();
 
 
-            // Generate for 5 cities
-            for(int i = 0; i < 5; i++)
+            // Generate for 4 cities
+            for(int i = 0; i < 4; i++)
             {
                 if (keywords.Count == 0) break;
 
@@ -91,19 +99,44 @@ namespace net_core_backend.Services
             await SaveToDisk(total, userId);
         }
 
-        private GooglePlaceObject[] GetSuggestions(List<GooglePlaceObject> suggestions)
+        private async Task<GooglePlaceObject[]> GetSuggestions(List<GooglePlaceObject> suggestions)
         {
+            suggestions = suggestions.Where(x => x.TimesDisplayed < 5).ToList();
+
+            List<GooglePlaceObject> temp = new List<GooglePlaceObject>();
+            temp.AddRange(suggestions);
+
             List<GooglePlaceObject> result = new List<GooglePlaceObject>();
 
-            for(int i = 0; i < 10; i++)
+
+            for (int i = 0; i < 10; i++)
             {
-                int current = r.Next(0, suggestions.Count);
+                int current = r.Next(0, temp.Count);
 
-                result.Add(suggestions[current]);
+                var selected = temp[current];
 
-                suggestions.Remove(suggestions[current]);
+                result.Add(selected);
+
+                temp.Remove(selected);
+
+
+                // Since LINQ is retarded and doesnt save unless you assign it to
+
+                var z = suggestions.IndexOf(suggestions.FirstOrDefault(y => y == selected));
+                suggestions[z].TimesDisplayed += 1;
+
+
+                if (suggestions[z].TimesDisplayed >= 5)
+                {
+                    //temp.Remove(suggestions[z]);
+                    suggestions.Remove(suggestions[z]);
+                }
             }
 
+            var c = suggestions.GroupBy(x => x.TimesDisplayed).ToList();
+
+
+            await SaveToDisk(suggestions, userId);
             return result.ToArray();
         }
 
@@ -115,7 +148,8 @@ namespace net_core_backend.Services
             using (var a = contextFactory.CreateDbContext())
             {
                 // Fetch
-                var userId = await base.GetUserId(httpContext.GetCurrentAuth());
+                userId = userId == 0 ? await base.GetUserId(httpContext.GetCurrentAuth()) : userId;
+
                 var keywords = await a.UserKeywords.Include(x => x.KeywordAddress).Include(x => x.KeywordType).Where(x => x.UserId == userId).ToListAsync();
 
                 // Filter for type
