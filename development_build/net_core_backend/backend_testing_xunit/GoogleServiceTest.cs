@@ -15,14 +15,11 @@ namespace backend_testing_xunit
     public class GoogleServiceTest : DatabaseSeeder
     {
         private readonly IGoogleService service;
-        private readonly IHttpContextAccessor http;
-        private readonly IContextFactory factory;
 
         public GoogleServiceTest(IGoogleService service, IHttpContextAccessor http, IContextFactory factory) : base(http, factory)
         {
             this.service = service;
             this.http = http;
-            this.factory = factory;
         }
 
         [Fact]
@@ -103,11 +100,35 @@ namespace backend_testing_xunit
         [Fact]
         public async Task Testing()
         {
+            var user = new Users() { Auth = "AuthForTesting" };
             // Inject
 
-            // Act
-            //await service.NearbyPlaceShift(new GoogleDataObject() { Latitude = 42.513361, Longitude = 27.465091, MainType = "school" });
+            UserKeywords keyword;
+            var s = await service.LocationFromLandmark("паметник альоша бургас");
 
+
+            using (var a = factory.CreateDbContext())
+            {
+
+                await a.AddAsync(user);
+                await a.SaveChangesAsync();
+                keyword = new UserKeywords()
+                {
+                    Keyword = "НЕГ Гьоте",
+                    KeywordAddress = new KeywordAddress()
+                    {
+                        City = "Burgas",
+                        Country = "Bulgaria",
+                    },
+                    UserId = user.Id,
+                };
+
+                await a.AddAsync(keyword);
+                await a.SaveChangesAsync();
+            }
+            // Act
+            var result = await service.GetNearbyPlaces(keyword);
+            var g = result;
         }
     }
 }
