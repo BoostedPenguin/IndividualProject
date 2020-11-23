@@ -96,7 +96,10 @@ namespace backend_testing_xunit
                 await a.SaveChangesAsync();
             }
 
-            var suggestions = await service.Main();
+            for(int i = 0; i < 9; i++)
+            {
+                var suggestions = await service.Main();
+            }
         }
     }
 }

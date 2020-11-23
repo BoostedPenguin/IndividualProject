@@ -243,6 +243,7 @@ namespace net_core_backend.Services
 
         public class GooglePlaceObject
         {
+            public int TimesDisplayed { get; set; }
             public string BusinessStatus { get; set; } //Optional
             public string Name { get; set; }
             public string PlaceId { get; set; }
