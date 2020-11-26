@@ -17,11 +17,15 @@ namespace net_core_backend.Services
 {
     public class SuggestionService : DataService<UserKeywords>, ISuggestionService
     {
+        private int MaxTimesToDisplay = 5;
+        private int RequestedSuggestions = 10;
+        private int TotalCitiesSuggestions = 4;
+
         private readonly IContextFactory contextFactory;
         private readonly IHttpContextAccessor httpContext;
         private readonly IGoogleService googleService;
+        private readonly Random r;
         private int userId;
-        private Random r;
 
         public SuggestionService(IContextFactory contextFactory, IHttpContextAccessor httpContext, IGoogleService googleService) : base(contextFactory)
         {
@@ -31,12 +35,22 @@ namespace net_core_backend.Services
             r = new Random();
         }
 
+
+        /// <summary>
+        /// Main algorithm function. Call to receive suggestions.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public async Task<GooglePlaceObject[]> Main(string type = null)
         {
             userId = await base.GetUserId(httpContext.GetCurrentAuth());
 
+            if (userId == 0) throw new ArgumentException("User is invalid");
+
             var data = await GenerateExistingSuggestions();
 
+
+            //Testing
             if(data != null)
             {
                 var c = data.GroupBy(x => x.TimesDisplayed).ToList();
@@ -49,7 +63,6 @@ namespace net_core_backend.Services
 
                 data = await GenerateExistingSuggestions();
 
-
                 if (data.Count == 0) throw new ArgumentException("Not enough suggestions generated");
 
                 return await GetSuggestions(data);
@@ -58,13 +71,18 @@ namespace net_core_backend.Services
             return await GetSuggestions(data);
         }
 
+
+        /// <summary>
+        /// Checks if current file suggestions aren't exchausted and uses them if possible
+        /// </summary>
+        /// <returns></returns>
         private async Task<List<GooglePlaceObject>> GenerateExistingSuggestions()
         {
-            var read = await ReadFromDisk(userId);
+            var read = await ReadSuggestionsFile(userId);
 
             if (read == null) return null;
 
-            if (read.Count >= 10)
+            if (read.Count >= RequestedSuggestions)
             {
                 return read;
             }
@@ -72,6 +90,12 @@ namespace net_core_backend.Services
             return null;
         }
 
+
+        /// <summary>
+        /// Generates new suggestions through Google API if current ones are exchausted
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private async Task GenerateNewSuggestions(string type)
         {
             var keywords = await Fetch(type);
@@ -83,8 +107,8 @@ namespace net_core_backend.Services
             List<GooglePlaceObject> total = new List<GooglePlaceObject>();
 
 
-            // Generate for 4 cities
-            for(int i = 0; i < 4; i++)
+            // Generate for cities
+            for(int i = 0; i < TotalCitiesSuggestions; i++)
             {
                 if (keywords.Count == 0) break;
 
@@ -96,12 +120,18 @@ namespace net_core_backend.Services
                 total.AddRange(await googleService.GetNearbyPlaces(main, type));
             }
 
-            await SaveToDisk(total, userId);
+            await WriteSuggestionsFile(total, userId);
         }
 
+
+        /// <summary>
+        /// Gets 10 random suggestions from the available and adjusts their usage
+        /// </summary>
+        /// <param name="suggestions"></param>
+        /// <returns></returns>
         private async Task<GooglePlaceObject[]> GetSuggestions(List<GooglePlaceObject> suggestions)
         {
-            suggestions = suggestions.Where(x => x.TimesDisplayed < 5).ToList();
+            suggestions = suggestions.Where(x => x.TimesDisplayed < MaxTimesToDisplay).ToList();
 
             List<GooglePlaceObject> temp = new List<GooglePlaceObject>();
             temp.AddRange(suggestions);
@@ -109,7 +139,7 @@ namespace net_core_backend.Services
             List<GooglePlaceObject> result = new List<GooglePlaceObject>();
 
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < RequestedSuggestions; i++)
             {
                 int current = r.Next(0, temp.Count);
 
@@ -120,35 +150,34 @@ namespace net_core_backend.Services
                 temp.Remove(selected);
 
 
-                // Since LINQ is retarded and doesnt save unless you assign it to
 
                 var z = suggestions.IndexOf(suggestions.FirstOrDefault(y => y == selected));
                 suggestions[z].TimesDisplayed += 1;
 
 
-                if (suggestions[z].TimesDisplayed >= 5)
+                if (suggestions[z].TimesDisplayed >= MaxTimesToDisplay)
                 {
                     //temp.Remove(suggestions[z]);
                     suggestions.Remove(suggestions[z]);
                 }
             }
 
+            // Testing
             var c = suggestions.GroupBy(x => x.TimesDisplayed).ToList();
 
 
-            await SaveToDisk(suggestions, userId);
+            await WriteSuggestionsFile(suggestions, userId);
             return result.ToArray();
         }
 
         /// <summary>
         /// Fetches all keywords for the specific user
         /// </summary>
-        public async Task<List<UserKeywords>> Fetch(string type)
+        private async Task<List<UserKeywords>> Fetch(string type)
         {
             using (var a = contextFactory.CreateDbContext())
             {
-                // Fetch
-                userId = userId == 0 ? await base.GetUserId(httpContext.GetCurrentAuth()) : userId;
+                //userId = userId == 0 ? await base.GetUserId(httpContext.GetCurrentAuth()) : userId;
 
                 var keywords = await a.UserKeywords.Include(x => x.KeywordAddress).Include(x => x.KeywordType).Where(x => x.UserId == userId).ToListAsync();
 
@@ -160,7 +189,12 @@ namespace net_core_backend.Services
         }
 
 
-        public UserKeywords GetRandomKeyword(List<UserKeywords> keywords)
+        /// <summary>
+        /// Gets a random keyword based on percentage from the given
+        /// </summary>
+        /// <param name="keywords"></param>
+        /// <returns></returns>
+        private UserKeywords GetRandomKeyword(List<UserKeywords> keywords)
         {
             var countriesCount = keywords.GroupBy(x => x.KeywordAddress.Country)
             .Select(x => new
@@ -228,6 +262,11 @@ namespace net_core_backend.Services
             return word;
         }
 
+
+        /// <summary>
+        /// Gets root project path
+        /// </summary>
+        /// <returns></returns>
         private string GetSuggestionFilesPath()
         {
             string baseDirectory = AppContext.BaseDirectory.Substring(0, AppContext.BaseDirectory.IndexOf("bin"));
@@ -242,7 +281,13 @@ namespace net_core_backend.Services
             return directory;
         }
 
-        public async Task SaveToDisk(List<GooglePlaceObject> places, int userId)
+        /// <summary>
+        /// Writes suggestions json file for specific user
+        /// </summary>
+        /// <param name="places"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task WriteSuggestionsFile(List<GooglePlaceObject> places, int userId)
         {
             string jsonObjects = JsonConvert.SerializeObject(places);
 
@@ -253,7 +298,13 @@ namespace net_core_backend.Services
             await File.WriteAllTextAsync(fileName, jsonObjects.ToString());
         }
 
-        public async Task<List<GooglePlaceObject>> ReadFromDisk(int userId)
+
+        /// <summary>
+        /// Reads suggestions json file for specific user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        private async Task<List<GooglePlaceObject>> ReadSuggestionsFile(int userId)
         {
             var path = GetSuggestionFilesPath();
 

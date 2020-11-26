@@ -17,6 +17,7 @@ namespace net_core_backend.Models
         public string City { get; set; }
         public string CountryCode { get; set; }
         public string CityAlt { get; set; }
+        public string PlaceId { get; set; }
 
         // Distance matrix
         public string Duration { get; set; }

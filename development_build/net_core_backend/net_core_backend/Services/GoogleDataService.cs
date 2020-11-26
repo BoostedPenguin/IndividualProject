@@ -80,6 +80,7 @@ namespace net_core_backend.Services
 
             data.Latitude = result.results[0].geometry.location.lat;
             data.Longitude = result.results[0].geometry.location.lng;
+            data.PlaceId = result.results[0].place_id;
 
             return data;
         }

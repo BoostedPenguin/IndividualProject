@@ -5,6 +5,7 @@ using net_core_backend.Services;
 using net_core_backend.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -23,7 +24,7 @@ namespace backend_testing_xunit
 
 
         [Fact]
-        public async Task Test()
+        public async Task MainAlgorithm()
         {
             CreateIdentity(Users[0].Auth);
             List<UserKeywords> words = new List<UserKeywords>()
@@ -96,10 +97,17 @@ namespace backend_testing_xunit
                 await a.SaveChangesAsync();
             }
 
-            for(int i = 0; i < 9; i++)
-            {
-                var suggestions = await service.Main();
-            }
+
+            //20-30ms on using already logged suggestions
+            //5000ms on using new suggestions
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            var suggestions = await service.Main();
+            sw.Stop();
+
+            Assert.Equal(10, suggestions.Length);
         }
     }
 }
