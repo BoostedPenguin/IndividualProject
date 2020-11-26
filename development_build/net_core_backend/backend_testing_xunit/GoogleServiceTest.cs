@@ -56,9 +56,9 @@ namespace backend_testing_xunit
         {
             // Inject
             // Arrange
-            var expected = new GoogleDataObject() { City = "Burgas", Country = "Bulgaria", CountryCode = "BG", Latitude = 42.5138584, Longitude = 27.469502, Types = { "establishment", "point_of_interest", "school"} };
+            var expected = new GoogleDataObject() { City = "Burgas", Country = "Bulgaria", CountryCode = "BG", Latitude = 42.5138584, Longitude = 27.469502, Types = { "establishment", "point_of_interest", "school"}, PlaceId = "ChIJc-mFqIaUpkARt2OCHhOpfk4" };
             // Act
-            var result = await service.LocationFromLandmark("NEG \"Goethe \"");
+            var result = await service.LocationFromLandmark("НЕГ Гьоте");
 
             // Assert
             Assert.Equal(Serialize(expected), Serialize(result));
