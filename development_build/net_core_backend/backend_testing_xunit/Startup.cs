@@ -42,7 +42,10 @@ namespace backend_testing_xunit
 
             services.AddSingleton<ISuggestionService, SuggestionService>();
 
+            // Obsolete
             services.AddSingleton<IWikipediaDataService, WikipediaDataService>();
+
+            services.AddSingleton<ISearchDataService, SearchDataService>();
 
             GoogleDataService.GoogleKey = Configuration.GetValue<string>("AppIdentitySettings:GoogleApiKey");
 

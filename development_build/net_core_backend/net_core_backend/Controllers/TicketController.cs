@@ -27,7 +27,7 @@ namespace net_core_backend.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetTicket(int id)
+        public async Task<IActionResult> GetTicket([FromRoute]int id)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace net_core_backend.Controllers
 
         [HttpPost("/message")]
         [Authorize]
-        public async Task<IActionResult> CreateMessage(int ticket_id, TicketChat chat)
+        public async Task<IActionResult> CreateMessage([FromRoute]int ticket_id, [FromBody]TicketChat chat)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace net_core_backend.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateTicket(SupportTicket ticket)
+        public async Task<IActionResult> CreateTicket([FromBody]SupportTicket ticket)
         {
             try
             {

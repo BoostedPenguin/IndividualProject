@@ -46,7 +46,7 @@ namespace net_core_backend.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetUserInfo(int id)
+        public async Task<IActionResult> GetUserInfo([FromRoute] int id)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace net_core_backend.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> ValidateUser(Users entity)
+        public async Task<IActionResult> ValidateUser([FromBody] Users entity)
         {
             try
             {

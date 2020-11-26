@@ -58,6 +58,7 @@ namespace backend_testing_xunit
             // Arrange
             var expected = new GoogleDataObject() { City = "Burgas", Country = "Bulgaria", CountryCode = "BG", Latitude = 42.5138584, Longitude = 27.469502, Types = { "establishment", "point_of_interest", "school"}, PlaceId = "ChIJc-mFqIaUpkARt2OCHhOpfk4" };
             // Act
+            //var types = new string[2] { "airport", "park" };
             var result = await service.LocationFromLandmark("НЕГ Гьоте");
 
             // Assert
