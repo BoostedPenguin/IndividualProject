@@ -48,7 +48,7 @@ namespace net_core_backend.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetTrip(int id)
+        public async Task<IActionResult> GetTrip([FromRoute]int id)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace net_core_backend.Controllers
 
         [HttpDelete]
         [Authorize]
-        public async Task<IActionResult> DeleteTrip(int trip_id)
+        public async Task<IActionResult> DeleteTrip([FromRoute]int trip_id)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace net_core_backend.Controllers
 
         [HttpPatch("/add/{trip_id}")]
         [Authorize]
-        public async Task<IActionResult> AddLocation(int trip_id, Locations location)
+        public async Task<IActionResult> AddLocation([FromRoute]int trip_id, [FromBody]Locations location)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace net_core_backend.Controllers
 
         [HttpPatch("/remove/{trip_id}")]
         [Authorize]
-        public async Task<IActionResult> RemoveLocation(int trip_id, int location_id )
+        public async Task<IActionResult> RemoveLocation([FromRoute]int trip_id, [FromBody]int location_id )
         {
             try
             {

@@ -20,6 +20,7 @@ using net_core_backend.Models;
 using net_core_backend.Services;
 using net_core_backend.Services.Interfaces;
 using net_core_backend.Profiles;
+using Microsoft.OpenApi.Models;
 
 namespace net_core_backend
 {
@@ -76,12 +77,24 @@ namespace net_core_backend
             services.AddHttpClient();
 
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseCors("AllowAll");
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             if (env.IsDevelopment())
             {

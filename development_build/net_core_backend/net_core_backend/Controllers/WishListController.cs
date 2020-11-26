@@ -67,7 +67,7 @@ namespace net_core_backend.Controllers
 
         [HttpPatch("/add")]
         [Authorize]
-        public async Task<IActionResult> AddLocation(Locations location)
+        public async Task<IActionResult> AddLocation([FromBody] Locations location)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace net_core_backend.Controllers
 
         [HttpPatch("/remove/{location_id}")]
         [Authorize]
-        public async Task<IActionResult> RemoveLocation(int location_id)
+        public async Task<IActionResult> RemoveLocation([FromRoute] int location_id)
         {
             try
             {

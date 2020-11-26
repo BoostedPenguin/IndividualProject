@@ -39,11 +39,15 @@ namespace net_core_backend.Services
         }
 
 
-        public async Task<GoogleDataObject> LocationFromLandmark(string landmark)
+        public async Task<GoogleDataObject> LocationFromLandmark(string landmark, string[] givenType = null)
         {
             if (landmark == null) throw new ArgumentException("Empty string");
 
-            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/geocode/json?address={landmark}");
+            //Creates a types string
+            string outputType = "&types=";
+            outputType = givenType != null ? outputType + string.Join("|", givenType) : "";
+
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/geocode/json?address={landmark}{outputType}");
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 
