@@ -1,7 +1,7 @@
 <template>
   <div>
     <NavigationBar />
-    <SearchMenu />
+    <Home />
   </div>
 </template>
 
@@ -17,9 +17,9 @@
 
 <script>
 import NavigationBar from "./components/NavigationBar";
-import SearchMenu from "./components/SearchMenu";
+import Home from "./views/Home";
 
 export default {
-  components: { NavigationBar, SearchMenu },
+  components: { NavigationBar, Home },
 };
 </script>

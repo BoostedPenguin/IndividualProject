@@ -1,5 +1,4 @@
 <template>
-
   <!-- Navigation -->
   <nav class="navbar navbar-expand-md navbar-custom">
     <div class="container">
@@ -12,7 +11,7 @@
 
       <!-- Toggler button on small screens -->
       <button
-        v-if="!$auth.isAuthenticated"
+        v-if="$auth.isAuthenticated"
         class="navbar-toggler border"
         type="button"
         data-toggle="collapse"
@@ -27,13 +26,17 @@
       </button>
 
       <!-- My account collapse -->
-      <div class="collapse navbar-collapse" id="navbarResponsive">
+      <div
+        class="collapse navbar-collapse"
+        id="navbarResponsive"
+        v-if="$auth.isAuthenticated"
+      >
         <ul class="navbar-nav ml-auto flex-nowrap">
           <div class="separator" />
 
           <!-- My account -->
           <li class="nav-item">
-            <router-link class="nav-link m-2 menu-item text-white" to="#"
+            <router-link class="nav-link m-2 menu-item navbar-button" to="#"
               ><span class="fa fa-sign-in" aria-hidden="true"></span>
               &nbsp;My Account
             </router-link>
@@ -43,7 +46,7 @@
 
           <!-- My trips -->
           <li class="nav-item">
-            <router-link class="nav-link m-2 menu-item text-white" to="#">
+            <router-link class="nav-link m-2 menu-item navbar-button" to="#">
               <i class="fa fa-globe" aria-hidden="true"></i>
               My Trips
             </router-link>
@@ -54,7 +57,7 @@
           <!-- Wishlist options -->
 
           <li class="nav-item">
-            <router-link class="nav-link m-2 menu-item text-white" to="/about">
+            <router-link class="nav-link m-2 menu-item navbar-button" to="/about">
               <i class="fa fa-heart" aria-hidden="true"></i>
               Wishlist
             </router-link>
@@ -64,12 +67,20 @@
 
       <!-- Guest options -->
 
-      <div v-if="$auth.isAuthenticated">
+      <div v-if="!$auth.isAuthenticated">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <router-link class="nav-link m-2 menu-item text-white" to="/about"
-              >Sign in</router-link
-            >
+            <div v-if="!$auth.loading">
+              <!-- show login when not authenticated -->
+              <a
+                href="#"
+                class="nav-link m-2 menu-item navbar-button"
+                v-if="!$auth.isAuthenticated"
+                @click="login"
+              >
+                Log in
+              </a>
+            </div>
           </li>
         </ul>
       </div>
@@ -82,6 +93,18 @@ export default {
   data() {
     return {};
   },
+  methods: {
+    // Log the user in
+    login() {
+      this.$auth.loginWithRedirect();
+    },
+    // Log the user out
+    logout() {
+      this.$auth.logout({
+        returnTo: window.location.origin,
+      });
+    },
+  },
 };
 </script>
 
@@ -90,8 +113,22 @@ export default {
 .nav-item {
   font-size: 20px;
 }
+
+.navbar-brand:hover {
+  box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.4);
+  transition: 0.5s;
+}
 .navbar-custom {
-  background-color: #0061b5;
+  background-color: var(--primary);
+}
+
+.navbar-button:hover {
+  transition: 0.3s;
+  color: rgb(180, 180, 180);
+}
+
+.navbar-button {
+  color: white;
 }
 
 .separator {
