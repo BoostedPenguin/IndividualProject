@@ -353,3 +353,4 @@ MigrationBackup/
 appsettings.json
 development_build/net_core_backend/backend_testing_xunit/appsettings.test.json
 development_build/net_core_backend/backend_testing_xunit/SuggestionFiles/
+development_build/vue_frontend/auth_config.json
