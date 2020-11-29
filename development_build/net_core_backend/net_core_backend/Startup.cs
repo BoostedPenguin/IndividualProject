@@ -74,6 +74,8 @@ namespace net_core_backend
 
             services.AddSingleton<IGoogleService, GoogleDataService>();
 
+            services.AddSingleton<ISearchDataService, SearchDataService>();
+
             services.AddHttpClient();
 
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);

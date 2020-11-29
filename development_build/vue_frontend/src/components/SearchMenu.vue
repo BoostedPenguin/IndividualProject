@@ -3,50 +3,47 @@
     <div class="main-search">
       <div class="h-100 d-flex justify-content-center align-items-center">
         <div class="col-10 col-sm-8 col-md-6 col-lg-5 col-xl-4">
-          <p class="text-center search-header outline">
-            Choose a destination
-          </p>
-          <form>
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <button
-                  class="btn filter-button "
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i class="fa fa-caret-down" aria-hidden="true"></i>
+          <p class="text-center search-header outline">Choose a destination</p>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <button
+                class="btn filter-button"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <i class="fa fa-caret-down" aria-hidden="true"></i>
+              </button>
 
-                </button>
-
-                <ul class="dropdown-menu checkbox-menu allow-focus">
-                  <li>
-                    <label @click.stop="stopTheEvent">
-                      <input type="checkbox" /> Filter Item 1
-                    </label>
-                  </li>
-                  <li>
-                    <label @click.stop="stopTheEvent">
-                      <input type="checkbox" /> Filter Item 2
-                    </label>
-                  </li>
-                </ul>
-              </div>
-              <input
-                type="text"
-                class="form-control form-rounded"
-                placeholder="Eiffel Tower, Paris"
-                aria-label="Eiffel Tower, Paris"
-                aria-describedby="basic-addon2"
-              />
-
-              <div class="input-group-append">
-                <button class="btn btn-primary search-button" type="submit">
-                  Search
-                </button>
-              </div>
+              <ul class="dropdown-menu checkbox-menu allow-focus">
+                <li>
+                  <label @click.stop="stopTheEvent">
+                    <input type="checkbox" /> Filter Item 1
+                  </label>
+                </li>
+                <li>
+                  <label @click.stop="stopTheEvent">
+                    <input type="checkbox" /> Filter Item 2
+                  </label>
+                </li>
+              </ul>
             </div>
-          </form>
+            <input
+              maxlength="40"
+              v-model="search_string"
+              type="text"
+              class="form-control form-rounded"
+              placeholder="Eiffel Tower, Paris"
+              aria-label="Eiffel Tower, Paris"
+              aria-describedby="basic-addon2"
+            />
+
+            <div class="input-group-append">
+              <button class="btn btn-primary search-button" @click="Search">
+                Search
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -54,9 +51,44 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
+  data() {
+    return {
+      error: "",
+      search_string: "",
+      url: process.env.VUE_APP_BASE_BACKEND_ROOT,
+    };
+  },
   methods: {
     stopTheEvent: (event) => event.stopPropagation(),
+
+    async Search() {
+      if (this.search_string) {
+        // Make request
+        const token = await this.$auth.getTokenSilently();
+
+        console.log(token);
+
+        await axios
+          .get(`${this.url}/search/${this.search_string}`, {
+            headers: {
+              Authorization: `Bearer ${token}`, // send the access token through the 'Authorization' header
+            },
+          })
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((error) => {
+            console.log(error);
+
+            this.error = error;
+          });
+      } else {
+        this.error = "Please, specify a destination first";
+      }
+    },
   },
 };
 </script>
@@ -85,20 +117,18 @@ export default {
   border-bottom-right-radius: 1rem;
 }
 
-
 .filter-button:hover {
-  background-color: #B55400;
+  background-color: #b55400;
 }
-
 
 .search-header {
   font-size: calc(15px + 1vw);
 }
 
 .outline {
-    color: #fff;
-    text-shadow: #000 0px 0px 5px;
-    -webkit-font-smoothing: antialiased;
+  color: #fff;
+  text-shadow: #000 0px 0px 5px;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Dropdown checkbox styling */
