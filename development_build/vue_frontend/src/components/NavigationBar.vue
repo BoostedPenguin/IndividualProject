@@ -57,11 +57,31 @@
           <!-- Wishlist options -->
 
           <li class="nav-item">
-            <router-link class="nav-link m-2 menu-item navbar-button" to="/about">
+            <router-link
+              class="nav-link m-2 menu-item navbar-button"
+              to="/about"
+            >
               <i class="fa fa-heart" aria-hidden="true"></i>
               Wishlist
             </router-link>
           </li>
+
+          <!-- REMOVE -->
+          <li class="nav-item">
+            <div v-if="!$auth.loading">
+              <!-- show login when not authenticated -->
+              <a
+                href="#"
+                class="nav-link m-2 menu-item navbar-button"
+                v-if="$auth.isAuthenticated"
+                @click="logout"
+              >
+                SIGN OUT
+              </a>
+            </div>
+          </li>
+          <!-- REMOVE -->
+
         </ul>
       </div>
 
@@ -115,7 +135,7 @@ export default {
 }
 
 .navbar-brand:hover {
-  box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.4);
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.4);
   transition: 0.5s;
 }
 .navbar-custom {

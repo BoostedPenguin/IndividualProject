@@ -24,7 +24,7 @@ namespace net_core_backend.Controllers
             this.context = context;
         }
 
-        [HttpGet]
+        [HttpGet("{location}")]
         [Authorize]
         public async Task<IActionResult> SearchForLocation(string location)
         {
