@@ -41,5 +41,21 @@ namespace net_core_backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("suggestions")]
+        [Authorize]
+        public async Task<IActionResult> GetSuggestions()
+        {
+            try
+            {
+                var result = await context.GetSuggestions();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

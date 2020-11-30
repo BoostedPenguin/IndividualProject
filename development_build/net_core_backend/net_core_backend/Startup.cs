@@ -75,6 +75,8 @@ namespace net_core_backend
             services.AddSingleton<IGoogleService, GoogleDataService>();
 
             services.AddSingleton<ISearchDataService, SearchDataService>();
+            
+            services.AddSingleton<ISuggestionService, SuggestionService>();
 
             services.AddHttpClient();
 

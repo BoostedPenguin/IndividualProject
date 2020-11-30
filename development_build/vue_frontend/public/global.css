@@ -7,3 +7,16 @@
 
     --error:#C12D3F;
 }
+
+.alert-error {
+    background-color: #b00020;
+    color: white;
+}
+
+.basic-fade-enter-active,
+.basic-fade-leave-active {
+  transition: opacity 0.8s;
+}
+.basic-fade-enter, .basic-fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}

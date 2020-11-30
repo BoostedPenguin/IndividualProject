@@ -5,6 +5,7 @@ import router from './router'
 
 // Import the Auth0 configuration
 import { domain, clientId, audience } from "../auth_config.json";
+import store from "./store/store"
 
 
 // Import the plugin here
@@ -26,5 +27,6 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

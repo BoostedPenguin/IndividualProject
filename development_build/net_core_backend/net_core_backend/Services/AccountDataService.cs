@@ -50,38 +50,6 @@ namespace net_core_backend.Services
         }
 
 
-        public async Task AddKeyword(string keyword)
-        {
-            if (keyword == null) throw new ArgumentException("Keyword was empty");
-
-            var result = await googleService.LocationFromLandmark(keyword);
-
-            using(var a = contextFactory.CreateDbContext())
-            {
-                var address = new KeywordAddress()
-                {
-                    City = result.City,
-                    CityAlt = result.CityAlt,
-                    Country = result.Country,
-                    CountryCode = result.CountryCode,
-                    Latitude = result.Latitude,
-                    Longitude = result.Longitude
-                };
-
-                var types = new List<KeywordType>();
-
-                foreach(var r in result.Types)
-                {
-                    types.Add(new KeywordType() { Type = r });
-                }
-
-                var key = new UserKeywords() { UserId = await base.GetUserId(httpContext.GetCurrentAuth()), Keyword = keyword, KeywordAddress = address , KeywordType = types };
-
-                await a.UserKeywords.AddAsync(key);
-                await a.SaveChangesAsync();
-            }
-        }
-
 
         public async Task ClearKeywords()
         {

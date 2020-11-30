@@ -2,34 +2,12 @@
   <div class="main">
     <div class="container-fluid">
       <div class="row mt-5">
-
-
-        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12 pt-3" v-for="index in 8" :key="index">
-
-          <div class="card">
-            <a class="stretched-link text-decoration-none" href="#">
-              <img
-                src="../assets/EiffelTower.jpg"
-                class="card-img-top  gallery-cover"
-                alt="..."
-              />
-            </a>
-            
-            <div class="card-body">
-              <h5 class="card-title">
-                <div class="d-flex justify-content-between">
-                  <div>Name</div>
-                  <div>
-                    <p class="out-of-stock">Rating?</p>
-                  </div>
-                </div>
-              </h5>
-              <div class="card-text d-flex justify-content-between">
-                <div>Description</div>
-              </div>
-            </div>
-            
-          </div>
+        <div
+          class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12 pt-3"
+          v-for="location in getSug"
+          v-bind:key="location"
+        >
+          <SuggestionObject/>
         </div>
       </div>
     </div>
@@ -37,7 +15,57 @@
 </template>
 
 <script>
-export default {};
+import { getInstance } from "../auth/authWrapper";
+import SuggestionObject from "./SuggestionObject";
+
+import axios from "axios";
+import { mapState } from "vuex";
+
+export default {
+  name: "SuggestionsGenerator",
+  components: {
+    SuggestionObject,
+  },
+  data() {
+    return {
+      url: process.env.VUE_APP_BASE_BACKEND_ROOT,
+    };
+  },
+  created() {
+    this.InitiateAuth(this.GetSuggestions);
+  },
+  computed: mapState({
+    getSug: (state) => state.suggestions,
+  }),
+  methods: {
+    InitiateAuth(fn) {
+      // have to do this nonsense to make sure auth0Client is ready
+      var instance = getInstance();
+      instance.$watch("loading", (loading) => {
+        if (loading === false) {
+          fn(instance);
+        }
+      });
+    },
+    async GetSuggestions(instance) {
+      if (!this.$auth.isAuthenticated) return;
+      await instance.getTokenSilently().then((authToken) => {
+        // do authorized API calls with auth0 authToken here
+
+        axios
+          .get(`${this.url}/search/suggestions`, {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
+            },
+          })
+          .then((data) => {
+            this.$store.commit("SET_Suggestions", data);
+          })
+          .catch((err) => console.log(err));
+      });
+    },
+  },
+};
 </script>
 
 <style>
@@ -60,9 +88,8 @@ body {
 }
 
 .card {
-    border: 1px;
-      box-shadow: 1px 2px 7px 6px rgba(0,0,0,0.25);
-
+  border: 1px;
+  box-shadow: 1px 2px 7px 6px rgba(0, 0, 0, 0.25);
 
   transition: 0.5s;
 }

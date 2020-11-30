@@ -230,6 +230,7 @@ namespace net_core_backend.Services
             {
                 output.Add(new GooglePlaceObject()
                 {
+                    Guid = Guid.NewGuid(),
                     BusinessStatus = a.business_status,
                     Name = a.name,
                     PlaceId = a.place_id,
@@ -248,6 +249,7 @@ namespace net_core_backend.Services
 
         public class GooglePlaceObject
         {
+            public Guid Guid { get; set; }
             public int TimesDisplayed { get; set; }
             public string BusinessStatus { get; set; } //Optional
             public string Name { get; set; }
