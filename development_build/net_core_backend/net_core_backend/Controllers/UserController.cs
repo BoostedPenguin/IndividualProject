@@ -31,7 +31,7 @@ namespace net_core_backend.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateAddress(Users entity)
+        public async Task<IActionResult> UpdateAddress([FromBody]Users entity)
         {
             try
             {
@@ -61,6 +61,7 @@ namespace net_core_backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
 
 
         /// <summary>

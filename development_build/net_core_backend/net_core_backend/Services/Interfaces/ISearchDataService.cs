@@ -5,6 +5,7 @@ namespace net_core_backend.Services
 {
     public interface ISearchDataService
     {
+        Task<GoogleDataService.GooglePlaceObject[]> GetSuggestions();
         Task<GoogleDataObject> SearchForLocation(string location, string type = null);
     }
 }

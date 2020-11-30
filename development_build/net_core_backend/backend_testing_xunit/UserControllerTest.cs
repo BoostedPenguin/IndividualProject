@@ -112,32 +112,32 @@ namespace backend_testing_xunit
             Assert.Equal(Serialize(expected), Serialize(((OkObjectResult)result).Value));
         }
 
-        [Fact]
-        public async Task AddKeyword()
-        {
-            // Inject
-            var user = new Users() { Auth = "AddKeyword", City = "Burgas", Country = "BG" };
+        //[Fact]
+        //public async Task AddKeyword()
+        //{
+        //    // Inject
+        //    var user = new Users() { Auth = "AddKeyword", City = "Burgas", Country = "BG" };
 
-            using(var a = factory.CreateDbContext())
-            {
-                await a.AddAsync(user);
-                await a.SaveChangesAsync();
-            }
+        //    using(var a = factory.CreateDbContext())
+        //    {
+        //        await a.AddAsync(user);
+        //        await a.SaveChangesAsync();
+        //    }
 
-            CreateIdentity(user.Auth);
+        //    CreateIdentity(user.Auth);
 
 
-            // Arrange
-            string keyword = "Eiffel Tower, Paris";
+        //    // Arrange
+        //    string keyword = "Eiffel Tower, Paris";
 
-            // Act
-            await service.AddKeyword(keyword);
+        //    // Act
+        //    await service.AddKeyword(keyword);
 
-            using(var a = factory.CreateDbContext())
-            {
-                var result = await a.UserKeywords.Include(x => x.KeywordAddress).Include(x => x.KeywordType).Where(x => x.UserId == user.Id).ToListAsync();
-            }
-            // Assert
-        }
+        //    using(var a = factory.CreateDbContext())
+        //    {
+        //        var result = await a.UserKeywords.Include(x => x.KeywordAddress).Include(x => x.KeywordType).Where(x => x.UserId == user.Id).ToListAsync();
+        //    }
+        //    // Assert
+        //}
     }
 }

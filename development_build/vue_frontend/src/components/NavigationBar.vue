@@ -1,6 +1,6 @@
 <template>
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-md navbar-custom">
+  <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container">
       <!-- Logo -->
       <a class="navbar-brand" href="#">
@@ -66,6 +66,8 @@
             </router-link>
           </li>
 
+          <div class="separator" />
+
           <!-- REMOVE -->
           <li class="nav-item">
             <div v-if="!$auth.loading">
@@ -76,7 +78,7 @@
                 v-if="$auth.isAuthenticated"
                 @click="logout"
               >
-                SIGN OUT
+                Sign Out
               </a>
             </div>
           </li>
@@ -93,7 +95,7 @@
             <div v-if="!$auth.loading">
               <!-- show login when not authenticated -->
               <a
-                href="#"
+                href="/login"
                 class="nav-link m-2 menu-item navbar-button"
                 v-if="!$auth.isAuthenticated"
                 @click="login"
@@ -120,6 +122,9 @@ export default {
     },
     // Log the user out
     logout() {
+      
+      // Remove suggestions from this person..
+      //this.$store.commit('SET_Suggestions', null)
       this.$auth.logout({
         returnTo: window.location.origin,
       });

@@ -4,6 +4,8 @@
       <div class="h-100 d-flex justify-content-center align-items-center">
         <div class="col-10 col-sm-8 col-md-6 col-lg-5 col-xl-4">
           <p class="text-center search-header outline">Choose a destination</p>
+
+          <!-- Input group -->
           <div class="input-group mb-3">
             <div class="input-group-prepend">
               <button
@@ -39,11 +41,19 @@
             />
 
             <div class="input-group-append">
-              <button class="btn btn-primary search-button" @click="Search">
+              <button v-bind:class="{ disabled: loading}" class="btn btn-primary search-button" @click="Search">
                 Search
+                  <span v-bind:class="{ 'd-none': !loading}" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               </button>
             </div>
           </div>
+
+          <!-- Alert error -->
+          <transition name="basic-fade">
+            <div class="alert alert-error" v-show="error" role="alert">
+              {{ error }}
+            </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -56,6 +66,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      loading: false,
       error: "",
       search_string: "",
       url: process.env.VUE_APP_BASE_BACKEND_ROOT,
@@ -65,12 +76,13 @@ export default {
     stopTheEvent: (event) => event.stopPropagation(),
 
     async Search() {
-      if (this.search_string) {
+      if (this.search_string && !this.loading) {
+
         // Make request
         const token = await this.$auth.getTokenSilently();
 
-        console.log(token);
-
+        this.error = "";
+        this.loading = true;
         await axios
           .get(`${this.url}/search/${this.search_string}`, {
             headers: {
@@ -81,10 +93,9 @@ export default {
             console.log(data);
           })
           .catch((error) => {
-            console.log(error);
-
             this.error = error;
           });
+        this.loading = false;
       } else {
         this.error = "Please, specify a destination first";
       }
