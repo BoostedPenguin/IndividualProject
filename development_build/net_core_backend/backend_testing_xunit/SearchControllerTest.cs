@@ -18,9 +18,10 @@ namespace backend_testing_xunit
         private ISearchDataService service;
         private IGoogleService googleService;
         private SearchController controller;
+        private ISuggestionService suggestionService;
         private readonly IMapper mapper;
 
-        public SearchControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper, ISearchDataService service, IGoogleService googleService) : base(http, factory)
+        public SearchControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper, ISearchDataService service, IGoogleService googleService, ISuggestionService suggestionService) : base(http, factory)
         {
             //Configure identity
             this.mapper = mapper;
@@ -28,7 +29,7 @@ namespace backend_testing_xunit
             this.googleService = googleService;
 
             CreateIdentity(Users[0].Auth);
-
+            this.suggestionService = suggestionService;
         }
 
         protected override void CreateIdentity(string auth)
@@ -38,7 +39,7 @@ namespace backend_testing_xunit
 
             // Inject
 
-            service = new SearchDataService(http, googleService);
+            service = new SearchDataService(http, googleService, factory, suggestionService);
             controller = new SearchController(null, service, mapper)
             {
                 ControllerContext = controllerContext,

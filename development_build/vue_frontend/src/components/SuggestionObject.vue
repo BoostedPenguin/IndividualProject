@@ -1,4 +1,5 @@
 <template>
+<transition name="bounce" v-if="show">
   <div class="card">
     <a class="stretched-link text-decoration-none" href="#">
       <img
@@ -11,52 +12,81 @@
     <div class="card-body">
       <h5 class="card-title">
         <div class="d-flex justify-content-between">
-          <div>{{ $store.state.suggestions.data[0] }}</div>
+          <div>{{ placeLocation.name }}</div>
           <div></div>
         </div>
       </h5>
       <div class="card-text d-flex justify-content-between">
-        <p class="out-of-stock" v-if="getCurrent == null">
+        <p class="out-of-stock" v-if="placeLocation.rating == null || placeLocation.rating == 0">
           Rating: unknown
         </p>
-        <p class="out-of-stock" v-else>Rating: {{ getCurrent }}</p>
-        <div>Description</div>
+        <p class="out-of-stock" v-else>Rating: {{ placeLocation.rating }}</p>
       </div>
+        <div>{{ placeLocation.vicinity }}</div>
     </div>
   </div>
+</transition>
 </template>
 
 <script>
 import axios from "axios";
-import { mapState } from 'vuex';
 
 export default {
   data() {
     return {
       google_key: process.env.VUE_APP_GOOGLE_KEY,
-      s_guid: this.guid,
+      photoReference: "",
+      show: false,
     };
   },
-  created() {
-      console.log(this.$store.state.suggestions.data)
+  mounted() {
+    this.show = true;
+    //this.GetGooglePhotos();
   },
-  computed: mapState({
-    getCurrent: state => state.getSuggestion
-  }),
-  props: [
-    'guid'
-  ],
+  props: ['placeLocation'],
   methods: {
-    async GetGooglePhotos(photo_id) {
+    async GetGooglePhotos() {
+      if(!this.placeLocation.photoReference) {
+        console.log("I hate this")
+        console.log(this.placeLocation)
+        return;
+      }
       axios
         .get(
-          `https://maps.googleapis.com/maps/api/place/photo?photoreference=${photo_id}&maxwidth=100&${this.google_key}`
+          `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.placeLocation.photoReference}&maxwidth=100&${this.google_key}`
         )
-        .then();
+        .then(data => {
+          console.log(data);
+          this.photoReference = data;
+        })
+        .catch(err => {
+          console.log(err);
+          this.image_src = "";
+        })
     },
   },
 };
 </script>
 
 <style>
+
+.card:hover{
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+
+.bounce-enter-active {
+  animation: bounce-in .5s;
+}
+.bounce-leave-active {
+  animation: bounce-in .5s reverse;
+}
+@keyframes bounce-in {
+  from {
+    transform: scale(0.2);
+  }
+  to {
+    transform: scale(1.0);
+  }
+}
 </style>
