@@ -13,7 +13,6 @@
             alt=""
           />
         </div>
-
         <div class="row">
           <p class="spinner-text text-center">Generating Suggestions...</p>
         </div>
@@ -40,7 +39,7 @@ import { mapState } from "vuex";
 
 export default {
   name: "SuggestionsGenerator",
-  
+
   components: {
     SuggestionObject,
   },
@@ -71,7 +70,7 @@ export default {
         }
       });
     },
-    
+
     async GetGuestSuggestions(data) {
       axios
         .get(
@@ -88,7 +87,7 @@ export default {
     async GetSuggestions(instance) {
       // Guest / Not logged in
       if (!this.$auth.isAuthenticated) {
-        console.log("HELLOOOO")
+        console.log("HELLOOOO");
         axios
           .get(
             `http://api.ipstack.com/check?access_key=${process.env.VUE_APP_IP_STACK_KEY}`

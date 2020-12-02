@@ -3,7 +3,7 @@
   <div class="card">
     <a class="stretched-link text-decoration-none" href="#">
       <img
-        src="../assets/EiffelTower.jpg"
+        :src=photoReference
         class="card-img-top gallery-cover"
         alt="..."
       />
@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import axios from "axios";
 
 export default {
   data() {
@@ -41,29 +40,11 @@ export default {
   },
   mounted() {
     this.show = true;
-    //this.GetGooglePhotos();
+    this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.placeLocation.photoReference}&maxwidth=500&key=${this.google_key}`
   },
   props: ['placeLocation'],
-  methods: {
-    async GetGooglePhotos() {
-      if(!this.placeLocation.photoReference) {
-        console.log("I hate this")
-        console.log(this.placeLocation)
-        return;
-      }
-      axios
-        .get(
-          `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.placeLocation.photoReference}&maxwidth=100&${this.google_key}`
-        )
-        .then(data => {
-          console.log(data);
-          this.photoReference = data;
-        })
-        .catch(err => {
-          console.log(err);
-          this.image_src = "";
-        })
-    },
+  methods: 
+  {
   },
 };
 </script>
