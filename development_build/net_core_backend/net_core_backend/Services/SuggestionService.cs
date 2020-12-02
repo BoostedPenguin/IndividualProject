@@ -18,7 +18,7 @@ namespace net_core_backend.Services
     public class SuggestionService : DataService<UserKeywords>, ISuggestionService
     {
         private int MaxTimesToDisplay = 5;
-        private int RequestedSuggestions = 10;
+        private int RequestedSuggestions = 8;
         private int TotalCitiesSuggestions = 4;
 
         private readonly IContextFactory contextFactory;

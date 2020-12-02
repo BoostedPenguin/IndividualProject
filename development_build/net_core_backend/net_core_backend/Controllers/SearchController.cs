@@ -57,5 +57,22 @@ namespace net_core_backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("suggestions/guest/{latitude}/{longtitude}")]
+        public async Task<IActionResult> GetGuestSuggestions(double latitude, double longtitude)
+        {
+            try
+            {
+                var data = new UserKeywords() { KeywordAddress = new KeywordAddress() { Latitude = latitude, Longitude = longtitude } };
+
+                var result = await context.GetGuestSuggestions(data);
+                
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

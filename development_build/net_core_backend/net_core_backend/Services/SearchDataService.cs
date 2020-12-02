@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using net_core_backend.Context;
 using net_core_backend.Models;
 using net_core_backend.Services.Extensions;
@@ -29,16 +30,7 @@ namespace net_core_backend.Services
 
         public async Task<GooglePlaceObject[]> GetSuggestions()
         {
-            try
-            {
                 return await suggestionService.Main();
-            }
-            catch(Exception)
-            {
-                // Give random locations :/
-
-                return null;
-            }
         }
 
         public async Task<GoogleDataObject> SearchForLocation(string location, string type = null)
@@ -50,6 +42,16 @@ namespace net_core_backend.Services
             await AddKeyword(location, result);
 
             return result;
+        }
+
+        public async Task<GooglePlaceObject[]> GetGuestSuggestions(UserKeywords keywords)
+        {
+            var result = await googleService.GetNearbyPlaces(keywords);
+
+            if(result.Count > 8) 
+                return result.Take(8).ToArray();
+
+            return result.ToArray();
         }
 
         private async Task AddKeyword(string keyword, GoogleDataObject result)

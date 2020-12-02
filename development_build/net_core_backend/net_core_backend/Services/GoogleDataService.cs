@@ -197,7 +197,7 @@ namespace net_core_backend.Services
             // type - ONLY ONE TYPE MAY BE SUPPLIED
 
 
-            if (input.Keyword == null) throw new ArgumentException("Keyword name is missing");
+            //if (input.Keyword == null) throw new ArgumentException("Keyword name is missing");
 
             GoogleDataObject coordinates;
             if (input.KeywordAddress.Latitude == null || input.KeywordAddress.Longitude == null)
@@ -218,7 +218,7 @@ namespace net_core_backend.Services
 
             //string keyword = input.Keyword != null ? $"&keyword={input.Keyword.Replace(" ", "+")}" : "";
 
-            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&rankby=prominence&radius={radius}{type}");
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&keyword=landmark&radius={radius}{type}");
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 
@@ -238,9 +238,6 @@ namespace net_core_backend.Services
                     Latitude = a.geometry.location.lat,
                     Longtitude = a.geometry.location.lng,
                     Rating = a.rating,
-                    PhotosWidth = a.photos[0].width,
-                    PhotosHeight = a.photos[0].height,
-                    PhotoReference = a.photos[0].photo_reference,
                 });
             }
 
@@ -259,10 +256,6 @@ namespace net_core_backend.Services
             public double? Longtitude { get; set; }
 
             public double? Rating { get; set; } //Optional
-
-            public int? PhotosHeight { get; set; } //Optional
-            public int? PhotosWidth { get; set; } //Optional
-            public string PhotoReference { get; set; } //Optional
         }
 
 
