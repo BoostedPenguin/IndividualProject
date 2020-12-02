@@ -187,7 +187,6 @@ namespace net_core_backend.Services
             return new GoogleDataObject() { Distance = distance, Duration = duration };
         }
 
-
         public async Task<List<GooglePlaceObject>> GetNearbyPlaces(UserKeywords input, string type = null, int radius = 10000)
         {
             //location lng ltd
@@ -195,7 +194,6 @@ namespace net_core_backend.Services
             // keyword - name type address etc.
             // rankny prominence
             // type - ONLY ONE TYPE MAY BE SUPPLIED
-
 
             //if (input.Keyword == null) throw new ArgumentException("Keyword name is missing");
 
@@ -218,7 +216,7 @@ namespace net_core_backend.Services
 
             //string keyword = input.Keyword != null ? $"&keyword={input.Keyword.Replace(" ", "+")}" : "";
 
-            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&keyword=landmark&radius={radius}{type}");
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&keyword=landmark&rankby=prominence&radius={radius}{type}");
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 
@@ -228,17 +226,21 @@ namespace net_core_backend.Services
 
             foreach (var a in result.results)
             {
-                output.Add(new GooglePlaceObject()
+                if(a.photos != null)
                 {
-                    Guid = Guid.NewGuid(),
-                    BusinessStatus = a.business_status,
-                    Name = a.name,
-                    PlaceId = a.place_id,
-                    Vicinity = a.vicinity,
-                    Latitude = a.geometry.location.lat,
-                    Longtitude = a.geometry.location.lng,
-                    Rating = a.rating,
-                });
+                    output.Add(new GooglePlaceObject()
+                    {
+                        Guid = Guid.NewGuid(),
+                        BusinessStatus = a.business_status,
+                        Name = a.name,
+                        PlaceId = a.place_id,
+                        Vicinity = a.vicinity,
+                        Latitude = a.geometry.location.lat,
+                        Longtitude = a.geometry.location.lng,
+                        Rating = a.rating,
+                        PhotoReference = a.photos[0].photo_reference,
+                    });
+                }
             }
 
             return output;
@@ -256,6 +258,9 @@ namespace net_core_backend.Services
             public double? Longtitude { get; set; }
 
             public double? Rating { get; set; } //Optional
+            public int? PhotosHeight { get; set; } //Optional
+            public int? PhotosWidth { get; set; } //Optional
+            public string PhotoReference { get; set; } //Optional
         }
 
 

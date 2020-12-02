@@ -107,7 +107,7 @@ namespace backend_testing_xunit
             var suggestions = await service.Main();
             sw.Stop();
 
-            Assert.Equal(10, suggestions.Length);
+            Assert.Equal(8, suggestions.Length);
         }
     }
 }
