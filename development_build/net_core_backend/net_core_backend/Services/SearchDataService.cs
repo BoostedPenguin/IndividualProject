@@ -39,7 +39,16 @@ namespace net_core_backend.Services
 
             if (result == null) throw new ArgumentException("There wasn't a match for this search location");
 
-            await AddKeyword(location, result);
+            try
+            {
+                httpContext.GetCurrentAuth();
+                await AddKeyword(location, result);
+            }
+            catch (Exception)
+            {
+                // Person is a guest
+                // Person isn't a guest, but the keyword already exists in the database
+            }
 
             return result;
         }
@@ -63,6 +72,9 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
+                if (a.UserKeywords.FirstOrDefaultAsync(x => x.Keyword == keyword) != null)
+                    throw new ArgumentException("This keyword already exists in our database");
+
                 var address = new KeywordAddress()
                 {
                     City = result.City,

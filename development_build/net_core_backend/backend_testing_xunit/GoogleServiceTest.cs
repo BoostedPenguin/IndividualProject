@@ -98,38 +98,38 @@ namespace backend_testing_xunit
             Assert.Equal(Serialize(expected), Serialize(result));
         }
 
-        [Fact]
-        public async Task Testing()
-        {
-            var user = new Users() { Auth = "AuthForTesting" };
-            // Inject
+        //[Fact]
+        //public async Task Testing()
+        //{
+        //    var user = new Users() { Auth = "AuthForTesting" };
+        //    // Inject
 
-            UserKeywords keyword;
-            var s = await service.LocationFromLandmark("паметник альоша бургас");
+        //    UserKeywords keyword;
+        //    var s = await service.LocationFromLandmark("паметник альоша бургас");
 
 
-            using (var a = factory.CreateDbContext())
-            {
+        //    using (var a = factory.CreateDbContext())
+        //    {
 
-                await a.AddAsync(user);
-                await a.SaveChangesAsync();
-                keyword = new UserKeywords()
-                {
-                    Keyword = "НЕГ Гьоте",
-                    KeywordAddress = new KeywordAddress()
-                    {
-                        City = "Burgas",
-                        Country = "Bulgaria",
-                    },
-                    UserId = user.Id,
-                };
+        //        await a.AddAsync(user);
+        //        await a.SaveChangesAsync();
+        //        keyword = new UserKeywords()
+        //        {
+        //            Keyword = "НЕГ Гьоте",
+        //            KeywordAddress = new KeywordAddress()
+        //            {
+        //                City = "Burgas",
+        //                Country = "Bulgaria",
+        //            },
+        //            UserId = user.Id,
+        //        };
 
-                await a.AddAsync(keyword);
-                await a.SaveChangesAsync();
-            }
-            // Act
-            var result = await service.GetNearbyPlaces(keyword);
-            var g = result;
-        }
+        //        await a.AddAsync(keyword);
+        //        await a.SaveChangesAsync();
+        //    }
+        //    // Act
+        //    var result = await service.GetNearbyPlaces(keyword);
+        //    var g = result;
+        //}
     }
 }

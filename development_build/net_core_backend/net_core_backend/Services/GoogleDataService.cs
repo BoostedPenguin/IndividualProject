@@ -48,10 +48,17 @@ namespace net_core_backend.Services
             outputType = givenType != null ? outputType + string.Join("|", givenType) : "";
 
             string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/geocode/json?address={landmark}{outputType}");
-
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 
             if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
+
+            string fields = $"business_status,international_phone_number,name,opening_hours,rating,website,user_ratings_total,vicinity,photos";
+
+            string responsePlace = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/details/json?place_id={result.results[0].place_id}&fields={fields}");
+            dynamic resultPlace = JsonConvert.DeserializeObject(responsePlace);
+
+            if (resultPlace.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
+
 
             var data = new GoogleDataObject();
 
@@ -85,6 +92,26 @@ namespace net_core_backend.Services
             data.Latitude = result.results[0].geometry.location.lat;
             data.Longitude = result.results[0].geometry.location.lng;
             data.PlaceId = result.results[0].place_id;
+            data.Business_status = resultPlace.result.business_status;
+            data.International_phone_number = resultPlace.result.international_phone_number;
+            data.Name = resultPlace.result.name;
+            if(resultPlace.result.photos != null)
+            {
+                data.PhotoReference = resultPlace.result.photos[0].photo_reference;
+            }
+            if(resultPlace.result.opening_hours != null)
+            {
+                data.OpenNow = resultPlace.result.opening_hours.open_now;
+
+                foreach (var a in resultPlace.result.opening_hours.weekday_text)
+                {
+                    data.WeekdayText.Add(a.Value);
+                }
+            }
+            data.Website = resultPlace.result.website;
+            data.User_ratings_total = resultPlace.result.user_ratings_total;
+            data.Vicinity = resultPlace.result.vicinity;
+            data.Rating = resultPlace.result.rating;
 
             return data;
         }
@@ -187,7 +214,7 @@ namespace net_core_backend.Services
             return new GoogleDataObject() { Distance = distance, Duration = duration };
         }
 
-        public async Task<List<GooglePlaceObject>> GetNearbyPlaces(UserKeywords input, string type = null, int radius = 10000)
+        public async Task<List<GooglePlaceObject>> GetNearbyPlaces(UserKeywords input, string type = null, int radius = 25000, string searchKeyword = "landmark")
         {
             //location lng ltd
             // Dont include radius if rankby DISTANCE exists
@@ -214,9 +241,7 @@ namespace net_core_backend.Services
 
             type = type != null ? $"&type={type}" : "";
 
-            //string keyword = input.Keyword != null ? $"&keyword={input.Keyword.Replace(" ", "+")}" : "";
-
-            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&keyword=landmark&rankby=prominence&radius={radius}{type}");
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&keyword={searchKeyword}&rankby=prominence&radius={radius}{type}");
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 
