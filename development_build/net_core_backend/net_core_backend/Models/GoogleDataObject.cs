@@ -10,6 +10,7 @@ namespace net_core_backend.Models
         public GoogleDataObject()
         {
             Types = new List<string>();
+            WeekdayText = new List<string>();
         }
 
         // Geocoding locations
@@ -22,6 +23,21 @@ namespace net_core_backend.Models
         // Distance matrix
         public string Duration { get; set; }
         public string Distance { get; set; }
+
+
+
+        // Place details
+        public string Business_status { get; set; }
+        public string International_phone_number { get; set; }
+        public string Name { get; set; }
+        public string OpenNow { get; set; }
+        public List<string> WeekdayText { get; set; }
+        public double? Rating { get; set; }
+        public string PhotoReference { get; set; }
+        public string Website { get; set; }
+        public int? User_ratings_total { get; set; }
+        public string Vicinity { get; set; }
+
 
         // Coordinates
         public double? Latitude { get; set; }

@@ -1,17 +1,17 @@
 <template>
-  <div class="main">
-    <SearchMenu />
+  <div>
+    <SearchItem />
     <Suggestions />
   </div>
 </template>
 
 <script>
-import SearchMenu from "../components/SearchMenu";
+import SearchItem from "../components/SearchItem";
 import Suggestions from "../components/Suggestions";
 
 export default {
   components: {
-    SearchMenu,
+    SearchItem,
     Suggestions,
   },
 };

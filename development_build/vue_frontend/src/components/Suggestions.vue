@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main-suggestions">
     <div class="container-fluid">
       <div
         class="d-flex flex-column align-items-center justify-content-center"
@@ -47,12 +47,11 @@ export default {
   data() {
     return {
       url: process.env.VUE_APP_BASE_BACKEND_ROOT,
-      loadingSuggestions: false,
+      loadingSuggestions: true,
     };
   },
 
   created() {
-    this.loadingSuggestions = true;
     this.InitiateAuth(this.GetSuggestions);
   },
 
@@ -64,11 +63,16 @@ export default {
     InitiateAuth(fn) {
       // have to do this nonsense to make sure auth0Client is ready
       var instance = getInstance();
+
       instance.$watch("loading", (loading) => {
         if (loading === false) {
           fn(instance);
         }
       });
+
+      if (instance.loading == false) {
+        this.GetSuggestions(instance);
+      }
     },
 
     async GetGuestSuggestions(data) {
@@ -85,6 +89,8 @@ export default {
     },
 
     async GetSuggestions(instance) {
+      console.log("Fetching now");
+
       // Guest / Not logged in
       if (!this.$auth.isAuthenticated) {
         console.log("HELLOOOO");
@@ -92,7 +98,9 @@ export default {
           .get(
             `http://api.ipstack.com/check?access_key=${process.env.VUE_APP_IP_STACK_KEY}`
           )
-          .then((data) => this.GetGuestSuggestions(data.data))
+          .then((data) => {
+            this.GetGuestSuggestions(data.data);
+          })
           .catch((err) => console.log(err));
       }
       await instance.getTokenSilently().then((authToken) => {

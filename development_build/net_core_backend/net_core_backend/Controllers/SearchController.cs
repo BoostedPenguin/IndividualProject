@@ -25,7 +25,6 @@ namespace net_core_backend.Controllers
         }
 
         [HttpGet("{location}")]
-        [Authorize]
         public async Task<IActionResult> SearchForLocation(string location)
         {
             try

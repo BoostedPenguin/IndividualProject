@@ -38,12 +38,22 @@
               placeholder="Eiffel Tower, Paris"
               aria-label="Eiffel Tower, Paris"
               aria-describedby="basic-addon2"
+              @keyup.enter="Search"
             />
 
             <div class="input-group-append">
-              <button v-bind:class="{ disabled: loading}" class="btn btn-primary search-button" @click="Search">
+              <button
+                v-bind:class="{ disabled: loading }"
+                class="btn btn-primary search-button"
+                @click="Search"
+              >
                 Search
-                  <span v-bind:class="{ 'd-none': !loading}" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                <span
+                  v-bind:class="{ 'd-none': !loading }"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
               </button>
             </div>
           </div>
@@ -75,22 +85,29 @@ export default {
   methods: {
     stopTheEvent: (event) => event.stopPropagation(),
 
+    // Executes get request for search location and displays results in another component
     async Search() {
       if (this.search_string && !this.loading) {
-
-        // Make request
-        const token = await this.$auth.getTokenSilently();
-
         this.error = "";
         this.loading = true;
+
+        let authToken = "";
+        try {
+          authToken = await this.$auth.getTokenSilently();
+        } catch (err) {
+          // Person is a guest
+        }
+
         await axios
           .get(`${this.url}/search/${this.search_string}`, {
             headers: {
-              Authorization: `Bearer ${token}`, // send the access token through the 'Authorization' header
+              Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
             },
           })
           .then((data) => {
             console.log(data);
+            this.$store.commit("SET_SearchItem", data);
+            this.$router.push({ path: "search" });
           })
           .catch((error) => {
             this.error = error;
