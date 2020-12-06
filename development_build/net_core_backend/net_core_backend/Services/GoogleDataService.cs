@@ -62,7 +62,42 @@ namespace net_core_backend.Services
 
             var data = new GoogleDataObject();
 
-            foreach(var res in result.results[0].address_components)
+            // Get location details
+
+            GetLocationFromResponse(result.results[0], ref data);
+
+            // Google place details
+            GetDetailsFromResponse(resultPlace.result, ref data);
+
+
+            return data;
+        }
+
+        public async Task<GoogleDataObject> GetLocationFromPlaceID(string placeId)
+        {
+            string fields = $"business_status,international_phone_number,name,opening_hours,rating,website,user_ratings_total,vicinity,photos,address_component,adr_address,geometry,vicinity,type,place_id";
+            
+            string responsePlace = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/details/json?place_id={placeId}&fields={fields}");
+            dynamic resultPlace = JsonConvert.DeserializeObject(responsePlace);
+            
+            if (resultPlace.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
+
+            var data = new GoogleDataObject();
+
+            //
+            GetDetailsFromResponse(resultPlace.result, ref data);
+
+            //
+            GetLocationFromResponse(resultPlace.result, ref data);
+
+            return data;
+
+        }
+
+        private void GetLocationFromResponse(dynamic result, ref GoogleDataObject data)
+        {
+
+            foreach (var res in result.address_components)
             {
                 if (data.City == null && res.types[0] == "locality")
                 {
@@ -84,36 +119,38 @@ namespace net_core_backend.Services
                 }
             }
 
-            foreach (var type in result.results[0].types)
-            {
-                data.Types.Add((string)type);
-            }
+            //foreach (var type in result.results[0].types)
+            //{
+            //    data.Types.Add((string)type);
+            //}
 
-            data.Latitude = result.results[0].geometry.location.lat;
-            data.Longitude = result.results[0].geometry.location.lng;
-            data.PlaceId = result.results[0].place_id;
-            data.Business_status = resultPlace.result.business_status;
-            data.International_phone_number = resultPlace.result.international_phone_number;
-            data.Name = resultPlace.result.name;
-            if(resultPlace.result.photos != null)
-            {
-                data.PhotoReference = resultPlace.result.photos[0].photo_reference;
-            }
-            if(resultPlace.result.opening_hours != null)
-            {
-                data.OpenNow = resultPlace.result.opening_hours.open_now;
+            data.Latitude = result.geometry.location.lat;
+            data.Longitude = result.geometry.location.lng;
+            data.PlaceId = result.place_id;
+        }
 
-                foreach (var a in resultPlace.result.opening_hours.weekday_text)
+        private void GetDetailsFromResponse(dynamic resultPlace, ref GoogleDataObject data)
+        {
+            data.Business_status = resultPlace.business_status;
+            data.International_phone_number = resultPlace.international_phone_number;
+            data.Name = resultPlace.name;
+            if (resultPlace.photos != null)
+            {
+                data.PhotoReference = resultPlace.photos[0].photo_reference;
+            }
+            if (resultPlace.opening_hours != null)
+            {
+                data.OpenNow = resultPlace.opening_hours.open_now;
+
+                foreach (var a in resultPlace.opening_hours.weekday_text)
                 {
                     data.WeekdayText.Add(a.Value);
                 }
             }
-            data.Website = resultPlace.result.website;
-            data.User_ratings_total = resultPlace.result.user_ratings_total;
-            data.Vicinity = resultPlace.result.vicinity;
-            data.Rating = resultPlace.result.rating;
-
-            return data;
+            data.Website = resultPlace.website;
+            data.User_ratings_total = resultPlace.user_ratings_total;
+            data.Vicinity = resultPlace.vicinity;
+            data.Rating = resultPlace.rating;
         }
 
         public async Task<GoogleDataObject> LocationFromCoordinates(GoogleDataObject coordinates)

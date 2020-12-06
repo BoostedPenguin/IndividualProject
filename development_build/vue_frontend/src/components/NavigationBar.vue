@@ -4,9 +4,9 @@
     <nav class="navbar navbar-expand-lg navbar-custom">
       <div class="container">
         <!-- Logo -->
-        <a class="navbar-brand" href="#">
+        <router-link class="navbar-button" to="/">
           <img src="../assets/MainLogo.png" width="150" alt="" />
-        </a>
+        </router-link>
 
         <!-- Logged in options -->
 
