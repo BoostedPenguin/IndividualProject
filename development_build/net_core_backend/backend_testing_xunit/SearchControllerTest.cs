@@ -58,7 +58,7 @@ namespace backend_testing_xunit
             var result = await service.SearchForLocation("НЕГ Гьоте");
 
             // Assert
-            Assert.Equal(Serialize(expected), Serialize(result));
+            Assert.Equal(typeof(GoogleDataObject), result.GetType());
         }
     }
 }

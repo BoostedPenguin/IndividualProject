@@ -14,7 +14,7 @@ const routes = [
     component: Home
   },
   {
-    path: '/search',
+    path: '/search/:placeId',
     name: 'SearchItemView',
     component: SearchItemView
   },

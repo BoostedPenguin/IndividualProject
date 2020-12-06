@@ -41,6 +41,21 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpGet("placeid/{placeId}")]
+        public async Task<IActionResult> GetPlaceByID(string placeId)
+        {
+            try
+            {
+                var result = await context.GetPlaceByID(placeId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("suggestions")]
         [Authorize]
         public async Task<IActionResult> GetSuggestions()

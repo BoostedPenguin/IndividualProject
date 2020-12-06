@@ -33,6 +33,15 @@ namespace net_core_backend.Services
                 return await suggestionService.Main();
         }
 
+        public async Task<GoogleDataObject> GetPlaceByID(string placeId)
+        {
+            var result = await googleService.GetLocationFromPlaceID(placeId);
+            
+            if (result == null) throw new ArgumentException("There wasn't a match for this search location");
+
+            return result;
+        }
+
         public async Task<GoogleDataObject> SearchForLocation(string location, string type = null)
         {
             var result = await googleService.LocationFromLandmark(location);

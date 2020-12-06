@@ -105,9 +105,12 @@ export default {
             },
           })
           .then((data) => {
-            console.log(data);
             this.$store.commit("SET_SearchItem", data);
-            this.$router.push({ path: "search" });
+            console.log(data.data.placeId);
+            this.$router.push({
+              name: "SearchItemView",
+              params: { placeId: data.data.placeId },
+            });
           })
           .catch((error) => {
             this.error = error;

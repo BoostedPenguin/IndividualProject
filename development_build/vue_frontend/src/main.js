@@ -1,15 +1,16 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import '../public/global.css'
 
 
 // Import the Auth0 configuration
-import { domain, clientId, audience } from "../auth_config.json";
+import { domain, clientId, audience } from "../auth_config.json"
 import store from "./store/store"
 
 
 // Import the plugin here
-import { Auth0Plugin } from "./auth";
+import { Auth0Plugin } from "./auth"
 
 Vue.use(Auth0Plugin, {
   domain,
@@ -19,9 +20,9 @@ Vue.use(Auth0Plugin, {
     router.push(appState && appState.targetUrl
       ? appState.targetUrl
       : window.location.pathname
-      );
+    )
   }
-});
+})
 
 Vue.config.productionTip = false
 
