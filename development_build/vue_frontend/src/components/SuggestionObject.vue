@@ -1,7 +1,11 @@
 <template>
   <transition name="bounce" v-if="show">
     <div class="card">
-      <a class="stretched-link text-decoration-none" href="#">
+      <a
+        class="stretched-link text-decoration-none"
+        v-on:click="SuggestedClicked"
+        href="#"
+      >
         <img
           :src="photoReference"
           class="card-img-top gallery-cover"
@@ -45,7 +49,14 @@ export default {
     this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.placeLocation.photoReference}&maxwidth=500&key=${this.google_key}`;
   },
   props: ["placeLocation"],
-  methods: {},
+  methods: {
+    SuggestedClicked() {
+      this.$router.push({
+        name: "SearchItemView",
+        params: { placeId: this.placeLocation.placeId },
+      });
+    },
+  },
 };
 </script>
 

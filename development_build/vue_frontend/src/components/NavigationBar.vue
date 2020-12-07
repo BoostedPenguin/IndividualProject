@@ -109,12 +109,19 @@
         </div>
       </div>
     </nav>
-    <router-view></router-view>
+    <transition-handler>
+      <router-view :key="$route.fullPath" />
+    </transition-handler>
   </div>
 </template>
 
 <script>
+import TransitionHandler from "./TransitionHandler.vue";
+
 export default {
+  components: {
+    TransitionHandler,
+  },
   data() {
     return {};
   },
