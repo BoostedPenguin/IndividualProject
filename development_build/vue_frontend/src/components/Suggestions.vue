@@ -81,9 +81,8 @@ export default {
           `${this.url}/search/suggestions/guest/${data.latitude}/${data.longitude}`
         )
         .then((data) => {
-          this.loadingSuggestions = false;
-
           this.$store.commit("SET_Suggestions", data);
+          this.loadingSuggestions = false;
         })
         .catch((err) => console.log(err));
     },

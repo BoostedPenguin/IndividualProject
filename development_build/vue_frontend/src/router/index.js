@@ -16,7 +16,8 @@ const routes = [
   {
     path: '/search/:placeId',
     name: 'SearchItemView',
-    component: SearchItemView
+    component: SearchItemView,
+    meta: { transitionName: 'slide' },
   },
   {
     path: '*',

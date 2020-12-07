@@ -9,28 +9,38 @@
         <div class="search-item-body col-12 col-lg-8 mt-lg-0 mt-4">
           <div class="row m-lg-5 my-2">
             <div class="col-lg-6 col-12">
-              <p><strong>Location Name:</strong> {{ searchItem.name }}</p>
-              <p><strong>City:</strong> {{ searchItem.city }}</p>
-              <p><strong>Country:</strong> {{ searchItem.country }}</p>
-              <p>
+              <p v-show="searchItem.name">
+                <strong>Location Name:</strong> {{ searchItem.name }}
+              </p>
+              <p v-show="searchItem.city">
+                <strong>City:</strong> {{ searchItem.city }}
+              </p>
+              <p v-show="searchItem.country">
+                <strong>Country:</strong> {{ searchItem.country }}
+              </p>
+              <p v-show="searchItem.international_phone_number">
                 <strong>Phone:</strong>
                 {{ searchItem.international_phone_number }}
               </p>
 
-              <p>
+              <p v-show="searchItem.rating">
                 <strong>Rating:</strong> {{ searchItem.rating }}
                 {{ searchItem.user_ratings_total }}
               </p>
-              <p><strong>Address:</strong> {{ searchItem.vicinity }}</p>
+              <p v-show="searchItem.vicinity">
+                <strong>Address:</strong> {{ searchItem.vicinity }}
+              </p>
             </div>
             <div class="col-lg-6 col-12">
-              <p>
+              <p v-show="searchItem.website">
                 <strong>Location website:</strong>
                 <a :href="searchItem.website"> {{ searchItem.website }} </a>
               </p>
-              <p><strong>Open now:</strong> {{ searchItem.openNow }}</p>
+              <p v-show="searchItem.openNow">
+                <strong>Open now:</strong> {{ searchItem.openNow }}
+              </p>
 
-              <div class="dropdown">
+              <div v-show="searchItem.weekdayText > 0" class="dropdown">
                 <button
                   class="btn btn-primary dropdown-toggle"
                   type="button"
