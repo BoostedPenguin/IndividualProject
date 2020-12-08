@@ -1,6 +1,6 @@
 <template>
   <transition name="bounce" v-if="show">
-    <div class="card">
+    <div class="card suggestion-card">
       <a
         class="stretched-link text-decoration-none"
         v-on:click="SuggestedClicked"
@@ -61,7 +61,14 @@ export default {
 </script>
 
 <style>
-.card:hover {
+.suggestion-card {
+  border: 1px;
+  box-shadow: 1px 2px 7px 6px rgba(0, 0, 0, 0.25);
+
+  transition: 0.5s;
+}
+
+.suggestion-card:hover {
   transform: scale(1.05);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
 }

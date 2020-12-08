@@ -37,7 +37,9 @@
 
             <!-- My account -->
             <li class="nav-item">
-              <router-link class="nav-link m-2 menu-item navbar-button" to="#"
+              <router-link
+                class="nav-link m-2 menu-item navbar-button"
+                to="/account"
                 ><i class="fa fa-user-circle-o" aria-hidden="true"></i>
                 &nbsp;My Account
               </router-link>

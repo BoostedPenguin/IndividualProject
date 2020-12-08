@@ -151,14 +151,6 @@ body {
     height: 60vw;
   }
 }
-
-.card {
-  border: 1px;
-  box-shadow: 1px 2px 7px 6px rgba(0, 0, 0, 0.25);
-
-  transition: 0.5s;
-}
-
 .container-fluid {
   padding-right: 50px;
   padding-left: 50px;
