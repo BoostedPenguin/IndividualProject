@@ -2,8 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import SearchItemView from '../views/SearchItemView.vue'
-// import Profile from "../views/Profile.vue"
-// import { authGuard } from "../auth/authGuard"
+import AccountView from '../views/AccountView.vue'
+import { authGuard } from "../auth/authGuard"
 
 Vue.use(VueRouter)
 
@@ -18,6 +18,13 @@ const routes = [
     name: 'SearchItemView',
     component: SearchItemView,
     meta: { transitionName: 'slide' },
+  },
+  {
+    path: '/account',
+    name: 'Account',
+    component: AccountView,
+    meta: { transitionName: 'slide' },
+    beforeEnter: authGuard
   },
   {
     path: '*',
