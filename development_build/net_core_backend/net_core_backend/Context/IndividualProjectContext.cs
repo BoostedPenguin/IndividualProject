@@ -132,6 +132,7 @@ namespace net_core_backend.Models
                     .HasMaxLength(50);
 
                 entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("(getdate())")
                     .HasColumnName("updated_at")
                     .HasColumnType("datetime");
 
@@ -224,6 +225,7 @@ namespace net_core_backend.Models
                     .HasMaxLength(50);
 
                 entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("(getdate())")
                     .HasColumnName("updated_at")
                     .HasColumnType("datetime");
 

@@ -6,11 +6,15 @@
           <div class="col-lg-12 offset-lg-0 col-8 offset-2">
             <router-link to="/" class="text-decoration-none">
               <div class="card myaccount-card">
-                <img
-                  class="card-img-top img-fluid"
-                  src="../assets/user.png"
-                  alt="Card image cap"
-                />
+                <div class="row justify-content-center">
+                  <div class="col-10">
+                    <img
+                      class="card-img-top img-fluid"
+                      src="../assets/user.png"
+                      alt="Card image cap"
+                    />
+                  </div>
+                </div>
 
                 <div class="card-body">
                   <p class="card-text">Information</p>
@@ -22,13 +26,17 @@
         </div>
         <div class="col-lg-4 col-12 mt-3">
           <div class="col-lg-12 offset-lg-0 col-8 offset-2">
-            <router-link to="/" class="text-decoration-none">
+            <router-link to="/support" class="text-decoration-none">
               <div class="card myaccount-card">
-                <img
-                  class="card-img-top img-fluid"
-                  src="../assets/customer_support.png"
-                  alt="Card image cap"
-                />
+                <div class="row justify-content-center">
+                  <div class="col-10">
+                    <img
+                      class="card-img-top img-fluid"
+                      src="../assets/customer_support.png"
+                      alt="Card image cap"
+                    />
+                  </div>
+                </div>
                 <div class="card-body">
                   <p class="card-text">Support</p>
                 </div>
@@ -42,11 +50,15 @@
           <div class="col-lg-12 offset-lg-0 col-8 offset-2">
             <router-link to="/" class="text-decoration-none">
               <div class="card myaccount-card">
-                <img
-                  class="card-img-top img-fluid"
-                  src="../assets/settings.png"
-                  alt="Card image cap"
-                />
+                <div class="row justify-content-center">
+                  <div class="col-10">
+                    <img
+                      class="card-img-top img-fluid"
+                      src="../assets/settings.png"
+                      alt="Card image cap"
+                    />
+                  </div>
+                </div>
                 <div class="card-body">
                   <p class="card-text">Settings</p>
                 </div>
@@ -61,7 +73,15 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      url: process.env.VUE_APP_BASE_BACKEND_ROOT,
+      error: "",
+    };
+  },
+  methods: {},
+};
 </script>
 
 <style scoped>

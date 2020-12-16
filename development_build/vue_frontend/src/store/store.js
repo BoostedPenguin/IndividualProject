@@ -10,13 +10,14 @@ export default new Vuex.Store({
     suggestions: {
     },
     searchItem: {},
+    supportTickets: {},
   },
   mutations: {
     SET_Suggestions(state, payload) {
       state.suggestions = payload
     },
-    SET_SearchItem(state, payload) {
-      state.searchItem = payload
+    SET_SupportTicket(state, payload) {
+      state.supportTickets = payload
     },
   },
   getters: {
@@ -35,7 +36,7 @@ export default new Vuex.Store({
       console.log(getters.token)
 
       if (!getters.token) {
-        return console.log("No token provided")
+        return console.log("Fuck my life")
       }
       axios
         .get(`${host}/search/suggestions`, {
