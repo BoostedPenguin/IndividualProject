@@ -16,6 +16,9 @@ export default new Vuex.Store({
     SET_Suggestions(state, payload) {
       state.suggestions = payload
     },
+    SET_SearchItem(state, payload) {
+      state.searchItem = payload
+    },
     SET_SupportTicket(state, payload) {
       state.supportTickets = payload
     },
