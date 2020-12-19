@@ -5,9 +5,12 @@
         <h1>Customer Support</h1>
       </div>
       <div class="row justify-content-end">
-        <button class="btn btn-primary btn-lg mr-2 mr-lg-0 create-button">
+        <router-link
+          to="/support/ticket"
+          class="btn btn-primary btn-lg mr-2 mr-lg-0 create-button"
+        >
           Create Ticket
-        </button>
+        </router-link>
       </div>
       <div
         v-if="getTickets != null && getTickets.length > 0"
@@ -46,9 +49,7 @@ import { mapState } from "vuex";
 import axios from "axios";
 export default {
   data() {
-    return {
-      url: process.env.VUE_APP_BASE_BACKEND_ROOT,
-    };
+    return {};
   },
   computed: mapState({
     getTickets: (state) => state.supportTickets.data,
@@ -63,7 +64,7 @@ export default {
       const authToken = await this.$auth.getTokenSilently();
 
       await axios
-        .get(`${this.url}/ticket`, {
+        .get(`${this.$store.state.base_url}/ticket`, {
           headers: {
             Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
           },

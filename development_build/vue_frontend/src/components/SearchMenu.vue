@@ -79,7 +79,6 @@ export default {
       loading: false,
       error: "",
       search_string: "",
-      url: process.env.VUE_APP_BASE_BACKEND_ROOT,
     };
   },
   methods: {
@@ -99,7 +98,7 @@ export default {
         }
 
         await axios
-          .get(`${this.url}/search/${this.search_string}`, {
+          .get(`${this.$store.state.base_url}/search/${this.search_string}`, {
             headers: {
               Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
             },

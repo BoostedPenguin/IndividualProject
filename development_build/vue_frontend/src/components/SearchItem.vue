@@ -77,8 +77,6 @@ export default {
   data() {
     return {
       photoReference: "",
-      google_key: process.env.VUE_APP_GOOGLE_KEY,
-      baseUrl: process.env.VUE_APP_BASE_BACKEND_ROOT,
     };
   },
 
@@ -98,7 +96,7 @@ export default {
 
   mounted() {
     if (this.searchItem) {
-      this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.google_key}`;
+      this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.$store.state.google_key}`;
     }
   },
 
@@ -109,7 +107,9 @@ export default {
   methods: {
     async RequestSearchItem() {
       await axios
-        .get(`${this.baseUrl}/search/placeid/${this.$route.params.placeId}`)
+        .get(
+          `${this.$store.state.base_url}/search/placeid/${this.$route.params.placeId}`
+        )
         .then((data) => {
           this.$store.commit("SET_SearchItem", data);
           this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.google_key}`;

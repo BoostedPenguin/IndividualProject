@@ -3,7 +3,8 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import SearchItemView from '../views/SearchItemView.vue'
 import AccountView from '../views/AccountView.vue'
-import CustomerSupport from '../views/CustomerSupport.vue'
+import CustomerSupportView from '../views/CustomerSupportView.vue'
+import TicketCreationView from '../views/TicketCreationView.vue'
 import { authGuard } from "../auth/authGuard"
 
 Vue.use(VueRouter)
@@ -29,8 +30,15 @@ const routes = [
   },
   {
     path: '/support',
-    name: 'CustomerSupport',
-    component: CustomerSupport,
+    name: 'CustomerSupportView',
+    component: CustomerSupportView,
+    meta: { transitionName: 'slide' },
+    beforeEnter: authGuard
+  },
+  {
+    path: '/support/ticket',
+    name: 'TicketCreationView',
+    component: TicketCreationView,
     meta: { transitionName: 'slide' },
     beforeEnter: authGuard
   },

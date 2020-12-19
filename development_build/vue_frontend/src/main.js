@@ -12,7 +12,10 @@ import store from "./store/store"
 // Import the plugin here
 import { Auth0Plugin } from "./auth"
 
+let base_url = process.env.VUE_APP_BASE_BACKEND_ROOT
+
 Vue.use(Auth0Plugin, {
+  base_url,
   domain,
   clientId,
   audience,

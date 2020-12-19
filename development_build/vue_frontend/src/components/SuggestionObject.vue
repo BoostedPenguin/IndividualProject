@@ -46,7 +46,7 @@ export default {
   },
   mounted() {
     this.show = true;
-    this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.placeLocation.photoReference}&maxwidth=500&key=${this.google_key}`;
+    this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.placeLocation.photoReference}&maxwidth=500&key=${this.$store.state.google_key}`;
   },
   props: ["placeLocation"],
   methods: {

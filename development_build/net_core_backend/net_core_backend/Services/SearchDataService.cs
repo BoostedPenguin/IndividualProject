@@ -81,7 +81,7 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                if (a.UserKeywords.FirstOrDefaultAsync(x => x.Keyword == keyword) != null)
+                if (await a.UserKeywords.FirstOrDefaultAsync(x => x.Keyword == keyword) != null)
                     throw new ArgumentException("This keyword already exists in our database");
 
                 var address = new KeywordAddress()

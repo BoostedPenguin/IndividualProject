@@ -11,6 +11,9 @@ export default new Vuex.Store({
     },
     searchItem: {},
     supportTickets: {},
+    base_url: process.env.VUE_APP_BASE_BACKEND_ROOT,
+    google_key: process.env.VUE_APP_GOOGLE_KEY,
+    ip_stack: process.env.VUE_APP_IP_STACK_KEY,
   },
   mutations: {
     SET_Suggestions(state, payload) {

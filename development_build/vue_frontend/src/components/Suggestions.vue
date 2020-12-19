@@ -46,7 +46,6 @@ export default {
 
   data() {
     return {
-      url: process.env.VUE_APP_BASE_BACKEND_ROOT,
       loadingSuggestions: true,
     };
   },
@@ -78,7 +77,7 @@ export default {
     async GetGuestSuggestions(data) {
       axios
         .get(
-          `${this.url}/search/suggestions/guest/${data.latitude}/${data.longitude}`
+          `${this.$store.state.base_url}/search/suggestions/guest/${data.latitude}/${data.longitude}`
         )
         .then((data) => {
           this.$store.commit("SET_Suggestions", data);
@@ -95,7 +94,7 @@ export default {
         console.log("HELLOOOO");
         axios
           .get(
-            `http://api.ipstack.com/check?access_key=${process.env.VUE_APP_IP_STACK_KEY}`
+            `http://api.ipstack.com/check?access_key=${this.$store.state.ip_stack}`
           )
           .then((data) => {
             this.GetGuestSuggestions(data.data);
@@ -106,7 +105,7 @@ export default {
         // do authorized API calls with auth0 authToken here
 
         axios
-          .get(`${this.url}/search/suggestions`, {
+          .get(`${this.$store.state.base_url}/search/suggestions`, {
             headers: {
               Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
             },
