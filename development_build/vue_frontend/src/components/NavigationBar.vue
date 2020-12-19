@@ -40,6 +40,8 @@
               <router-link
                 class="nav-link m-2 menu-item navbar-button"
                 to="/account"
+                data-toggle="collapse"
+                data-target=".navbar-collapse.show"
                 ><i class="fa fa-user-circle-o" aria-hidden="true"></i>
                 &nbsp;My Account
               </router-link>
@@ -49,7 +51,12 @@
 
             <!-- My trips -->
             <li class="nav-item">
-              <router-link class="nav-link m-2 menu-item navbar-button" to="#">
+              <router-link
+                class="nav-link m-2 menu-item navbar-button"
+                to="#"
+                data-toggle="collapse"
+                data-target=".navbar-collapse.show"
+              >
                 <i class="fa fa-globe" aria-hidden="true"></i>
                 My Trips
               </router-link>
@@ -63,6 +70,8 @@
               <router-link
                 class="nav-link m-2 menu-item navbar-button"
                 to="/about"
+                data-toggle="collapse"
+                data-target=".navbar-collapse.show"
               >
                 <i class="fa fa-heart" aria-hidden="true"></i>
                 Wishlist
@@ -78,6 +87,8 @@
                 <a
                   href="#"
                   class="nav-link m-2 menu-item navbar-button"
+                  data-toggle="collapse"
+                  data-target=".navbar-collapse.show"
                   v-if="$auth.isAuthenticated"
                   @click="logout"
                 >

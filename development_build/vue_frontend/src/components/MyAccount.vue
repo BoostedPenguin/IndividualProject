@@ -48,7 +48,7 @@
 
         <div class="col-lg-4 col-12 mt-3 mb-3 mb-lg-0">
           <div class="col-lg-12 offset-lg-0 col-8 offset-2">
-            <router-link to="/" class="text-decoration-none">
+            <router-link to="/settings" class="text-decoration-none">
               <div class="card myaccount-card">
                 <div class="row justify-content-center">
                   <div class="col-10">

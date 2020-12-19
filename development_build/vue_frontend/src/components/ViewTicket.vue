@@ -31,8 +31,10 @@
             v-bind:key="chat.id"
           >
             <div>
-              {{ chat.isCurrentUser ? "Me" : "Admin" }} |
-              {{ DisplayDate(chat.createdAt) }}
+              <small>
+                {{ chat.isCurrentUser ? "Me" : "Admin" }} |
+                {{ DisplayDate(chat.createdAt) }}
+              </small>
             </div>
             <span class="message">
               {{ chat.message }}
@@ -102,7 +104,7 @@ export default {
       } catch (err) {
         console.log("Person ain't logged");
         this.error = "You aren't logged in!";
-        //this.$router.push("home");
+        this.$router.push({ name: "Home" });
       }
 
       await axios
@@ -117,7 +119,7 @@ export default {
         })
         .catch((err) => {
           console.log(err);
-          //this.$router.push("home");
+          this.$router.push({ name: "Home" });
         });
     },
 
@@ -138,7 +140,7 @@ export default {
       } catch (err) {
         console.log("Person ain't logged");
         this.error = "You aren't logged in!";
-        //this.$router.push("home");
+        this.$router.push({ name: "Home" });
       }
 
       await axios

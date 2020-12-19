@@ -24,8 +24,10 @@
               </p>
 
               <p v-show="searchItem.rating">
-                <strong>Rating:</strong> {{ searchItem.rating }}
-                {{ searchItem.user_ratings_total }}
+                <strong>Rating:</strong> {{ searchItem.rating }} / 5 ({{
+                  searchItem.user_ratings_total
+                }}
+                reviews)
               </p>
               <p v-show="searchItem.vicinity">
                 <strong>Address:</strong> {{ searchItem.vicinity }}
@@ -112,7 +114,7 @@ export default {
         )
         .then((data) => {
           this.$store.commit("SET_SearchItem", data);
-          this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.google_key}`;
+          this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.$store.state.google_key}`;
         })
         .catch((error) => {
           this.error = error;
