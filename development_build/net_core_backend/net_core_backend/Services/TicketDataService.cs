@@ -25,12 +25,21 @@ namespace net_core_backend.Services
 
         public async Task<SupportTicket> GetTicket(int id)
         {
+            int requester_id = await base.GetUserId(httpContext.GetCurrentAuth());
+
             using (var _context = contextFactory.CreateDbContext())
             {
                 var ticket = await _context.SupportTicket
                     .Where(x => x.Id == id)
                     .Include(x => x.TicketChat)
                     .FirstOrDefaultAsync();
+                foreach(var a in ticket.TicketChat)
+                {
+                    if(a.CreatorId == requester_id)
+                    {
+                        a.IsCurrentUser = true;
+                    }
+                }
 
                 if (CurrentExtensions.HasPrivileges(ticket.UserId, httpContext, contextFactory)) return ticket;
 
@@ -51,11 +60,15 @@ namespace net_core_backend.Services
 
         public async Task<TicketChat> CreateMessage(int ticket_id, TicketChat chat)
         {
+            int userId = await base.GetUserId(httpContext.GetCurrentAuth());
+
             using (var _context = contextFactory.CreateDbContext())
             {
                 var ticket = await _context.SupportTicket.Include(x => x.User).Where(x => x.Id == ticket_id && x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (ticket == null) return null;
+
+                chat.CreatorId = userId;
 
                 ticket.TicketChat.Add(chat);
 

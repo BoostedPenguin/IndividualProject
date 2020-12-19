@@ -6,7 +6,7 @@
       </div>
       <div class="row justify-content-end">
         <router-link
-          to="/support/ticket"
+          to="/support/ticket/create"
           class="btn btn-primary btn-lg mr-2 mr-lg-0 create-button"
         >
           Create Ticket
@@ -32,7 +32,17 @@
               <td>
                 {{ DisplayDate(tick) }}
               </td>
-              <td><button class="btn view-button btn-block">View</button></td>
+              <td>
+                <router-link
+                  :to="{
+                    name: 'TicketContentView',
+                    params: { ticketid: tick.id },
+                  }"
+                  class=""
+                >
+                  <button class="btn view-button btn-block">View</button>
+                </router-link>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -85,7 +95,7 @@ export default {
         date = tick.updatedAt;
       }
       let final = new Date(Date.parse(date));
-      return final.toDateString();
+      return final.toLocaleString();
     },
   },
 };

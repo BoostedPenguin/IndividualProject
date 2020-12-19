@@ -1,15 +1,16 @@
 <template>
   <div>
-    <create-ticket />
+    <view-ticket :ticketid="ticketid" />
     <suggestions />
   </div>
 </template>
 
 <script>
-import CreateTicket from "../components/CreateTicket.vue";
 import Suggestions from "../components/Suggestions.vue";
+import ViewTicket from "../components/ViewTicket.vue";
 export default {
-  components: { CreateTicket, Suggestions },
+  components: { ViewTicket, Suggestions },
+  props: ["ticketid"],
 };
 </script>
 

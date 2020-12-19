@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import SearchItemView from '../views/SearchItemView.vue'
 import AccountView from '../views/AccountView.vue'
 import CustomerSupportView from '../views/CustomerSupportView.vue'
+import TicketContentView from '../views/TicketContentView.vue'
 import TicketCreationView from '../views/TicketCreationView.vue'
 import { authGuard } from "../auth/authGuard"
 
@@ -36,7 +37,15 @@ const routes = [
     beforeEnter: authGuard
   },
   {
-    path: '/support/ticket',
+    path: '/support/:ticketid',
+    name: 'TicketContentView',
+    component: TicketContentView,
+    meta: { transitionName: 'slide' },
+    props: true,
+    beforeEnter: authGuard
+  },
+  {
+    path: '/support/ticket/create',
     name: 'TicketCreationView',
     component: TicketCreationView,
     meta: { transitionName: 'slide' },

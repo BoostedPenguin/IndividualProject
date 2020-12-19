@@ -61,7 +61,7 @@ namespace net_core_backend.Controllers
             }
         }
 
-        [HttpPost("/message")]
+        [HttpPost("message/{ticket_id}")]
         [Authorize]
         public async Task<IActionResult> CreateMessage([FromRoute]int ticket_id, [FromBody]TicketChat chat)
         {
@@ -69,7 +69,9 @@ namespace net_core_backend.Controllers
             {
                 var result = await _context.CreateMessage(ticket_id, chat);
 
-                var dto = mapper.Map<TicketChatViewModel>(result);
+                var ticket = await _context.GetTicket(ticket_id);
+
+                var dto = mapper.Map<SupportTicketViewModel>(ticket);
 
                 return Ok(dto);
             }
