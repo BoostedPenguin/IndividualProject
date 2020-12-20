@@ -50,19 +50,6 @@ namespace net_core_backend.Services
         }
 
 
-
-        public async Task ClearKeywords()
-        {
-            using(var a = contextFactory.CreateDbContext())
-            {
-                var currentKeywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToListAsync();
-
-                a.RemoveRange(currentKeywords);
-
-                await a.SaveChangesAsync();
-            }
-        }
-
         public async Task<Users> GetUserInfo(int id)
         {
             using (var _context = contextFactory.CreateDbContext())

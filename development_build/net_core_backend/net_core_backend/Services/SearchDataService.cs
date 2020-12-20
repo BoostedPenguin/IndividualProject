@@ -30,7 +30,7 @@ namespace net_core_backend.Services
 
         public async Task<GooglePlaceObject[]> GetSuggestions()
         {
-                return await suggestionService.Main();
+            return await suggestionService.Main();
         }
 
         public async Task<GoogleDataObject> GetPlaceByID(string placeId)
@@ -62,6 +62,17 @@ namespace net_core_backend.Services
             return result;
         }
 
+        public async Task<UserKeywords[]> AddKeyword(string location, string type = null)
+        {
+            var result = await googleService.LocationFromLandmark(location);
+
+            if (result == null) throw new ArgumentException("There wasn't a match for this search location");
+
+            await AddKeyword(location, result);
+
+            return await GetKeywords();
+        }
+
         public async Task<GooglePlaceObject[]> GetGuestSuggestions(UserKeywords keywords)
         {
             var result = await googleService.GetNearbyPlaces(keywords);
@@ -70,6 +81,43 @@ namespace net_core_backend.Services
                 return result.Take(8).ToArray();
 
             return result.ToArray();
+        }
+
+        public async Task ClearKeywords()
+        {
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var currentKeywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToListAsync();
+
+                a.RemoveRange(currentKeywords);
+
+                await a.SaveChangesAsync();
+            }
+        }
+
+        public async Task<UserKeywords[]> RemoveKeyword(int id)
+        {
+            using(var a = contextFactory.CreateDbContext())
+            {
+                var keyword = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth() && x.Id == id).FirstOrDefaultAsync();
+                
+                if (keyword == null) throw new ArgumentException("A keyword with this id and user doesn't exist");
+
+                a.Remove(keyword);
+                
+                await a.SaveChangesAsync();
+
+                return await GetKeywords();
+            }
+        }
+        
+        public async Task<UserKeywords[]> GetKeywords()
+        {
+            using(var a = contextFactory.CreateDbContext())
+            {
+                var keywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToArrayAsync();
+                return keywords;
+            }
         }
 
         private async Task AddKeyword(string keyword, GoogleDataObject result)

@@ -3,7 +3,8 @@ import App from './App.vue'
 import router from './router'
 import '../public/global.css'
 
-
+import ToggleButton from 'vue-js-toggle-button'
+Vue.use(ToggleButton)
 // Import the Auth0 configuration
 import { domain, clientId, audience } from "../auth_config.json"
 import store from "./store/store"

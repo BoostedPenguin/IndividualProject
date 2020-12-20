@@ -1,10 +1,15 @@
 <template>
   <div class="main-content">
     <div class="container">
-      <div class="row mt-5 justify-content-center">
+      <div class="row mt-5">
+        <div class="col-4 justify-content-start">
+          <router-link class="btn btn-success" to="/account">
+            <i class="fa fa-arrow-left" aria-hidden="true">&nbsp; Back</i>
+          </router-link>
+        </div>
         <h1>Customer Support</h1>
       </div>
-      <div class="row justify-content-end">
+      <div class="row justify-content-end mt-5">
         <router-link
           to="/support/ticket/create"
           class="btn btn-primary btn-lg mr-2 mr-lg-0 create-button"
