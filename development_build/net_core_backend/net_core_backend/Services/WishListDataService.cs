@@ -24,6 +24,8 @@ namespace net_core_backend.Services
 
         public async Task<Locations> AddLocation(Locations location)
         {
+            if (location.Lang == 0 || location.Long == 0 || location.Name == null || location.PlaceId == null) throw new ArgumentException("The location data was empty");
+
             if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
                 throw new ArgumentException("Administrators cannot intact with their wishlist!");
@@ -31,9 +33,14 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
+                var duplicate = await a.Locations.Where(x => x.PlaceId == location.PlaceId && x.TripId == null).FirstOrDefaultAsync();
+                
+                if (duplicate != null) throw new ArgumentException("This location is already in your wishlist");
+
                 var wishList = await a.WishList.Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
+
 
                 //Assign values to make a unique location
                 location.WishlistId = wishList.Id;

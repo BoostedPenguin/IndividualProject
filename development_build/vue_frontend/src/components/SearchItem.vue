@@ -1,6 +1,12 @@
 <template>
   <div class="main-search-item">
     <div class="container-fluid pt-5 mb-5">
+      <!-- Alert error -->
+      <transition name="basic-fade">
+        <div class="alert alert-error mt-1" v-show="error" role="alert">
+          {{ error }}
+        </div>
+      </transition>
       <div v-if="searchItem" class="row">
         <div class="col-12 col-lg-4">
           <img :src="photoReference" class="img-fluid main-photo" alt="..." />
@@ -64,6 +70,24 @@
                 </div>
               </div>
             </div>
+
+            <div
+              v-if="$auth.isAuthenticated && !searchItem.alreadyInWishlist"
+              class="col-12 text-center"
+            >
+              <button
+                v-on:click="AddToWishlist()"
+                class="btn btn-add-wishlish btn-block mb-3"
+              >
+                Add to wishlist
+              </button>
+            </div>
+            <div v-else-if="searchItem.alreadyInWishlist">
+              <small>This location is already in your wishlist.</small>
+            </div>
+            <div v-else class="col-12 text-center mt-3">
+              <small>Login in order to add items to your wishlist.</small>
+            </div>
           </div>
         </div>
       </div>
@@ -74,11 +98,14 @@
 <script>
 import { mapState } from "vuex";
 import axios from "axios";
+import { getInstance } from "../auth/authWrapper";
 
 export default {
   data() {
     return {
       photoReference: "",
+      error: "",
+      local_already_in_wishlist: false,
     };
   },
 
@@ -87,10 +114,7 @@ export default {
       this.searchItem == null ||
       this.searchItem.placeId != this.$route.params.placeId
     ) {
-      console.log(
-        `Please request a new query using this placeId: ${this.$route.params.placeId}`
-      );
-      this.RequestSearchItem();
+      this.InitiateAuth(this.RequestSearchItem);
     } else {
       console.log(`Correct url for place :)`);
     }
@@ -107,17 +131,88 @@ export default {
   }),
 
   methods: {
-    async RequestSearchItem() {
-      await axios
+    async ValidateUser() {
+      let authToken = "";
+      try {
+        authToken = await this.$auth.getTokenSilently();
+      } catch (err) {
+        console.log("Person ain't logged");
+        this.error = "You aren't logged in!";
+        this.$router.push({ name: "Home" });
+        return;
+      }
+      return authToken;
+    },
+
+    InitiateAuth(fn) {
+      // have to do this nonsense to make sure auth0Client is ready
+      var instance = getInstance();
+
+      instance.$watch("loading", (loading) => {
+        if (loading === false) {
+          fn(instance);
+        }
+      });
+
+      if (instance.loading == false) {
+        this.RequestSearchItem(instance);
+      }
+    },
+
+    async RequestSearchItem(instance) {
+      if (!this.$auth.isAuthenticated) {
+        await this.CallSearchItem("");
+      }
+      await instance.getTokenSilently().then((authToken) => {
+        // do authorized API calls with auth0 authToken here
+        this.CallSearchItem(authToken);
+      });
+    },
+
+    async CallSearchItem(authToken) {
+      axios
         .get(
-          `${this.$store.state.base_url}/search/placeid/${this.$route.params.placeId}`
+          `${this.$store.state.base_url}/search/placeid/${this.$route.params.placeId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
+            },
+          }
         )
         .then((data) => {
+          console.log(data);
           this.$store.commit("SET_SearchItem", data);
           this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.$store.state.google_key}`;
         })
         .catch((error) => {
           this.error = error;
+        });
+    },
+
+    async AddToWishlist() {
+      let authToken = await this.ValidateUser();
+
+      await axios
+        .patch(
+          `${this.$store.state.base_url}/wishlist/add`,
+          {
+            name: this.searchItem.name,
+            lang: this.searchItem.latitude,
+            long: this.searchItem.longitude,
+            placeId: this.searchItem.placeId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
+            },
+          }
+        )
+        .then((data) => {
+          console.log(data);
+          this.$store.commit("SET_SearchItem_alreadyInWishlist", true);
+        })
+        .catch((error) => {
+          this.error = error.response.data;
         });
     },
   },
@@ -141,5 +236,9 @@ export default {
 .main-search-item {
   display: flex;
   background-color: rgb(255, 255, 255);
+}
+.btn-add-wishlish {
+  background-color: black;
+  color: white;
 }
 </style>

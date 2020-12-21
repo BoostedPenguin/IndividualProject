@@ -65,7 +65,7 @@ namespace net_core_backend.Controllers
             }
         }
 
-        [HttpPatch("/add")]
+        [HttpPatch("add")]
         [Authorize]
         public async Task<IActionResult> AddLocation([FromBody] Locations location)
         {
@@ -83,7 +83,7 @@ namespace net_core_backend.Controllers
             }
         }
 
-        [HttpPatch("/remove/{location_id}")]
+        [HttpPatch("remove/{location_id}")]
         [Authorize]
         public async Task<IActionResult> RemoveLocation([FromRoute] int location_id)
         {
@@ -101,7 +101,7 @@ namespace net_core_backend.Controllers
             }
         }
 
-        [HttpPost("/create")]
+        [HttpPost("create")]
         [Authorize]
         public async Task<IActionResult> CreateTrip()
         {

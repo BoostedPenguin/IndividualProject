@@ -95,6 +95,11 @@ namespace net_core_backend.Models
                     .HasColumnName("name")
                     .HasMaxLength(50);
 
+                entity.Property(e => e.PlaceId)
+                    .IsRequired()
+                    .HasColumnName("place_id")
+                    .HasMaxLength(200);
+
                 entity.Property(e => e.TripId).HasColumnName("trip_id");
 
                 entity.Property(e => e.WishlistId).HasColumnName("wishlist_id");

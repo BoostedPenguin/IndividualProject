@@ -7,6 +7,7 @@
         href="#"
       >
         <img
+          @error="setAltImg"
           :src="photoReference"
           class="card-img-top gallery-cover"
           alt="..."
@@ -55,6 +56,9 @@ export default {
         name: "SearchItemView",
         params: { placeId: this.placeLocation.placeId },
       });
+    },
+    setAltImg() {
+      this.photoReference = "https://i.imgur.com/enuN17J.png";
     },
   },
 };

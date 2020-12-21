@@ -33,11 +33,44 @@ namespace net_core_backend.Services
             return await suggestionService.Main();
         }
 
+
+
+        private async Task<Tuple<GoogleDataObject, Users>> CheckIfAlreadyInWishlist(GoogleDataObject result)
+        {
+            using(var a = contextFactory.CreateDbContext())
+            {
+                var auth = httpContext.GetCurrentAuth();
+
+                var id = await base.GetUserId(auth);
+
+                var user = await a.Users.Where(x => x.Auth == auth).FirstOrDefaultAsync();
+
+                var alreadyInWishlist = await a.Locations.Include(x => x.Wishlist).Where(x => x.Wishlist.UserId == id && x.PlaceId == result.PlaceId && x.TripId == null).FirstOrDefaultAsync();
+
+                if (alreadyInWishlist != null) result.AlreadyInWishlist = true;
+
+                return new Tuple<GoogleDataObject, Users>(result, user);
+            }
+        }
+
         public async Task<GoogleDataObject> GetPlaceByID(string placeId)
         {
             var result = await googleService.GetLocationFromPlaceID(placeId);
-            
+
             if (result == null) throw new ArgumentException("There wasn't a match for this search location");
+
+
+            try
+            {
+                var resultUser = await CheckIfAlreadyInWishlist(result);
+
+                return resultUser.Item1;
+            }
+            catch (Exception)
+            {
+                //Person ain't logged in
+            }
+
 
             return result;
         }
@@ -50,15 +83,15 @@ namespace net_core_backend.Services
 
             try
             {
-                using (var a = contextFactory.CreateDbContext())
-                {
-                    var user = await a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var resultUser = await CheckIfAlreadyInWishlist(result);
 
-                    if(user.Suggestions == true)
-                    {
-                        await AddKeyword(location, result);
-                    }
+
+                if (resultUser.Item2.Suggestions == true)
+                {
+                    await AddKeyword(location, result);
                 }
+
+                return resultUser.Item1;
             }
             catch (Exception)
             {
