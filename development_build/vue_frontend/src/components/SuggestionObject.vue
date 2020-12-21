@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       google_key: process.env.VUE_APP_GOOGLE_KEY,
-      photoReference: "",
+      photoReference: "../assets/default_suggestion_picture.png",
       show: false,
     };
   },

@@ -78,6 +78,22 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpPatch("keywords/toggle")]
+        [Authorize]
+        public async Task<IActionResult> ToggleLoggingKeywords()
+        {
+            try
+            {
+                await context.ToggleLoggingKeywords();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("keywords")]
         [Authorize]
         public async Task<IActionResult> GetKeywords()
@@ -89,6 +105,22 @@ namespace net_core_backend.Controllers
                 var dto = mapper.Map<UserKeywordsViewModel[]>(result);
 
                 return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("keywords/logging")]
+        [Authorize]
+        public async Task<IActionResult> GetLoggingStatus()
+        {
+            try
+            {
+                var result = await context.GetLoggingStatus();
+
+                return Ok(result);
             }
             catch (Exception ex)
             {

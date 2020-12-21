@@ -4,6 +4,9 @@ import router from './router'
 import '../public/global.css'
 
 import ToggleButton from 'vue-js-toggle-button'
+import VTooltip from 'v-tooltip'
+
+Vue.use(VTooltip)
 Vue.use(ToggleButton)
 // Import the Auth0 configuration
 import { domain, clientId, audience } from "../auth_config.json"

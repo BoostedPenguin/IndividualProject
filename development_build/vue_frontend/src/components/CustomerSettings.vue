@@ -2,25 +2,33 @@
   <div class="main-content">
     <div class="container">
       <div class="row mt-5">
-        <h3 class="col-12 text-center">Settings</h3>
-
+        <div class="col-4">
+          <router-link class="btn btn-success" to="/account">
+            <i class="fa fa-arrow-left" aria-hidden="true">&nbsp; Back</i>
+          </router-link>
+        </div>
+        <div class="col-8">
+          <h1>Settings</h1>
+        </div>
+      </div>
+      <div class="row mt-5">
         <div class="col-12 mt-3">
           <p>
             Automatic generation of keywords &nbsp;
-            <i class="fa fa-question-circle" aria-hidden="true"></i>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-toggle="tooltip"
-              data-placement="bottom"
-              title="Tooltip on bottom"
-            >
-              Tooltip on bottom
-            </button>
+            <i
+              class="fa fa-question-circle"
+              v-tooltip="{
+                content:
+                  'If you want to manually add each keyword instead of using our algorithm to determine the best ones for you, you can disable it.',
+                trigger: 'click, hover',
+              }"
+              aria-hidden="true"
+            ></i>
           </p>
           <toggle-button
-            v-model="suggestions"
-            :value="false"
+            @change="ToggleLoggingKeywords()"
+            :sync="true"
+            :value="keyword_logging"
             color="black"
             :labels="true"
           />
@@ -89,15 +97,16 @@ import axios from "axios";
 export default {
   data() {
     return {
-      suggestions: true,
       keywords: {},
       addKeyword: "",
       loading: false,
       error: "",
+      keyword_logging: true,
     };
   },
   mounted() {
     this.GetKeywords();
+    this.GetLogging();
   },
   methods: {
     async ValidateUser() {
@@ -124,6 +133,23 @@ export default {
         .then((data) => {
           console.log(data);
           this.keywords = data.data;
+        })
+        .catch((error) => {
+          this.error = error;
+        });
+    },
+
+    async GetLogging() {
+      let authToken = await this.ValidateUser();
+      await axios
+        .get(`${this.$store.state.base_url}/search/keywords/logging`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
+          },
+        })
+        .then((data) => {
+          console.log(data);
+          this.keyword_logging = data.data;
         })
         .catch((error) => {
           this.error = error;
@@ -169,6 +195,29 @@ export default {
           this.error = false;
           this.loading = false;
           this.keywords = {};
+        })
+        .catch((error) => {
+          this.error = error;
+          this.loading = false;
+        });
+    },
+
+    async ToggleLoggingKeywords() {
+      let authToken = await this.ValidateUser();
+
+      if (this.loading) return;
+      this.loading = true;
+      console.log(authToken);
+
+      await axios
+        .patch(`${this.$store.state.base_url}/search/keywords/toggle`, null, {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
+          },
+        })
+        .then(() => {
+          this.loading = false;
+          this.keyword_logging = !this.keyword_logging;
         })
         .catch((error) => {
           this.error = error;

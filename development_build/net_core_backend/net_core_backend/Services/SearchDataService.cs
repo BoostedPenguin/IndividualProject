@@ -50,8 +50,15 @@ namespace net_core_backend.Services
 
             try
             {
-                httpContext.GetCurrentAuth();
-                await AddKeyword(location, result);
+                using (var a = contextFactory.CreateDbContext())
+                {
+                    var user = await a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+
+                    if(user.Suggestions == true)
+                    {
+                        await AddKeyword(location, result);
+                    }
+                }
             }
             catch (Exception)
             {
@@ -60,6 +67,18 @@ namespace net_core_backend.Services
             }
 
             return result;
+        }
+
+        public async Task ToggleLoggingKeywords()
+        {
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var user = await a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                
+                user.Suggestions = !user.Suggestions;
+
+                await a.SaveChangesAsync();
+            }
         }
 
         public async Task<UserKeywords[]> AddKeyword(string location, string type = null)
@@ -117,6 +136,16 @@ namespace net_core_backend.Services
             {
                 var keywords = await a.UserKeywords.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToArrayAsync();
                 return keywords;
+            }
+        }
+
+        public async Task<bool?> GetLoggingStatus()
+        {
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var user = await a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+
+                return user.Suggestions;
             }
         }
 
