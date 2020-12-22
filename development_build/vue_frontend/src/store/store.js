@@ -7,8 +7,8 @@ const host = process.env.VUE_APP_BASE_BACKEND_ROOT
 
 export default new Vuex.Store({
   state: {
-    suggestions: {
-    },
+    suggestions: {},
+    wishlist: {},
     searchItem: {},
     supportTickets: {},
     base_url: process.env.VUE_APP_BASE_BACKEND_ROOT,
@@ -25,6 +25,9 @@ export default new Vuex.Store({
     SET_SupportTicket(state, payload) {
       state.supportTickets = payload
     },
+    SET_WishlistItems(state, payload) {
+      state.wishlist = payload
+    }
   },
   getters: {
     GET_SearchItem: state => {
