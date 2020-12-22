@@ -166,7 +166,7 @@ export default {
   transition: 0.5s;
 }
 .navbar-custom {
-  background-color: var(--primary);
+  background-color: var(--penguin-primary);
 }
 
 .navbar-button:hover {

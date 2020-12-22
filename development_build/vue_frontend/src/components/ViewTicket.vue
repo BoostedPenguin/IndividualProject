@@ -63,7 +63,8 @@
           </transition>
           <button
             v-bind:class="{ disabled: loading }"
-            class="btn btn-send-message text-white mt-1 pull-right"
+            id="btn-send-message"
+            class="btn text-white mt-1 pull-right"
             @click="SendMessage"
           >
             Send message
@@ -179,8 +180,12 @@ export default {
   background-color: rgb(255, 255, 255);
 }
 
-.btn-send-message {
-  background-color: var(--secondary-variant);
+#btn-send-message {
+  background-color: var(--penguin-secondary-variant);
+}
+
+#btn-send-message:hover {
+  background-color: var(--penguin-secondary);
 }
 
 .message {

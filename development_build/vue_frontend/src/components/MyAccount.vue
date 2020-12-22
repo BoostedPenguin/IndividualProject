@@ -102,7 +102,7 @@ export default {
   background-image: linear-gradient(
     to bottom,
     #fff 50%,
-    var(--secondary-variant) 50%
+    var(--penguin-secondary-variant) 50%
   );
   transition: 0.5s;
 }

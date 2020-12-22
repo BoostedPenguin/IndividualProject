@@ -118,18 +118,18 @@ export default {
 
 <style scoped>
 .view-button {
-  background-color: var(--secondary-variant);
+  background-color: var(--penguin-secondary-variant);
   color: white;
 }
 .view-button:hover {
-  background-color: var(--secondary);
+  background-color: var(--penguin-secondary);
 }
 .create-button {
-  background-color: var(--primary);
+  background-color: var(--penguin-primary);
   border-radius: 1rem;
 }
 .create-button:hover {
-  background-color: var(--primary-variant);
+  background-color: var(--penguin-primary-variant);
 }
 
 .spinner-text {

@@ -1,11 +1,11 @@
 :root {
-    --primary:#0061B5;
-    --primary-variant:#007CE8;
+    --penguin-primary:#0061B5;
+    --penguin-primary-variant:#007CE8;
 
-    --secondary:#B55400;
-    --secondary-variant:#E86C00;
+    --penguin-secondary:#B55400;
+    --penguin-secondary-variant:#E86C00;
 
-    --error:#C12D3F;
+    --penguin-error:#C12D3F;
 }
 
 .alert-error {

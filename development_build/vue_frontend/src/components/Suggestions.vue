@@ -123,13 +123,13 @@ export default {
 
 <style>
 body {
-  background-color: var(--primary-variant);
+  background-color: var(--penguin-primary-variant);
 }
 
 .loading-spinner {
   width: 5em;
   height: 5em;
-  color: var(--secondary-variant);
+  color: var(--penguin-secondary-variant);
 }
 
 .spinner-text {

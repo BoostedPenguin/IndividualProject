@@ -276,7 +276,7 @@ export default {
   color: gray;
 }
 .clear-keywords {
-  color: var(--error);
+  color: var(--penguin-error);
 }
 .keyword-box {
   display: inline-block;

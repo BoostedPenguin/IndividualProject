@@ -7,15 +7,11 @@
 
           <!-- Input group -->
           <div class="input-group mb-3">
-            <div class="input-group-prepend">
-              <button
-                class="btn filter-button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <i class="fa fa-caret-down" aria-hidden="true"></i>
-              </button>
+            <!-- <div class="input-group-prepend">
+              <b-dropdown>
+                <b-dropdown-item href="#">An item</b-dropdown-item>
+                <b-dropdown-item href="#">Another item</b-dropdown-item>
+              </b-dropdown>
 
               <ul class="dropdown-menu checkbox-menu allow-focus">
                 <li>
@@ -29,7 +25,7 @@
                   </label>
                 </li>
               </ul>
-            </div>
+            </div> -->
             <input
               maxlength="40"
               v-model="search_string"
@@ -137,9 +133,9 @@ export default {
   border-radius: 1rem;
 }
 
-.filter-button {
-  border-color: var(--secondary);
-  background-color: var(--secondary-variant);
+#filter-button {
+  border-color: var(--penguin-secondary);
+  background-color: var(--penguin-secondary-variant);
 }
 
 .search-button {
@@ -147,7 +143,7 @@ export default {
   border-bottom-right-radius: 1rem;
 }
 
-.filter-button:hover {
+#filter-button:hover {
   background-color: #b55400;
 }
 
