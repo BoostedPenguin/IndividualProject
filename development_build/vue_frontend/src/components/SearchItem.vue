@@ -70,23 +70,27 @@
                 </div>
               </div>
             </div>
-
-            <div
-              v-if="$auth.isAuthenticated && !searchItem.alreadyInWishlist"
-              class="col-12 text-center"
-            >
-              <button
-                v-on:click="AddToWishlist()"
-                class="btn btn-add-wishlish btn-block mb-3"
+            <div v-if="$auth.isAuthenticated">
+              <div
+                v-if="!searchItem.alreadyInWishlist"
+                class="col-12 text-center"
               >
-                Add to wishlist
-              </button>
+                <button
+                  v-on:click="AddToWishlist()"
+                  class="btn btn-add-wishlish btn-block mb-3"
+                >
+                  Add to wishlist
+                </button>
+              </div>
+              <div v-else-if="searchItem.alreadyInWishlist">
+                <small>This location is already in your wishlist.</small>
+              </div>
             </div>
-            <div v-else-if="searchItem.alreadyInWishlist">
-              <small>This location is already in your wishlist.</small>
-            </div>
-            <div v-else class="col-12 text-center mt-3">
-              <small>Login in order to add items to your wishlist.</small>
+
+            <div v-else>
+              <div class="col-12 text-center mt-3">
+                <small>Login in order to add items to your wishlist.</small>
+              </div>
             </div>
           </div>
         </div>
@@ -105,7 +109,6 @@ export default {
     return {
       photoReference: "",
       error: "",
-      local_already_in_wishlist: false,
     };
   },
 
@@ -127,7 +130,7 @@ export default {
   },
 
   computed: mapState({
-    searchItem: (state) => state.searchItem.data,
+    searchItem: (state) => state.searchItem,
   }),
 
   methods: {
@@ -180,8 +183,8 @@ export default {
           }
         )
         .then((data) => {
-          console.log(data);
-          this.$store.commit("SET_SearchItem", data);
+          console.log(data.data);
+          this.$store.commit("SET_SearchItem", data.data);
           this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.$store.state.google_key}`;
         })
         .catch((error) => {
@@ -208,8 +211,8 @@ export default {
           }
         )
         .then((data) => {
-          console.log(data);
-          this.$store.commit("SET_SearchItem_alreadyInWishlist", true);
+          this.$store.commit("SET_WishlistItems", data.data);
+          this.$store.commit("SET_SearchItemInWishlist", true);
         })
         .catch((error) => {
           this.error = error.response.data;

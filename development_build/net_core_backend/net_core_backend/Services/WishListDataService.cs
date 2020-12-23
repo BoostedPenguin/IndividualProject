@@ -22,7 +22,7 @@ namespace net_core_backend.Services
             httpContext = httpContextAccessor;
         }
 
-        public async Task<Locations> AddLocation(Locations location)
+        public async Task<WishList> AddLocation(Locations location)
         {
             if (location.Lang == 0 || location.Long == 0 || location.Name == null || location.PlaceId == null) throw new ArgumentException("The location data was empty");
 
@@ -37,7 +37,7 @@ namespace net_core_backend.Services
                 
                 if (duplicate != null) throw new ArgumentException("This location is already in your wishlist");
 
-                var wishList = await a.WishList.Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var wishList = await a.WishList.Include(x => x.User).Include(x => x.Locations).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
@@ -51,7 +51,7 @@ namespace net_core_backend.Services
 
                 await a.SaveChangesAsync();
 
-                return location;
+                return wishList;
             }
         }
 
@@ -123,7 +123,7 @@ namespace net_core_backend.Services
             }
         }
 
-        public async Task<Locations> RemoveLocation(int location_id)
+        public async Task<WishList> RemoveLocation(int location_id)
         {
             if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
@@ -132,7 +132,7 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                var wishList = await a.WishList.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var wishList = await a.WishList.Include(x => x.User).Include(x => x.Locations).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
@@ -140,7 +140,9 @@ namespace net_core_backend.Services
 
                 a.Remove(location);
 
-                return location;
+                await a.SaveChangesAsync();
+
+                return wishList;
             }
         }
     }

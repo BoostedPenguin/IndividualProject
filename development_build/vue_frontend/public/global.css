@@ -130,3 +130,18 @@
   opacity: 1;
   transition: opacity .15s;
 }
+
+#btn-back {
+  border-radius: 2px;
+  border: 1px solid black;
+  background-color: white;
+}
+#btn-back:hover {
+  background-color: lightgray;
+}
+
+#btn-back:focus,
+#btn-back:active {
+  outline: none !important;
+  box-shadow: none;
+}

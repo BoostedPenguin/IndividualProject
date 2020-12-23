@@ -17,6 +17,14 @@
           <p class="spinner-text text-center">Generating Suggestions...</p>
         </div>
       </div>
+      <div class="text-center mt-5" v-else-if="error">
+        <!-- Alert error -->
+        <transition name="basic-fade">
+          <div class="alert alert-error" role="alert">
+            {{ error }}
+          </div>
+        </transition>
+      </div>
       <div class="row mt-5" v-else>
         <div
           class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12 pt-3"
@@ -47,6 +55,7 @@ export default {
   data() {
     return {
       loadingSuggestions: true,
+      error: "",
     };
   },
 
@@ -83,7 +92,11 @@ export default {
           this.$store.commit("SET_Suggestions", data);
           this.loadingSuggestions = false;
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          this.loadingSuggestions = false;
+
+          this.error = err;
+        });
     },
 
     async GetSuggestions(instance) {
@@ -114,7 +127,10 @@ export default {
             this.loadingSuggestions = false;
             this.$store.commit("SET_Suggestions", data);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            this.loadingSuggestions = false;
+            this.error = err;
+          });
       });
     },
   },

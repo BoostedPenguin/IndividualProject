@@ -120,17 +120,24 @@
         </div>
       </div>
     </b-navbar>
+
+    <!-- Wishlist -->
     <div>
       <b-sidebar id="sidebar-1" title="Wishlist" right shadow>
         <div class="px-3 py-2">
           <div v-for="w in getWishlist.locations" :key="w.id">
-            <span class="boxed-x px-1">
+            <span class="boxed-x px-1" v-on:click="RemoveWishlistItem(w.id)">
               <i class="fa fa-times" aria-hidden="true"></i>
             </span>
             {{ w.name }}
             <hr />
           </div>
-          <button class="btn btn-primary btn-block">Create trip</button>
+          <div v-if="getWishlist.locations.length > 0">
+            <button class="btn btn-primary btn-block">Create trip</button>
+          </div>
+          <div v-else>
+            <small>You need to add at least 1 location to create a trip.</small>
+          </div>
         </div>
       </b-sidebar>
     </div>
@@ -203,6 +210,36 @@ export default {
         })
         .catch((err) => (this.error = err));
     },
+    async ValidateUser() {
+      let authToken = "";
+      try {
+        authToken = await this.$auth.getTokenSilently();
+      } catch (err) {
+        console.log("Person ain't logged");
+        this.error = "You aren't logged in!";
+        return;
+      }
+      return authToken;
+    },
+    async RemoveWishlistItem(item_id) {
+      let authToken = await this.ValidateUser();
+
+      axios
+        .patch(
+          `${this.$store.state.base_url}/wishlist/remove/${item_id}`,
+          null,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
+            },
+          }
+        )
+        .then((data) => {
+          this.$store.commit("SET_WishlistItems", data.data);
+          this.$store.commit("SET_SearchItemInWishlist", false);
+        })
+        .catch((err) => (this.error = err));
+    },
   },
 };
 </script>
@@ -231,6 +268,11 @@ export default {
 }
 .boxed-x {
   border: 1px solid black;
+  transition: 0.5s;
+}
+.boxed-x:hover,
+.boxed-x:focus {
+  box-shadow: 0 0 3pt 1pt #000000;
 }
 
 .separator {

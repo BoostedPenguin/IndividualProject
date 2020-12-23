@@ -10,8 +10,8 @@ namespace net_core_backend.Services.Interfaces
     {
         Task<WishList> GetWishlist();
         Task<WishList> ClearWishlist();
-        Task<Locations> AddLocation(Locations location);
-        Task<Locations> RemoveLocation(int location_id);
+        Task<WishList> AddLocation(Locations location);
+        Task<WishList> RemoveLocation(int location_id);
         Task<UserTrips> CreateTrip();
     }
 }

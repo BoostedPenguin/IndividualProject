@@ -2,12 +2,14 @@
   <div class="main-content">
     <div class="container">
       <div class="row mt-5">
-        <div class="col-4 justify-content-start">
-          <router-link class="btn btn-success" to="/account">
+        <div class="col-lg-4 col-2">
+          <b-link id="btn-back" class="btn" to="/account">
             <i class="fa fa-arrow-left" aria-hidden="true">&nbsp; Back</i>
-          </router-link>
+          </b-link>
         </div>
-        <h1>Customer Support</h1>
+        <div class="col-lg-4 col-10 text-center">
+          <h1>Customer Support</h1>
+        </div>
       </div>
       <div class="row justify-content-end mt-5">
         <router-link

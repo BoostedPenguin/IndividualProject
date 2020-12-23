@@ -100,7 +100,7 @@ export default {
             },
           })
           .then((data) => {
-            this.$store.commit("SET_SearchItem", data);
+            this.$store.commit("SET_SearchItem", data.data);
             console.log(data.data.placeId);
             this.$router.push({
               name: "SearchItemView",

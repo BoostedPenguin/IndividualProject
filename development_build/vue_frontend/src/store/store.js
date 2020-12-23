@@ -27,6 +27,9 @@ export default new Vuex.Store({
     },
     SET_WishlistItems(state, payload) {
       state.wishlist = payload
+    },
+    SET_SearchItemInWishlist(state, payload) {
+      state.searchItem.alreadyInWishlist = payload
     }
   },
   getters: {

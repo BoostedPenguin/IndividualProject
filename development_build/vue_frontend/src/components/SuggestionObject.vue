@@ -4,7 +4,7 @@
       <a
         class="stretched-link text-decoration-none"
         v-on:click="SuggestedClicked"
-        href="#"
+        :href="placeLocation.placeId"
       >
         <img
           @error="setAltImg"

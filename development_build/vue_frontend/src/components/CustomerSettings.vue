@@ -3,11 +3,11 @@
     <div class="container">
       <div class="row mt-5">
         <div class="col-4">
-          <router-link class="btn btn-success" to="/account">
+          <b-link id="btn-back" class="btn" to="/account">
             <i class="fa fa-arrow-left" aria-hidden="true">&nbsp; Back</i>
-          </router-link>
+          </b-link>
         </div>
-        <div class="col-8">
+        <div class="col-4 text-center">
           <h1>Settings</h1>
         </div>
       </div>
@@ -73,7 +73,7 @@
           <div class="input-group-append">
             <button
               v-bind:class="{ disabled: loading }"
-              class="btn btn-primary"
+              class="btn btn-primary mb-5"
               v-on:click="AddKeyword()"
             >
               Add keyword

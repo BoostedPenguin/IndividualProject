@@ -73,7 +73,7 @@ namespace net_core_backend.Controllers
             {
                 var result = await _context.AddLocation(location);
 
-                var dto = mapper.Map<LocationsViewModel>(result);
+                var dto = mapper.Map<WishListViewModel>(result);
 
                 return Ok(dto);
             }
@@ -91,7 +91,7 @@ namespace net_core_backend.Controllers
             {
                 var result = await _context.RemoveLocation(location_id);
 
-                var dto = mapper.Map<LocationsViewModel>(result);
+                var dto = mapper.Map<WishListViewModel>(result);
 
                 return Ok(dto);
             }

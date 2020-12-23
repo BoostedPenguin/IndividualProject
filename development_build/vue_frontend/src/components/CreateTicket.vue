@@ -3,9 +3,9 @@
     <div class="container">
       <div class="row">
         <div class="col-4 mt-5 justify-content-start">
-          <router-link class="btn btn-success" to="/support">
+          <b-link id="btn-back" class="btn" to="/support">
             <i class="fa fa-arrow-left" aria-hidden="true">&nbsp; Back</i>
-          </router-link>
+          </b-link>
         </div>
         <div class="col-8 mt-5 justify-content-end">
           <h3>Create a support request</h3>
