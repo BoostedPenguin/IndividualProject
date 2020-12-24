@@ -29,7 +29,10 @@ export default new Vuex.Store({
       state.wishlist = payload
     },
     SET_SearchItemInWishlist(state, payload) {
-      state.searchItem.alreadyInWishlist = payload
+      if (state.searchItem.placeId == 0 || payload.placeId == 0) return
+      if (state.searchItem.placeId == payload.placeId || payload.placeId == null) {
+        state.searchItem.alreadyInWishlist = payload.isAlreadyInWishlist
+      }
     }
   },
   getters: {

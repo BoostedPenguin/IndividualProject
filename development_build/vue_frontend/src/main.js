@@ -12,11 +12,16 @@ import { domain, clientId, audience } from "../auth_config.json"
 import store from "./store/store"
 
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import VueMeta from 'vue-meta'
+
 
 // Import the plugin here
 import { Auth0Plugin } from "./auth"
 
-
+Vue.use(VueMeta, {
+  // optional pluginOptions
+  refreshOnceOnNavigation: true
+})
 Vue.use(VTooltip)
 Vue.use(ToggleButton)
 // Import the Auth0 configuration

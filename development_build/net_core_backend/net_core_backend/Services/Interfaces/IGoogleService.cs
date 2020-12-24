@@ -12,7 +12,7 @@ namespace net_core_backend.Services.Interfaces
         Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2, Transportation transportation);
         Task<GoogleDataObject> DistanceDurationBetweenLocations(GoogleDataObject latLngLocation1, GoogleDataObject latLngLocation2, Transportation transportation);
         Task<GoogleDataObject> GetLocationFromPlaceID(string placeId);
-        Task<List<GoogleDataService.GooglePlaceObject>> GetNearbyPlaces(UserKeywords input, string type = null, int radius = 10000, string searchKeyword = "landmark");
+        Task<List<GoogleDataService.GooglePlaceObject>> GetNearbyPlaces(UserKeywords input, string type = null, int radius = 25000, string searchKeyword = "attraction");
         Task<GoogleDataObject> LocationFromCoordinates(GoogleDataObject coordinates);
         Task<GoogleDataObject> LocationFromLandmark(string landmark, string[] givenType = null);
     }

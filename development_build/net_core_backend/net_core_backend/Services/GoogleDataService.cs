@@ -251,7 +251,7 @@ namespace net_core_backend.Services
             return new GoogleDataObject() { Distance = distance, Duration = duration };
         }
 
-        public async Task<List<GooglePlaceObject>> GetNearbyPlaces(UserKeywords input, string type = null, int radius = 25000, string searchKeyword = "landmark")
+        public async Task<List<GooglePlaceObject>> GetNearbyPlaces(UserKeywords input, string type = null, int radius = 25000, string searchKeyword = "attraction")
         {
             //location lng ltd
             // Dont include radius if rankby DISTANCE exists
@@ -277,8 +277,9 @@ namespace net_core_backend.Services
 
 
             type = type != null ? $"&type={type}" : "";
+            searchKeyword = searchKeyword != null ? $"&keyword={searchKeyword}" : "";
 
-            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&keyword={searchKeyword}&rankby=prominence&radius={radius}{type}");
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={coordinates.Latitude},{coordinates.Longitude}&rankby=prominence&radius={radius}{type}{searchKeyword}");
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 

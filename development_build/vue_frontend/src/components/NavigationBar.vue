@@ -126,13 +126,16 @@
       <b-sidebar id="sidebar-1" title="Wishlist" right shadow>
         <div class="px-3 py-2">
           <div v-for="w in getWishlist.locations" :key="w.id">
-            <span class="boxed-x px-1" v-on:click="RemoveWishlistItem(w.id)">
+            <span
+              class="boxed-x px-1"
+              v-on:click="RemoveWishlistItem(w.id, w.placeId)"
+            >
               <i class="fa fa-times" aria-hidden="true"></i>
             </span>
             {{ w.name }}
             <hr />
           </div>
-          <div v-if="getWishlist.locations.length > 0">
+          <div v-if="getWishlist.locations && getWishlist.locations.length > 0">
             <button class="btn btn-primary btn-block">Create trip</button>
           </div>
           <div v-else>
@@ -221,7 +224,7 @@ export default {
       }
       return authToken;
     },
-    async RemoveWishlistItem(item_id) {
+    async RemoveWishlistItem(item_id, placeId) {
       let authToken = await this.ValidateUser();
 
       axios
@@ -236,7 +239,10 @@ export default {
         )
         .then((data) => {
           this.$store.commit("SET_WishlistItems", data.data);
-          this.$store.commit("SET_SearchItemInWishlist", false);
+          this.$store.commit("SET_SearchItemInWishlist", {
+            placeId: placeId,
+            isAlreadyInWishlist: false,
+          });
         })
         .catch((err) => (this.error = err));
     },

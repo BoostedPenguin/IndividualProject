@@ -117,7 +117,7 @@ namespace net_core_backend.Services
                 // Exclude this city from future requests
                 keywords = keywords.Where(x => x.KeywordAddress.City != main.KeywordAddress.City).ToList();
 
-                total.AddRange(await googleService.GetNearbyPlaces(main, type));
+                total.AddRange(await googleService.GetNearbyPlaces(main));
             }
 
             await WriteSuggestionsFile(total, userId);

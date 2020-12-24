@@ -26,16 +26,39 @@
                 </li>
               </ul>
             </div> -->
-            <input
+            <!-- <input
               maxlength="40"
-              v-model="search_string"
+              v-model="location"
               type="text"
               class="form-control form-rounded"
               placeholder="Eiffel Tower, Paris"
               aria-label="Eiffel Tower, Paris"
               aria-describedby="basic-addon2"
               @keyup.enter="Search"
-            />
+            /> -->
+            <!-- <b-list-group v-if="location">
+              <b-list-group-item v-for="(result, i) in searchResults" :key="i">
+                {{ result }}
+              </b-list-group-item>
+            </b-list-group> -->
+
+            <b-form-input
+              maxlength="40"
+              v-model="location"
+              type="text"
+              class="form-control form-rounded"
+              placeholder="Eiffel Tower, Paris"
+              aria-label="Eiffel Tower, Paris"
+              aria-describedby="basic-addon2"
+              @keyup.enter="Search"
+              list="my-list-id"
+            ></b-form-input>
+
+            <datalist id="my-list-id">
+              <option v-for="(result, i) in searchResults" :key="i">
+                {{ result }}
+              </option>
+            </datalist>
 
             <div class="input-group-append">
               <button
@@ -74,15 +97,54 @@ export default {
     return {
       loading: false,
       error: "",
-      search_string: "",
+      location: "",
+      searchResults: [],
+      service: null,
+    };
+  },
+  watch: {
+    location(newValue) {
+      if (newValue) {
+        this.service.getPlacePredictions(
+          {
+            input: this.location,
+          },
+          this.displaySuggestions
+        );
+      }
+    },
+  },
+  metaInfo() {
+    return {
+      script: [
+        {
+          src: `https://maps.googleapis.com/maps/api/js?key=${this.$store.state.google_key}&libraries=places`,
+          async: true,
+          defer: true,
+          callback: () => this.MapsInit(), // will declare it in methods
+        },
+      ],
     };
   },
   methods: {
     stopTheEvent: (event) => event.stopPropagation(),
 
+    MapsInit() {
+      this.service = new window.google.maps.places.AutocompleteService();
+    },
+    displaySuggestions(predictions, status) {
+      if (status !== window.google.maps.places.PlacesServiceStatus.OK) {
+        this.searchResults = [];
+        return;
+      }
+      this.searchResults = predictions.map(
+        (prediction) => prediction.description
+      );
+    },
+
     // Executes get request for search location and displays results in another component
     async Search() {
-      if (this.search_string && !this.loading) {
+      if (this.location && !this.loading) {
         this.error = "";
         this.loading = true;
 
@@ -94,7 +156,7 @@ export default {
         }
 
         await axios
-          .get(`${this.$store.state.base_url}/search/${this.search_string}`, {
+          .get(`${this.$store.state.base_url}/search/${this.location}`, {
             headers: {
               Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
             },

@@ -7,93 +7,101 @@
           {{ error }}
         </div>
       </transition>
-      <div v-if="searchItem" class="row">
-        <div class="col-12 col-lg-4">
-          <img :src="photoReference" class="img-fluid main-photo" alt="..." />
-        </div>
+      <transition name="basic-fade">
+        <div v-if="!loading" class="row">
+          <div class="col-12 col-lg-4">
+            <img :src="photoReference" class="img-fluid main-photo" alt="..." />
+          </div>
 
-        <div class="search-item-body col-12 col-lg-8 mt-lg-0 mt-4">
-          <div class="row m-lg-5 my-2">
-            <div class="col-lg-6 col-12">
-              <p v-show="searchItem.name">
-                <strong>Location Name:</strong> {{ searchItem.name }}
-              </p>
-              <p v-show="searchItem.city">
-                <strong>City:</strong> {{ searchItem.city }}
-              </p>
-              <p v-show="searchItem.country">
-                <strong>Country:</strong> {{ searchItem.country }}
-              </p>
-              <p v-show="searchItem.international_phone_number">
-                <strong>Phone:</strong>
-                {{ searchItem.international_phone_number }}
-              </p>
+          <div class="search-item-body col-12 col-lg-8 mt-lg-0 mt-4">
+            <div class="row m-lg-5 my-2">
+              <div class="col-lg-6 col-12">
+                <p v-show="searchItem.name">
+                  <strong>Location Name:</strong> {{ searchItem.name }}
+                </p>
+                <p v-show="searchItem.city">
+                  <strong>City:</strong> {{ searchItem.city }}
+                </p>
+                <p v-show="searchItem.country">
+                  <strong>Country:</strong> {{ searchItem.country }}
+                </p>
+                <p v-show="searchItem.international_phone_number">
+                  <strong>Phone:</strong>
+                  {{ searchItem.international_phone_number }}
+                </p>
 
-              <p v-show="searchItem.rating">
-                <strong>Rating:</strong> {{ searchItem.rating }} / 5 ({{
-                  searchItem.user_ratings_total
-                }}
-                reviews)
-              </p>
-              <p v-show="searchItem.vicinity">
-                <strong>Address:</strong> {{ searchItem.vicinity }}
-              </p>
-            </div>
-            <div class="col-lg-6 col-12">
-              <p v-show="searchItem.website">
-                <strong>Location website:</strong>
-                <a :href="searchItem.website"> {{ searchItem.website }} </a>
-              </p>
-              <p v-show="searchItem.openNow">
-                <strong>Open now:</strong> {{ searchItem.openNow }}
-              </p>
+                <p v-show="searchItem.rating">
+                  <strong>Rating:</strong> {{ searchItem.rating }} / 5 ({{
+                    searchItem.user_ratings_total
+                  }}
+                  reviews)
+                </p>
+                <p v-show="searchItem.vicinity">
+                  <strong>Address:</strong> {{ searchItem.vicinity }}
+                </p>
+              </div>
+              <div class="col-lg-6 col-12">
+                <p v-show="searchItem.website">
+                  <strong>Location website:</strong>
+                  <a :href="searchItem.website"> {{ searchItem.website }} </a>
+                </p>
+                <p v-show="searchItem.openNow">
+                  <strong>Open now:</strong> {{ searchItem.openNow }}
+                </p>
 
-              <div v-show="searchItem.weekdayText > 0" class="dropdown">
-                <button
-                  class="btn btn-primary dropdown-toggle"
-                  type="button"
-                  id="dropdownMenuButton"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  Open hours
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a
-                    v-for="l in searchItem.weekdayText"
-                    v-bind:key="l"
-                    class="dropdown-item"
-                    href="#"
-                    >{{ l }}</a
+                <div v-show="searchItem.weekdayText > 0" class="dropdown">
+                  <button
+                    class="btn btn-primary dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
                   >
+                    Open hours
+                  </button>
+                  <div
+                    class="dropdown-menu"
+                    aria-labelledby="dropdownMenuButton"
+                  >
+                    <a
+                      v-for="l in searchItem.weekdayText"
+                      v-bind:key="l"
+                      class="dropdown-item"
+                      href="#"
+                      >{{ l }}</a
+                    >
+                  </div>
                 </div>
               </div>
-            </div>
-            <div v-if="$auth.isAuthenticated">
-              <div
-                v-if="!searchItem.alreadyInWishlist"
-                class="col-12 text-center"
-              >
-                <button
-                  v-on:click="AddToWishlist()"
-                  class="btn btn-add-wishlish btn-block mb-3"
+              <div v-if="$auth.isAuthenticated">
+                <div
+                  v-if="!searchItem.alreadyInWishlist"
+                  class="col-12 text-center"
                 >
-                  Add to wishlist
-                </button>
+                  <button
+                    v-on:click="AddToWishlist()"
+                    class="btn btn-add-wishlish btn-block mb-3"
+                  >
+                    Add to wishlist
+                  </button>
+                </div>
+                <div v-else-if="searchItem.alreadyInWishlist">
+                  <small>This location is already in your wishlist.</small>
+                </div>
               </div>
-              <div v-else-if="searchItem.alreadyInWishlist">
-                <small>This location is already in your wishlist.</small>
-              </div>
-            </div>
 
-            <div v-else>
-              <div class="col-12 text-center mt-3">
-                <small>Login in order to add items to your wishlist.</small>
+              <div v-else>
+                <div class="col-12 text-center mt-3">
+                  <small>Login in order to add items to your wishlist.</small>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </transition>
+      <div v-if="loading" class="text-center">
+        <b-spinner label="Spinning"></b-spinner>
       </div>
     </div>
   </div>
@@ -109,6 +117,7 @@ export default {
     return {
       photoReference: "",
       error: "",
+      loading: false,
     };
   },
 
@@ -147,6 +156,10 @@ export default {
       return authToken;
     },
 
+    setAltImg() {
+      this.photoReference = "https://i.imgur.com/enuN17J.png";
+    },
+
     InitiateAuth(fn) {
       // have to do this nonsense to make sure auth0Client is ready
       var instance = getInstance();
@@ -163,6 +176,7 @@ export default {
     },
 
     async RequestSearchItem(instance) {
+      this.loading = true;
       if (!this.$auth.isAuthenticated) {
         await this.CallSearchItem("");
       }
@@ -183,7 +197,7 @@ export default {
           }
         )
         .then((data) => {
-          console.log(data.data);
+          this.loading = false;
           this.$store.commit("SET_SearchItem", data.data);
           this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.$store.state.google_key}`;
         })
@@ -212,7 +226,9 @@ export default {
         )
         .then((data) => {
           this.$store.commit("SET_WishlistItems", data.data);
-          this.$store.commit("SET_SearchItemInWishlist", true);
+          this.$store.commit("SET_SearchItemInWishlist", {
+            isAlreadyInWishlist: true,
+          });
         })
         .catch((error) => {
           this.error = error.response.data;
