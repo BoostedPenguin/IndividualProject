@@ -5,6 +5,7 @@ using net_core_backend.Services;
 using net_core_backend.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -96,6 +97,49 @@ namespace backend_testing_xunit
 
             // Assert
             Assert.Equal(Serialize(expected), Serialize(result));
+        }
+
+
+        [Fact]
+        public async Task DistanceBetweenMultipleLocations()
+        {
+            // Inject
+            // Arrange
+            var origin = await service.LocationFromLandmark("Paris");
+            List<GoogleDataObject> destinations = new List<GoogleDataObject>
+            {
+                await service.LocationFromLandmark("Berlin"),
+                await service.LocationFromLandmark("Moscow"),
+                await service.LocationFromLandmark("Sofia"),
+                await service.LocationFromLandmark("Eindhoven"),
+            };
+
+            // Act
+            await service.DistanceBetweenMultipleLocations(origin.PlaceId, destinations.Select(x => x.PlaceId).ToArray());
+
+            // Assert
+        }
+
+        [Fact]
+        public async Task DirectionsServiceTest()
+        {
+            // Inject
+            // Arrange
+            var origin = await service.LocationFromLandmark("Paris");
+            List<GoogleDataObject> waypoints = new List<GoogleDataObject>
+            {
+                await service.LocationFromLandmark("Berlin"),
+                await service.LocationFromLandmark("Moscow"),
+                await service.LocationFromLandmark("Sofia"),
+                await service.LocationFromLandmark("Eindhoven"),
+            };
+
+            var destination = await service.LocationFromLandmark("Madrid");
+
+            // Act
+            await service.DirectionsServiceTest(origin.PlaceId, destination.PlaceId, waypoints.Select(x => x.PlaceId).ToArray());
+
+            // Assert
         }
 
         //[Fact]

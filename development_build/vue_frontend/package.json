@@ -16,7 +16,6 @@
     "v-tooltip": "^2.0.3",
     "vue": "^2.6.12",
     "vue-js-toggle-button": "^1.3.3",
-    "vue-meta": "^2.4.0",
     "vue-router": "^3.2.0",
     "vuex": "^3.6.0"
   },

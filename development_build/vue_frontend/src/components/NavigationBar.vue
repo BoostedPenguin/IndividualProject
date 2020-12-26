@@ -271,6 +271,11 @@ export default {
 #navbar-button {
   color: white;
   font-size: 20px;
+  transition-duration: 0.4s;
+}
+
+#navbar-button:hover {
+  transform: scale(1.1);
 }
 .boxed-x {
   border: 1px solid black;

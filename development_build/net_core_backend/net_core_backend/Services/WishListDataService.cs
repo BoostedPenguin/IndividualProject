@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static net_core_backend.Services.GoogleDataService;
 
 namespace net_core_backend.Services
 {
@@ -15,11 +16,32 @@ namespace net_core_backend.Services
     {
         private readonly IContextFactory contextFactory;
         private readonly IHttpContextAccessor httpContext;
+        private readonly IGoogleService googleService;
 
-        public WishListDataService(IContextFactory _contextFactory, IHttpContextAccessor httpContextAccessor) : base(_contextFactory)
+        public WishListDataService(IContextFactory _contextFactory, IHttpContextAccessor httpContextAccessor, IGoogleService googleService) : base(_contextFactory)
         {
             contextFactory = _contextFactory;
             httpContext = httpContextAccessor;
+            this.googleService = googleService;
+        }
+
+        public async Task<GoogleDirectionsObject[]> GetWaypointsFromWishlist()
+        {
+            if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
+            {
+                throw new ArgumentException("Administrators cannot intact with their wishlist!");
+            }
+
+            using(var a = contextFactory.CreateDbContext())
+            {
+                var wishlist = await a.WishList.Include(x => x.User).Include(x => x.Locations).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                
+                if (wishlist == null) throw new ArgumentException("Something went wrong. User doesn't have a wishlist");
+
+                var waypoints = await googleService.DirectionsServiceTest("Moscow", "Sofia", wishlist.Locations.Select(x => x.PlaceId).ToArray());
+
+                return waypoints;
+            }
         }
 
         public async Task<WishList> AddLocation(Locations location)
@@ -120,6 +142,35 @@ namespace net_core_backend.Services
                     .Include(x => x.Locations)
                     .Where(x => x.User.Auth == httpContext.GetCurrentAuth())
                     .FirstOrDefaultAsync();
+            }
+        }
+
+        public class SimpleLocation
+        {
+            public double Latitude { get; set; }
+            public double Longitude { get; set; }
+        }
+
+        public async Task<SimpleLocation[]> GetSimpleWishlistLocations()
+        {
+            if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
+            {
+                throw new ArgumentException("Administrators cannot interact with their own wishlist!");
+            }
+
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var wishlist = await a.WishList
+                    .Include(x => x.Locations)
+                    .Where(x => x.User.Auth == httpContext.GetCurrentAuth())
+                    .FirstOrDefaultAsync();
+
+                List<SimpleLocation> sl = new List<SimpleLocation>();
+                foreach(var b in wishlist.Locations)
+                {
+                    sl.Add(new SimpleLocation() { Latitude = b.Lang, Longitude = b.Long});
+                }
+                return sl.ToArray();
             }
         }
 

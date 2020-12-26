@@ -64,6 +64,19 @@ export default new Vuex.Store({
           console.log(items)
           commit('SET_Items', ...items)
         })
-    }
-  }
+    },
+    // async Testing(context, payload) {
+    //   axios
+    //     .get(`${context.state.base_url}/wishlist`, {
+    //       headers: {
+    //         Authorization: `Bearer ${payload.authToken}`, // send the access token through the 'Authorization' header
+    //       },
+    //     })
+    //     .then((data) => {
+    //       context.commit("SET_WishlistItems", data.data)
+    //       console.log(data)
+    //     })
+    //     .catch((err) => (this.error = err))
+    // },
+  },
 })

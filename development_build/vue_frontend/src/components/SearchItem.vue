@@ -117,7 +117,7 @@ export default {
     return {
       photoReference: "",
       error: "",
-      loading: false,
+      loading: true,
     };
   },
 
@@ -128,6 +128,7 @@ export default {
     ) {
       this.InitiateAuth(this.RequestSearchItem);
     } else {
+      this.loading = false;
       console.log(`Correct url for place :)`);
     }
   },

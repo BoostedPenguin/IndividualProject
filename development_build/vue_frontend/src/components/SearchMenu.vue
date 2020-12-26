@@ -7,41 +7,6 @@
 
           <!-- Input group -->
           <div class="input-group mb-3">
-            <!-- <div class="input-group-prepend">
-              <b-dropdown>
-                <b-dropdown-item href="#">An item</b-dropdown-item>
-                <b-dropdown-item href="#">Another item</b-dropdown-item>
-              </b-dropdown>
-
-              <ul class="dropdown-menu checkbox-menu allow-focus">
-                <li>
-                  <label @click.stop="stopTheEvent">
-                    <input type="checkbox" /> Filter Item 1
-                  </label>
-                </li>
-                <li>
-                  <label @click.stop="stopTheEvent">
-                    <input type="checkbox" /> Filter Item 2
-                  </label>
-                </li>
-              </ul>
-            </div> -->
-            <!-- <input
-              maxlength="40"
-              v-model="location"
-              type="text"
-              class="form-control form-rounded"
-              placeholder="Eiffel Tower, Paris"
-              aria-label="Eiffel Tower, Paris"
-              aria-describedby="basic-addon2"
-              @keyup.enter="Search"
-            /> -->
-            <!-- <b-list-group v-if="location">
-              <b-list-group-item v-for="(result, i) in searchResults" :key="i">
-                {{ result }}
-              </b-list-group-item>
-            </b-list-group> -->
-
             <b-form-input
               maxlength="40"
               v-model="location"
@@ -93,6 +58,7 @@
 import axios from "axios";
 
 export default {
+  components: {},
   data() {
     return {
       loading: false,
@@ -114,17 +80,8 @@ export default {
       }
     },
   },
-  metaInfo() {
-    return {
-      script: [
-        {
-          src: `https://maps.googleapis.com/maps/api/js?key=${this.$store.state.google_key}&libraries=places`,
-          async: true,
-          defer: true,
-          callback: () => this.MapsInit(), // will declare it in methods
-        },
-      ],
-    };
+  mounted() {
+    this.MapsInit();
   },
   methods: {
     stopTheEvent: (event) => event.stopPropagation(),

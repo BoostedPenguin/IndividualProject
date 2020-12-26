@@ -212,6 +212,63 @@ namespace net_core_backend.Services
             return data;
         }
 
+        public async Task DistanceBetweenMultipleLocations(string origin, string[] destination)
+        {
+            string destinationString = string.Join("|place_id:", destination);
+            //string destinationString = destination[0];
+
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=place_id:{origin}&destinations=place_id:{destinationString}");
+
+            dynamic result = JsonConvert.DeserializeObject(responseBody);
+
+            if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
+        }
+
+        public async Task<GoogleDirectionsObject[]> DirectionsServiceTest(string origin, string destination, string[] locations)
+        {
+            var waypointsString = string.Join("|place_id:", locations);
+
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&waypoints=optimize:true|place_id:{waypointsString}");
+            
+            dynamic result = JsonConvert.DeserializeObject(responseBody);
+
+            if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
+
+            var dataObjects = new List<GoogleDirectionsObject>();
+            foreach(var a in result.routes[0].legs)
+            {
+                dataObjects.Add(new GoogleDirectionsObject()
+                {
+                    DistanceString = a.distance.text,
+                    Distance = a.distance.value,
+                    Duration = a.duration.value,
+                    DurationString = a.duration.text,
+                    End_Address = a.end_address,
+                    End_Location_Lat = a.end_location.lat,
+                    End_Location_Lng = a.end_location.lng,
+                    Start_Address = a.start_address,
+                    Start_Location_Lat = a.start_location.lat,
+                    Start_Location_Lng = a.start_location.lng,
+                });
+            }
+
+            return dataObjects.ToArray();
+        }
+
+        public class GoogleDirectionsObject
+        {
+            public string DistanceString { get; set; }
+            public int Distance { get; set; }
+            public string DurationString { get; set; }
+            public int Duration { get; set; }
+            public string End_Address{ get; set; }
+            public double End_Location_Lat{ get; set; }
+            public double End_Location_Lng { get; set; }
+            public string Start_Address { get; set; }
+            public double Start_Location_Lat { get; set; }
+            public double Start_Location_Lng { get; set; }
+        }
+
 
         public async Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2, Transportation transportation)
         {

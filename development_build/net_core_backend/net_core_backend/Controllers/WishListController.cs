@@ -47,6 +47,22 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpGet("locations")]
+        [Authorize]
+        public async Task<IActionResult> GetSimpleWishlistLocations()
+        {
+            try
+            {
+                var result = await _context.GetSimpleWishlistLocations();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpDelete]
         [Authorize]
         public async Task<IActionResult> ClearWishlist()
@@ -117,6 +133,32 @@ namespace net_core_backend.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet("waypoints")]
+        [Authorize]
+        public async Task<IActionResult> GetWaypointsFromWishlist()
+        {
+            try
+            {
+                var result = await _context.GetWaypointsFromWishlist();
+
+                List<fuckoff> ea = new List<fuckoff>();
+                foreach(var a in result)
+                {
+                    ea.Add(new fuckoff() { Location = a.End_Address });
+                }
+                return Ok(ea);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        public class fuckoff
+        {
+            public string Location { get; set; }
         }
     }
 }
