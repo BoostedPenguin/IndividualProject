@@ -270,33 +270,33 @@ namespace net_core_backend.Services
         }
 
 
-        public async Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2, Transportation transportation)
-        {
-            if (location1 == null || location2 == null) throw new ArgumentException("You need to fill in a valid location!");
+        //public async Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2, string transportation)
+        //{
+        //    if (location1 == null || location2 == null) throw new ArgumentException("You need to fill in a valid location!");
             
-            var city1 = await CoordinatesFromLocation(location1);
-            var city2 = await CoordinatesFromLocation(location2);
+        //    var city1 = await CoordinatesFromLocation(location1);
+        //    var city2 = await CoordinatesFromLocation(location2);
 
-            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/distancematrix/json?origins={city1.Latitude},{city1.Longitude}&destinations={city2.Latitude},{city2.Longitude}&mode={transportation.SetTransportation()}");
+        //    string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/distancematrix/json?origins={city1.Latitude},{city1.Longitude}&destinations={city2.Latitude},{city2.Longitude}&mode={transportation.SetTransportation()}");
 
-            dynamic result = JsonConvert.DeserializeObject(responseBody);
+        //    dynamic result = JsonConvert.DeserializeObject(responseBody);
 
-            if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
-
-
-            string distance = result.rows[0].elements[0].distance.text;
-            string duration = result.rows[0].elements[0].duration.text;
-
-            return new GoogleDataObject() { Distance = distance, Duration = duration };
-        }
+        //    if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
 
 
-        public async Task<GoogleDataObject> DistanceDurationBetweenLocations(GoogleDataObject latLngLocation1, GoogleDataObject latLngLocation2, Transportation transportation)
+        //    string distance = result.rows[0].elements[0].distance.text;
+        //    string duration = result.rows[0].elements[0].duration.text;
+
+        //    return new GoogleDataObject() { Distance = distance, Duration = duration };
+        //}
+
+
+        public async Task<GoogleDataObject> DistanceDurationBetweenLocations(GoogleDataObject latLngLocation1, GoogleDataObject latLngLocation2)
         {
             if (latLngLocation1.Latitude == null || latLngLocation1.Longitude == null || latLngLocation2.Latitude == null || latLngLocation2.Longitude == null) 
                 throw new ArgumentException("You need to fill in a valid location!");
 
-            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/distancematrix/json?origins={latLngLocation1.Latitude},{latLngLocation1.Longitude}&destinations={latLngLocation2.Latitude},{latLngLocation2.Longitude}&mode={transportation.SetTransportation()}");
+            string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/distancematrix/json?origins={latLngLocation1.Latitude},{latLngLocation1.Longitude}&destinations={latLngLocation2.Latitude},{latLngLocation2.Longitude}");
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 
@@ -394,6 +394,11 @@ namespace net_core_backend.Services
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsStringAsync();
+        }
+
+        public Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2)
+        {
+            throw new NotImplementedException();
         }
     }
 }

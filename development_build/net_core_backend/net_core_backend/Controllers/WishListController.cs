@@ -63,6 +63,41 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpPatch("locations/status")]
+        [Authorize]
+        public async Task<IActionResult> SetOriginDestination([FromBody]dynamic body)
+        {
+            int locationId = body.locationId;
+            string od = body.od;
+
+            try
+            {
+                await _context.SetOriginDestination(locationId, od);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("locations/status")]
+        [Authorize]
+        public async Task<IActionResult> CheckOriginDestination()
+        {
+            try
+            {
+                var result = await _context.CheckOriginDestination();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpDelete]
         [Authorize]
         public async Task<IActionResult> ClearWishlist()
@@ -119,11 +154,14 @@ namespace net_core_backend.Controllers
 
         [HttpPost("create")]
         [Authorize]
-        public async Task<IActionResult> CreateTrip()
+        public async Task<IActionResult> CreateTrip([FromBody]dynamic body)
         {
+            string name = body.name;
+            string transportation = body.transportation;
+
             try
             {
-                var result = await _context.CreateTrip();
+                var result = await _context.CreateTrip(name, transportation);
 
                 var dto = mapper.Map<UserTripsViewModel>(result);
 

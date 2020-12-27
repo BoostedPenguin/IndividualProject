@@ -81,20 +81,14 @@ namespace net_core_backend.Services.Extensions
             }
         }
 
-        public static string SetTransportation(this Transportation transportation)
+        public static bool CheckTransportation(this string transportation)
         {
-            switch (transportation)
+            if(transportation != null && (transportation == "WALKING" || transportation == "BIKING" && transportation == "DRIVING"))
             {
-                case Transportation.Bus:
-                    return "driving";
-
-                case Transportation.Car:
-                    return "driving";
-
-                case Transportation.Walk:
-                    return "walking";
+                return true;
             }
-            return null;
+
+            throw new ArgumentException("You must enter a valid transportation method!");
         }
     }
 }

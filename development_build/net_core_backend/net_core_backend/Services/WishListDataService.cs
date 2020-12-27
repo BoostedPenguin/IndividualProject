@@ -44,6 +44,59 @@ namespace net_core_backend.Services
             }
         }
 
+        public async Task<bool> CheckOriginDestination()
+        {
+            if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
+            {
+                throw new ArgumentException("Administrators cannot intact with their wishlist!");
+            }
+
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var wishlist = await a.WishList.Include(x => x.User).Include(x => x.Locations).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+
+                if (wishlist == null) throw new ArgumentException("Something went wrong. User doesn't have a wishlist");
+
+                var origin = wishlist.Locations.Any(x => x.Origin_Destination == "ORIGIN");
+                
+                var destination = wishlist.Locations.Any(x => x.Origin_Destination == "DESTINATION");
+
+                if (origin && destination) return true;
+
+                throw new ArgumentException("You need to have an origin and destination location before you proceed!");
+            }
+        }
+
+        public async Task SetOriginDestination(int locationId, string od)
+        {
+            if (od != "ORIGIN" && od != "DESTINATION") throw new ArgumentException("Origin or destination weren't in the correct format");
+
+            if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
+            {
+                throw new ArgumentException("Administrators cannot intact with their wishlist!");
+            }
+
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var wishlist = await a.WishList.Include(x => x.User).Include(x => x.Locations).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+
+                var location = wishlist.Locations.Where(x => x.Id == locationId).First();
+
+
+                //Checks if there is already a location assigned as an origin or destination and removes it
+                var locationWithSameStatus = wishlist.Locations.Where(x => x.Origin_Destination == od).FirstOrDefault();
+                
+                if (locationWithSameStatus != null)
+                {
+                    locationWithSameStatus.Origin_Destination = null;
+                }
+
+                location.Origin_Destination = od;
+
+                await a.SaveChangesAsync();
+            }
+        }
+
         public async Task<WishList> AddLocation(Locations location)
         {
             if (location.Lang == 0 || location.Long == 0 || location.Name == null || location.PlaceId == null) throw new ArgumentException("The location data was empty");
@@ -98,8 +151,12 @@ namespace net_core_backend.Services
             }
         }
 
-        public async Task<UserTrips> CreateTrip()
+        public async Task<UserTrips> CreateTrip(string name, string transportation)
         {
+            if (name == null) throw new ArgumentException("The name of the tirp can't be empty!");
+
+            transportation.CheckTransportation();
+            
             if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
                 throw new ArgumentException("Administrators cannot intact with their wishlist!");
@@ -107,23 +164,24 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                var wishList = await a.WishList.Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var wishList = await a.WishList.Include(x => x.User).Include(x => x.Locations).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
-                var locations = await a.Locations.Where(x => x.TripId == null && x.WishlistId == wishList.Id).ToListAsync();
+                if (wishList.Locations.Count == 0) throw new ArgumentException("You must have at least 1 location in your wishlist!");
 
-                if (locations.Count == 0) throw new ArgumentException("You must have at least 1 location in your wishlist!");
+                var trip = new UserTrips() { Transportation = transportation, Name = name, UserId = wishList.UserId };
+                
+                await a.AddAsync(trip);
 
-                var trip = new UserTrips() { Distance = wishList.Distance, Duration = wishList.Duration, Transportation = wishList.Transportation, Name = wishList.Name, UserId = wishList.UserId };
-                foreach (var l in locations)
+                await a.SaveChangesAsync();
+
+                foreach (var l in wishList.Locations)
                 {
                     l.TripId = trip.Id;
                     l.WishlistId = null;
                 }
-
-                await a.AddAsync(trip);
-                await a.AddRangeAsync(locations);
+                await a.SaveChangesAsync();
 
                 return trip;
             }

@@ -53,7 +53,7 @@ namespace backend_testing_xunit
 
             // Comment this if you don't want to seed the database
             // WARNING: It may cause unexpected database errors
-            //DatabaseSeeder.Seed(new ContextFactoryTesting(Configuration.GetConnectionString("Testing_SQLCONNSTR_Database")));
+            DatabaseSeeder.Seed(new ContextFactoryTesting(Configuration.GetConnectionString("Testing_SQLCONNSTR_Database")));
         }
     }
 }

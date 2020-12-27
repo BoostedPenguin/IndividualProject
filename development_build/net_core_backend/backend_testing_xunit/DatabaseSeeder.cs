@@ -121,11 +121,11 @@ namespace backend_testing_xunit
 
                 Locations = new Locations[5]
                 {
-                new Locations() { Lang = 5, Long = 3, Name = "BS", TripId = UserTrips[0].Id },
-                new Locations() { Lang = 5, Long = 3, Name = "zaw", TripId = UserTrips[0].Id },
-                new Locations() { Lang = 5, Long = 3, Name = "awesda", WishlistId = WishLists[0].Id },
-                new Locations() { Lang = 5, Long = 53, Name = "zafg", WishlistId = WishLists[0].Id },
-                new Locations() { Lang = 5, Long = 3, Name = "hjm", TripId = UserTrips[2].Id },
+                new Locations() { Lang = 5, Long = 3, Name = "BS", TripId = UserTrips[0].Id, PlaceId = "123" },
+                new Locations() { Lang = 5, Long = 3, Name = "zaw", TripId = UserTrips[0].Id, PlaceId = "123" },
+                new Locations() { Lang = 5, Long = 3, Name = "awesda", WishlistId = WishLists[0].Id, PlaceId = "123" },
+                new Locations() { Lang = 5, Long = 53, Name = "zafg", WishlistId = WishLists[0].Id, PlaceId = "123" },
+                new Locations() { Lang = 5, Long = 3, Name = "hjm", TripId = UserTrips[2].Id, PlaceId = "123" },
                 };
 
 

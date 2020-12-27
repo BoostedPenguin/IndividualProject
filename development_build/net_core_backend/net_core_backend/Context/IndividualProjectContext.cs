@@ -113,6 +113,10 @@ namespace net_core_backend.Models
                     .WithMany(p => p.Locations)
                     .HasForeignKey(d => d.WishlistId)
                     .HasConstraintName("FK_Locations_WishList");
+
+                entity.Property(e => e.Origin_Destination)
+                    .HasColumnName("origin_destination")
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<SupportTicket>(entity =>
@@ -225,7 +229,6 @@ namespace net_core_backend.Models
 
                 entity.Property(e => e.Transportation)
                     .IsRequired()
-                    .HasConversion(x => x.ToString(), x => (Transportation)Enum.Parse(typeof(Transportation), x))
                     .HasColumnName("transportation")
                     .HasMaxLength(50);
 
@@ -314,7 +317,6 @@ namespace net_core_backend.Models
                     .HasMaxLength(50);
 
                 entity.Property(e => e.Transportation)
-                    .HasConversion(x => x.ToString(), x => (Transportation)Enum.Parse(typeof(Transportation), x))
                     .HasColumnName("transportation")
                     .HasMaxLength(50);
 

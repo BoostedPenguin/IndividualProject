@@ -132,7 +132,12 @@
             >
               <i class="fa fa-times" aria-hidden="true"></i>
             </span>
-            {{ w.name }}
+            <router-link
+              id="wishlist-link"
+              :to="{ name: 'SearchItemView', params: { placeId: w.placeId } }"
+            >
+              {{ w.name }}
+            </router-link>
             <hr />
           </div>
           <div v-if="getWishlist.locations && getWishlist.locations.length > 0">
@@ -284,6 +289,17 @@ export default {
 .boxed-x:hover,
 .boxed-x:focus {
   box-shadow: 0 0 3pt 1pt #000000;
+}
+
+#wishlist-link {
+  text-decoration: none;
+  color: black;
+  transition: 0.4s;
+}
+
+#wishlist-link:hover {
+  text-decoration: underline;
+  color: gray;
 }
 
 .separator {

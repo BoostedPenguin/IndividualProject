@@ -75,7 +75,7 @@ namespace backend_testing_xunit
 
 
             // Act
-            var result = await service.DistanceDurationBetweenLocations("Burgas", "Varna", Transportation.Car);
+            var result = await service.DistanceDurationBetweenLocations("Burgas", "Varna");
             
             // Assert
             Assert.Equal(Serialize(expected), Serialize(result));
@@ -93,7 +93,7 @@ namespace backend_testing_xunit
 
 
             // Act
-            var result = await service.DistanceDurationBetweenLocations(loc1, loc2, Transportation.Car);
+            var result = await service.DistanceDurationBetweenLocations(loc1, loc2);
 
             // Assert
             Assert.Equal(Serialize(expected), Serialize(result));

@@ -7,6 +7,7 @@ import CustomerSupportView from '../views/CustomerSupportView.vue'
 import TicketContentView from '../views/TicketContentView.vue'
 import TicketCreationView from '../views/TicketCreationView.vue'
 import SettingsView from '../views/SettingsView.vue'
+import WishlistPreview from '../views/WishlistPreview.vue'
 import { authGuard } from "../auth/authGuard"
 
 Vue.use(VueRouter)
@@ -56,6 +57,13 @@ const routes = [
     path: '/settings',
     name: 'SettingsView',
     component: SettingsView,
+    meta: { transitionName: 'slide' },
+    beforeEnter: authGuard
+  },
+  {
+    path: '/wishlist/preview',
+    name: 'WishlistPreview',
+    component: WishlistPreview,
     meta: { transitionName: 'slide' },
     beforeEnter: authGuard
   },

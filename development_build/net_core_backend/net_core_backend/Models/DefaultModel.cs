@@ -11,12 +11,6 @@ namespace net_core_backend.Models
         Admin
     }
 
-    public enum Transportation
-    {
-        Walk,
-        Car,
-        Bus
-    }
 
     public class DefaultModel
     {
