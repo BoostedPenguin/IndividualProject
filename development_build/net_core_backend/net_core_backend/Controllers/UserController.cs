@@ -62,6 +62,21 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ValidateIfAdmin()
+        {
+            try
+            {
+                var result = await _context.ValidateIfAdmin();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
 
         /// <summary>

@@ -1,5 +1,13 @@
 <template>
-  <div id="map"></div>
+  <div>
+    <div v-show="isReady" id="map"></div>
+    <div v-show="!isReady">
+      <div class="text-center mt-5">
+        <p class="">Generating map...</p>
+        <div class="spinner-border text-primary" role="status" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -106,14 +114,33 @@ export default {
               reconstructed.push(temp[e]);
             });
 
+            reconstructed[0].distance = 0;
+            reconstructed[0].distance_text = "Start";
+
+            reconstructed[0].duration = 0;
+            reconstructed[0].duration_text = "Start";
+
             reconstructed.push(
               waypoints.locations.filter(
                 (e) => e.origin_Destination == "DESTINATION"
               )[0]
             );
 
-            waypoints.locations = reconstructed;
+            for (let count = 1; count < reconstructed.length; count++) {
+              reconstructed[count].distance =
+                response.routes[0].legs[count - 1].distance.value;
+              reconstructed[count].distance_text =
+                response.routes[0].legs[count - 1].distance.text;
 
+              reconstructed[count].duration =
+                response.routes[0].legs[count - 1].duration.value;
+              reconstructed[count].duration_text =
+                response.routes[0].legs[count - 1].duration.text;
+            }
+
+            waypoints.locations = reconstructed;
+            console.log(response);
+            console.log(reconstructed);
             this.$store.commit("SET_SelectedTrip", waypoints);
 
             directionsRenderer.setDirections(response);
@@ -135,8 +162,6 @@ export default {
           },
         })
         .then((data) => {
-          //Content
-
           this.GenerateMap(data.data);
         })
         .catch((err) => console.log(err));

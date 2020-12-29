@@ -95,13 +95,11 @@ export default {
         .catch((err) => {
           this.loadingSuggestions = false;
 
-          this.error = err;
+          this.error = err.response.data;
         });
     },
 
     async GetSuggestions(instance) {
-      console.log("Fetching now");
-
       // Guest / Not logged in
       if (!this.$auth.isAuthenticated) {
         console.log("HELLOOOO");
@@ -112,7 +110,9 @@ export default {
           .then((data) => {
             this.GetGuestSuggestions(data.data);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            this.error = err.response.data;
+          });
       }
       await instance.getTokenSilently().then((authToken) => {
         // do authorized API calls with auth0 authToken here
@@ -129,7 +129,7 @@ export default {
           })
           .catch((err) => {
             this.loadingSuggestions = false;
-            this.error = err;
+            this.error = err.response.data;
           });
       });
     },

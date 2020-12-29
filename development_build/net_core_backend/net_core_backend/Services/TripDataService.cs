@@ -100,7 +100,7 @@ namespace net_core_backend.Services
             }
         }
 
-        public async Task<UserTrips> DeleteTrip(int trip_id)
+        public async Task<UserTrips[]> DeleteTrip(int trip_id)
         {
             if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
@@ -109,16 +109,21 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                var trip = await a.UserTrips.Where(x => x.Id == trip_id && x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var trip = await a.UserTrips.Include(x => x.User).Where(x => x.Id == trip_id && x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (trip == null) throw new ArgumentException("There isn't a trip with that id!");
 
                 var locations = await a.Locations.Where(x => x.TripId == trip.Id && x.WishlistId == null).ToListAsync();
                 
                 a.RemoveRange(locations);
+
                 a.Remove(trip);
 
-                return trip;
+                await a.SaveChangesAsync();
+
+                var trips = await a.UserTrips.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToArrayAsync();
+
+                return trips;
             }
         }
 

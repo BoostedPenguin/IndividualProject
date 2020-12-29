@@ -27,6 +27,31 @@
       </div>
     </transition>
     <div class="row mt-5">
+      <div class="col-lg-4 col-12 mt-3 mb-3 mb-lg-0">
+        <div class="col-lg-12 offset-lg-0 col-8 offset-2">
+          <b-card
+            @click="SelectCard('DRIVING')"
+            v-bind:class="{ 'selected-card': transportation == 'DRIVING' }"
+            bg-variant="primary"
+            text-variant="white"
+            class="text-center wishlist-card"
+          >
+            <div class="row justify-content-center">
+              <div class="col-10">
+                <img
+                  class="wishlist-pictures img-fluid"
+                  src="../assets/car.png"
+                  alt="Card image cap"
+                />
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="card-text">Car</p>
+            </div>
+          </b-card>
+        </div>
+        <hr class="hr-black" />
+      </div>
       <div class="col-lg-4 col-12 mt-3">
         <div class="col-lg-12 offset-lg-0 col-8 offset-2">
           <b-card
@@ -56,7 +81,7 @@
       <div class="col-lg-4 col-12 mt-3">
         <div class="col-lg-12 offset-lg-0 col-8 offset-2">
           <b-card
-            @click="SelectCard('BIKING')"
+            @click="SelectCard('BICYCLING')"
             v-bind:class="{ 'selected-card': transportation == 'BICYCLING' }"
             bg-variant="primary"
             text-variant="white"
@@ -78,33 +103,18 @@
         </div>
         <hr class="hr-black" />
       </div>
+      <transition
+        v-if="transportation == 'WALKING' || transportation == 'BICYCLING'"
+        name="basic-fade"
+      >
+        <p class="hidden-text">
+          Selecting <strong>walking</strong> or
+          <strong>bicycling</strong> transport methods may result in unexpected
+          behaviour if distances between locations are too big!
+        </p>
+      </transition>
 
-      <div class="col-lg-4 col-12 mt-3 mb-3 mb-lg-0">
-        <div class="col-lg-12 offset-lg-0 col-8 offset-2">
-          <b-card
-            @click="SelectCard('DRIVING')"
-            v-bind:class="{ 'selected-card': transportation == 'DRIVING' }"
-            bg-variant="primary"
-            text-variant="white"
-            class="text-center wishlist-card"
-          >
-            <div class="row justify-content-center">
-              <div class="col-10">
-                <img
-                  class="wishlist-pictures img-fluid"
-                  src="../assets/car.png"
-                  alt="Card image cap"
-                />
-              </div>
-            </div>
-            <div class="card-body">
-              <p class="card-text">Car</p>
-            </div>
-          </b-card>
-        </div>
-        <hr class="hr-black" />
-      </div>
-      <button class="btn btn-primary btn-block mt-5" @click="CreateTrip()">
+      <button class="btn mb-5 btn-primary btn-block mt-5" @click="CreateTrip()">
         Create trip
       </button>
     </div>
@@ -162,10 +172,14 @@ export default {
         .then((data) => {
           this.$store.commit("SET_WishlistItems", null);
           console.log(data.data);
+          this.$router.push({
+            name: "TripOverview",
+            params: { tripId: data.data.id },
+          });
         })
         .catch((err) => {
           console.log(err);
-          this.error = err;
+          this.error = err.response.data;
         });
     },
   },
@@ -174,8 +188,8 @@ export default {
 
 <style>
 .selected-card {
-  transform: scale(1.2);
-  border: 5px solid black !important;
+  transform: scale(1.1);
+  border: 4px solid black !important;
   background-color: brown !important;
 }
 .wishlist-card {
@@ -192,7 +206,14 @@ export default {
 .wishlist-card:hover,
 .wishlist-card:focus {
   color: #fff;
-  transform: scale(1.1);
+  transform: scale(1.05);
+}
+
+.hidden-text {
+  padding: 5px;
+  border-radius: 1em;
+  border: 1px solid black;
+  text-align: center;
 }
 
 .hr-black {

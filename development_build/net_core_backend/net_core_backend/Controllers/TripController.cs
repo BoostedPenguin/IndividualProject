@@ -64,7 +64,7 @@ namespace net_core_backend.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{trip_id}")]
         [Authorize]
         public async Task<IActionResult> DeleteTrip([FromRoute]int trip_id)
         {
@@ -72,7 +72,7 @@ namespace net_core_backend.Controllers
             {
                 var trip = await _context.DeleteTrip(trip_id);
 
-                var dto = mapper.Map<UserTripsViewModel>(trip);
+                var dto = mapper.Map<UserTripsViewModel[]>(trip);
 
                 return Ok(dto);
             }

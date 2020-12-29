@@ -135,7 +135,7 @@ export default {
           this.keywords = data.data;
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
         });
     },
 
@@ -152,7 +152,7 @@ export default {
           this.keyword_logging = data.data;
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
         });
     },
 
@@ -174,7 +174,7 @@ export default {
           this.loading = false;
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
           this.loading = false;
         });
     },
@@ -197,7 +197,7 @@ export default {
           this.keywords = {};
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
           this.loading = false;
         });
     },
@@ -220,7 +220,7 @@ export default {
           this.keyword_logging = !this.keyword_logging;
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
           this.loading = false;
         });
     },
@@ -253,7 +253,7 @@ export default {
           this.keywords = data.data;
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
           this.loading = false;
         });
     },

@@ -1,14 +1,14 @@
 <template>
   <div class="main-menu">
     <div class="container">
-      <div v-if="loadingTrips" class="text-center mt-5">
+      <div v-if="loadingTrips" class="text-center pt-5">
         <p class="">Fetching trips...</p>
         <div class="spinner-border text-primary" role="status" />
       </div>
       <div v-else>
         <div
           v-if="getTrips != null && getTrips.length > 0"
-          class="table-responsive mt-5"
+          class="table-responsive pt-5"
         >
           <table class="table table-bordered">
             <thead>
@@ -34,8 +34,13 @@
                     }"
                     class="text-decoration-none"
                   >
-                    <button class="btn view-button btn-block">View</button>
+                    <button class="btn btn-primary btn-block">View</button>
                   </router-link>
+                </td>
+                <td>
+                  <button class="btn btn-danger" @click="RemoveTrip(trip.id)">
+                    Remove Trip
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -95,7 +100,27 @@ export default {
           this.$store.commit("SET_UserTrips", data.data);
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
+        });
+      this.loadingTrips = false;
+    },
+
+    async RemoveTrip(id) {
+      const authToken = await this.$auth.getTokenSilently();
+
+      this.loadingTrips = true;
+
+      await axios
+        .delete(`${this.$store.state.base_url}/trip/${id}`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
+          },
+        })
+        .then((data) => {
+          this.$store.commit("SET_UserTrips", data.data);
+        })
+        .catch((error) => {
+          this.error = error.response.data;
         });
       this.loadingTrips = false;
     },

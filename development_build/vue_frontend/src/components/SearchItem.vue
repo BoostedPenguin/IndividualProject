@@ -203,7 +203,7 @@ export default {
           this.photoReference = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${this.searchItem.photoReference}&maxwidth=500&key=${this.$store.state.google_key}`;
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
         });
     },
 

@@ -1,11 +1,15 @@
 <template>
-  <wishlist-set-origin-destination />
+  <div>
+    <wishlist-set-origin-destination />
+    <suggestions />
+  </div>
 </template>
 
 <script>
+import Suggestions from "../components/Suggestions.vue";
 import WishlistSetOriginDestination from "../components/WishlistSetOriginDestination.vue";
 export default {
-  components: { WishlistSetOriginDestination },
+  components: { WishlistSetOriginDestination, Suggestions },
 };
 </script>
 

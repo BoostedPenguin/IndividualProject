@@ -1,7 +1,10 @@
 <template>
   <div class="main-menu">
     <div class="container pt-5">
-      <h1 class="mb-5 text-center">Trip overview</h1>
+      <b-link id="btn-back" class="btn mb-sm-3 mb-3" to="/trips">
+        <i class="fa fa-arrow-left" aria-hidden="true">&nbsp; Back</i>
+      </b-link>
+      <h1 class="mb-5 text-center">Trip overview - {{ currentTrip.name }}</h1>
     </div>
     <div class="container">
       <div class="row">
@@ -10,6 +13,8 @@
             <thead>
               <tr>
                 <th scope="col" colspan="2">Locations</th>
+                <th scope="col">Distance</th>
+                <th scope="col">Duration</th>
               </tr>
             </thead>
             <tbody>
@@ -34,6 +39,21 @@
                     }}
                   </small>
                 </td>
+                <td>
+                  {{ trip.distance_text }}
+                </td>
+                <td>
+                  {{ trip.duration_text }}
+                </td>
+              </tr>
+              <tr>
+                <th colspan="2">Total</th>
+                <th>
+                  {{ DisplayTotalDistance(currentTrip.locations) }}
+                </th>
+                <th>
+                  {{ DisplayTotalDuration(currentTrip.locations) }}
+                </th>
               </tr>
             </tbody>
           </table>
@@ -78,6 +98,25 @@ export default {
       if (instance.loading == false) {
         this.GetTrip();
       }
+    },
+
+    DisplayTotalDistance(arrayData) {
+      if (!arrayData) return;
+      var data = arrayData.map((a) => a.distance);
+      var sum = data.reduce(function (a, b) {
+        return a + b;
+      }, 0);
+      return `${Math.round(sum / 1000)} km`;
+    },
+
+    DisplayTotalDuration(arrayData) {
+      if (!arrayData) return;
+
+      var data = arrayData.map((a) => a.duration);
+      var sum = data.reduce(function (a, b) {
+        return a + b;
+      }, 0);
+      return `${Math.floor(sum / 60 / 60)} hours`;
     },
   },
 };

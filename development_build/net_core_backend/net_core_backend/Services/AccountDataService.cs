@@ -49,6 +49,18 @@ namespace net_core_backend.Services
             }
         }
 
+        public async Task<bool> ValidateIfAdmin()
+        {
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var user = await a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+
+                if (user.Role == "Admin") return true;
+
+                return false;
+            }
+        }
+
 
         public async Task<Users> GetUserInfo(int id)
         {

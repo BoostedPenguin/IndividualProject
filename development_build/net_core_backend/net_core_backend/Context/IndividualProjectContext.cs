@@ -287,7 +287,6 @@ namespace net_core_backend.Models
                 entity.Property(e => e.Role)
                     .IsRequired()
                     .HasColumnName("role")
-                    .HasConversion(x => x.ToString(), x => (Role)Enum.Parse(typeof(Role), x))
                     .HasMaxLength(20)
                     .HasDefaultValueSql("('User')");
 

@@ -100,7 +100,7 @@ export default {
           console.log(data);
         })
         .catch((error) => {
-          this.error = error;
+          this.error = error.response.data;
         });
       this.loadingTickets = false;
     },

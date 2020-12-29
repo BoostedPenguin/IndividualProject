@@ -127,7 +127,7 @@ export default {
             });
           })
           .catch((error) => {
-            this.error = error;
+          this.error = error.response.data;
           });
         this.loading = false;
       } else {

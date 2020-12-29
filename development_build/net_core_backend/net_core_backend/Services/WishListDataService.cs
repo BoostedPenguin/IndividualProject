@@ -174,7 +174,7 @@ namespace net_core_backend.Services
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
-                if (wishList.Locations.Count == 0) throw new ArgumentException("You must have at least 1 location in your wishlist!");
+                if (wishList.Locations.Count < 2) throw new ArgumentException("You must have at least 2 locations in your wishlist!");
 
                 var trip = new UserTrips() { Transportation = transportation, Name = name, UserId = wishList.UserId };
                 

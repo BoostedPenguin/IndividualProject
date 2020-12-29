@@ -7,6 +7,7 @@ const host = process.env.VUE_APP_BASE_BACKEND_ROOT
 
 export default new Vuex.Store({
   state: {
+    user_role: {},
     trip: {},
     suggestions: {},
     wishlist: {},
@@ -32,6 +33,9 @@ export default new Vuex.Store({
     },
     SET_SelectedTrip(state, payload) {
       state.trip = payload
+    },
+    SET_UserRole(state, payload) {
+      state.user_role = payload
     },
     SET_UserTrips(state, payload) {
       state.userTrips = payload

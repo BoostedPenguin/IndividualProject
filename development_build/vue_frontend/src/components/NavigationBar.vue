@@ -125,7 +125,8 @@
     <div>
       <b-sidebar id="sidebar-1" title="Wishlist" right shadow>
         <div class="px-3 py-2">
-          <div v-if="getWishlist != null && getWishlist.locations > 0">
+          <p>Your locations:</p>
+          <div v-if="getWishlist != null">
             <div v-for="w in getWishlist.locations" :key="w.id">
               <span
                 class="boxed-x px-1"
@@ -142,7 +143,7 @@
               <hr />
             </div>
             <div
-              v-if="getWishlist.locations && getWishlist.locations.length > 0"
+              v-if="getWishlist.locations && getWishlist.locations.length > 1"
             >
               <b-link
                 :to="{ name: 'WishlistPreview' }"
@@ -151,10 +152,12 @@
                 <button class="btn btn-primary btn-block">Create trip</button>
               </b-link>
             </div>
-          </div>
 
-          <div v-else>
-            <small>You need to add at least 1 location to create a trip.</small>
+            <div v-else>
+              <small
+                >You need to add at least 2 locations to create a trip.</small
+              >
+            </div>
           </div>
         </div>
       </b-sidebar>
@@ -206,12 +209,29 @@ export default {
       instance.$watch("loading", (loading) => {
         if (loading === false) {
           this.GetWishList(instance);
+          this.ValidateAdmin();
         }
       });
 
       if (instance.loading == false) {
         this.GetWishList(instance);
+        this.ValidateAdmin();
       }
+    },
+    async ValidateAdmin() {
+      if (!this.$auth.isAuthenticated) return;
+      let authToken = await this.$auth.getTokenSilently();
+
+      axios
+        .get(`${this.$store.state.base_url}/user`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
+          },
+        })
+        .then((data) => {
+          this.$store.commit("SET_UserRole", data.data);
+        })
+        .catch((err) => (this.error = err.response.data));
     },
     async GetWishList() {
       if (!this.$auth.isAuthenticated) return;
@@ -226,7 +246,7 @@ export default {
         .then((data) => {
           this.$store.commit("SET_WishlistItems", data.data);
         })
-        .catch((err) => (this.error = err));
+        .catch((err) => (this.error = err.response.data));
     },
     async ValidateUser() {
       let authToken = "";
@@ -259,7 +279,7 @@ export default {
             isAlreadyInWishlist: false,
           });
         })
-        .catch((err) => (this.error = err));
+        .catch((err) => (this.error = err.response.data));
     },
   },
 };
@@ -299,6 +319,7 @@ export default {
 .boxed-x:hover,
 .boxed-x:focus {
   box-shadow: 0 0 3pt 1pt #000000;
+  cursor: pointer;
 }
 
 #wishlist-link {
