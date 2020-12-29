@@ -164,7 +164,13 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                var wishList = await a.WishList.Include(x => x.User).Include(x => x.Locations).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var currentAuth = httpContext.GetCurrentAuth();
+
+                var duplicateName = await a.UserTrips.Include(x => x.User).Where(x => x.Name == name && x.User.Auth == currentAuth).FirstOrDefaultAsync();
+
+                if (duplicateName != null) throw new ArgumentException("There is already a trip with that name. Please choose another.");
+
+                var wishList = await a.WishList.Include(x => x.User).Include(x => x.Locations).Where(x => x.User.Auth == currentAuth).FirstOrDefaultAsync();
 
                 if (wishList == null) throw new ArgumentException("Something went wrong! This user doesn't have a wishlist!");
 
@@ -207,6 +213,8 @@ namespace net_core_backend.Services
         {
             public double Latitude { get; set; }
             public double Longitude { get; set; }
+            public string Origin_Destination { get; set; }
+
         }
 
         public async Task<SimpleLocation[]> GetSimpleWishlistLocations()

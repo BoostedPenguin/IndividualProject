@@ -7,9 +7,11 @@ const host = process.env.VUE_APP_BASE_BACKEND_ROOT
 
 export default new Vuex.Store({
   state: {
+    trip: {},
     suggestions: {},
     wishlist: {},
     searchItem: {},
+    userTrips: {},
     supportTickets: {},
     base_url: process.env.VUE_APP_BASE_BACKEND_ROOT,
     google_key: process.env.VUE_APP_GOOGLE_KEY,
@@ -27,6 +29,12 @@ export default new Vuex.Store({
     },
     SET_WishlistItems(state, payload) {
       state.wishlist = payload
+    },
+    SET_SelectedTrip(state, payload) {
+      state.trip = payload
+    },
+    SET_UserTrips(state, payload) {
+      state.userTrips = payload
     },
     SET_SearchItemInWishlist(state, payload) {
       if (state.searchItem.placeId == 0 || payload.placeId == 0) return

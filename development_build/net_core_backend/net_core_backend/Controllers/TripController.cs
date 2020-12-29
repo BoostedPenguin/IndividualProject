@@ -100,6 +100,22 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpGet("trip/{tripId}")]
+        [Authorize]
+        public async Task<IActionResult> GetSimpleTripLocations([FromRoute]int tripId)
+        {
+            try
+            {
+                var result = await _context.GetSimpleTripLocations(tripId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPatch("/remove/{trip_id}")]
         [Authorize]
         public async Task<IActionResult> RemoveLocation([FromRoute]int trip_id, [FromBody]int location_id )

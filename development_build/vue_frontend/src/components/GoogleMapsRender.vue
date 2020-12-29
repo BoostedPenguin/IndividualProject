@@ -8,8 +8,11 @@ import { getInstance } from "../auth/authWrapper";
 
 export default {
   data() {
-    return {};
+    return {
+      isReady: false,
+    };
   },
+  props: ["tripId"],
   created() {
     this.InitiateAuth();
     //this.GenerateMap();
@@ -37,6 +40,7 @@ export default {
         center: { lat: 41.85, lng: -87.65 },
         streetViewControl: false,
         rotateControl: false,
+        mapTypeControl: false,
       });
       const directionsRenderer = new window.google.maps.DirectionsRenderer({
         map: map,
@@ -49,66 +53,91 @@ export default {
       );
     },
     calculateAndDisplayRoute(directionsService, directionsRenderer, waypoints) {
-      console.log(waypoints);
       class waypointObject {
         constructor(googleBs) {
           this.location = googleBs;
         }
       }
 
+      let origin = null;
+      let destination = null;
       let waypointsFinal = [];
-      waypoints.forEach((element) => {
+      waypoints.locations.forEach((element) => {
+        if (element.origin_Destination == "ORIGIN") {
+          origin = new window.google.maps.LatLng(element.lang, element.long);
+          return;
+        } else if (element.origin_Destination == "DESTINATION") {
+          destination = new window.google.maps.LatLng(
+            element.lang,
+            element.long
+          );
+          return;
+        }
         waypointsFinal.push(
           new waypointObject(
-            new window.google.maps.LatLng(element.latitude, element.longitude)
+            new window.google.maps.LatLng(element.lang, element.long)
           )
         );
       });
-
+      console.log(waypoints.transportation);
       directionsService.route(
         {
-          origin: "Eindhoven",
-          destination: "Sofia",
+          origin: origin,
+          destination: destination,
           waypoints: waypointsFinal,
           optimizeWaypoints: true,
           travelMode: "DRIVING",
         },
         (response, status) => {
           if (status === "OK") {
-            console.log("Did it return positive?");
+            let reconstructed = [];
+            let order = response.routes[0].waypoint_order;
+
+            reconstructed.push(
+              waypoints.locations.filter(
+                (e) => e.origin_Destination == "ORIGIN"
+              )[0]
+            );
+
+            let temp = waypoints.locations.filter(
+              (e) => e.origin_Destination == null
+            );
+            order.forEach((e) => {
+              reconstructed.push(temp[e]);
+            });
+
+            reconstructed.push(
+              waypoints.locations.filter(
+                (e) => e.origin_Destination == "DESTINATION"
+              )[0]
+            );
+
+            waypoints.locations = reconstructed;
+
+            this.$store.commit("SET_SelectedTrip", waypoints);
+
             directionsRenderer.setDirections(response);
-            //this.showSteps(response, markerArray, map);
           } else {
             window.alert("Directions request failed due to " + status);
           }
+          this.isReady = true;
         }
       );
-    },
-    showSteps(directionResult, markerArray, map) {
-      // For each step, place a marker, and add the text to the marker's infowindow.
-      // Also attach the marker to an array so we can keep track of it and remove it
-      // when calculating new routes.
-      const myRoute = directionResult.routes[0].legs[0];
-      for (let i = 0; i < myRoute.steps.length; i++) {
-        const marker = (markerArray[i] =
-          markerArray[i] || new window.google.maps.Marker());
-        marker.setMap(map);
-        marker.setPosition(myRoute.steps[i].start_location);
-      }
     },
     async GetWaypoints() {
       if (!this.$auth.isAuthenticated) return;
       let authToken = await this.$auth.getTokenSilently();
+
       axios
-        .get(`${this.$store.state.base_url}/wishlist/locations`, {
+        .get(`${this.$store.state.base_url}/trip/${this.tripId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`, // send the access token through the 'Authorization' header
           },
         })
         .then((data) => {
           //Content
+
           this.GenerateMap(data.data);
-          console.log(data.data);
         })
         .catch((err) => console.log(err));
     },

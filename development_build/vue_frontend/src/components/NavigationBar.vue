@@ -47,7 +47,7 @@
               <router-link
                 id="navbar-button"
                 class="nav-link m-2 menu-item"
-                to="#"
+                :to="{ name: 'UserTripsView' }"
                 data-toggle="collapse"
                 data-target=".navbar-collapse.show"
               >
@@ -125,24 +125,34 @@
     <div>
       <b-sidebar id="sidebar-1" title="Wishlist" right shadow>
         <div class="px-3 py-2">
-          <div v-for="w in getWishlist.locations" :key="w.id">
-            <span
-              class="boxed-x px-1"
-              v-on:click="RemoveWishlistItem(w.id, w.placeId)"
+          <div v-if="getWishlist != null && getWishlist.locations > 0">
+            <div v-for="w in getWishlist.locations" :key="w.id">
+              <span
+                class="boxed-x px-1"
+                v-on:click="RemoveWishlistItem(w.id, w.placeId)"
+              >
+                <i class="fa fa-times" aria-hidden="true"></i>
+              </span>
+              <router-link
+                id="wishlist-link"
+                :to="{ name: 'SearchItemView', params: { placeId: w.placeId } }"
+              >
+                {{ w.name }}
+              </router-link>
+              <hr />
+            </div>
+            <div
+              v-if="getWishlist.locations && getWishlist.locations.length > 0"
             >
-              <i class="fa fa-times" aria-hidden="true"></i>
-            </span>
-            <router-link
-              id="wishlist-link"
-              :to="{ name: 'SearchItemView', params: { placeId: w.placeId } }"
-            >
-              {{ w.name }}
-            </router-link>
-            <hr />
+              <b-link
+                :to="{ name: 'WishlistPreview' }"
+                class="text-decoration-none"
+              >
+                <button class="btn btn-primary btn-block">Create trip</button>
+              </b-link>
+            </div>
           </div>
-          <div v-if="getWishlist.locations && getWishlist.locations.length > 0">
-            <button class="btn btn-primary btn-block">Create trip</button>
-          </div>
+
           <div v-else>
             <small>You need to add at least 1 location to create a trip.</small>
           </div>

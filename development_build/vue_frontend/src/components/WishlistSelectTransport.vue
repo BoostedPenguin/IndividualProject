@@ -57,7 +57,7 @@
         <div class="col-lg-12 offset-lg-0 col-8 offset-2">
           <b-card
             @click="SelectCard('BIKING')"
-            v-bind:class="{ 'selected-card': transportation == 'BIKING' }"
+            v-bind:class="{ 'selected-card': transportation == 'BICYCLING' }"
             bg-variant="primary"
             text-variant="white"
             class="text-center wishlist-card"
@@ -160,8 +160,8 @@ export default {
           }
         )
         .then((data) => {
+          this.$store.commit("SET_WishlistItems", null);
           console.log(data.data);
-          console.log(":)))");
         })
         .catch((err) => {
           console.log(err);

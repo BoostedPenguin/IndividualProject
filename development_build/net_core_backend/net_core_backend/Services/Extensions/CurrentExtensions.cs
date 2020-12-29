@@ -83,7 +83,7 @@ namespace net_core_backend.Services.Extensions
 
         public static bool CheckTransportation(this string transportation)
         {
-            if(transportation != null && (transportation == "WALKING" || transportation == "BIKING" && transportation == "DRIVING"))
+            if(transportation == "WALKING" || transportation == "BICYCLING" || transportation == "DRIVING")
             {
                 return true;
             }

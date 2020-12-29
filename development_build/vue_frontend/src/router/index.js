@@ -6,8 +6,10 @@ import AccountView from '../views/AccountView.vue'
 import CustomerSupportView from '../views/CustomerSupportView.vue'
 import TicketContentView from '../views/TicketContentView.vue'
 import TicketCreationView from '../views/TicketCreationView.vue'
+import UserTripsView from '../views/UserTripsView.vue'
 import SettingsView from '../views/SettingsView.vue'
 import WishlistPreview from '../views/WishlistPreview.vue'
+import TripOverview from '../views/TripOverview'
 import { authGuard } from "../auth/authGuard"
 
 Vue.use(VueRouter)
@@ -22,6 +24,12 @@ const routes = [
     path: '/search/:placeId',
     name: 'SearchItemView',
     component: SearchItemView,
+    meta: { transitionName: 'slide' },
+  },
+  {
+    path: '/trips',
+    name: 'UserTripsView',
+    component: UserTripsView,
     meta: { transitionName: 'slide' },
   },
   {
@@ -65,6 +73,14 @@ const routes = [
     name: 'WishlistPreview',
     component: WishlistPreview,
     meta: { transitionName: 'slide' },
+    beforeEnter: authGuard
+  },
+  {
+    path: '/trips/overview/:tripId',
+    name: 'TripOverview',
+    component: TripOverview,
+    meta: { transitionName: 'slide' },
+    props: true,
     beforeEnter: authGuard
   },
   {
