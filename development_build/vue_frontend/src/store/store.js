@@ -19,6 +19,15 @@ export default new Vuex.Store({
     ip_stack: process.env.VUE_APP_IP_STACK_KEY,
   },
   mutations: {
+    SET_RemoveUserSpecificInformation(state) {
+      state.user_role = null
+      state.trip = null
+      state.suggestions = null
+      state.wishlist = null
+      state.searchItem = null
+      state.userTrips = null
+      state.supportTickets = null
+    },
     SET_Suggestions(state, payload) {
       state.suggestions = payload
     },

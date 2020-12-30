@@ -16,7 +16,7 @@
                 <th scope="col">ID</th>
                 <th scope="col">Trip name</th>
                 <th scope="col">Created</th>
-                <th scope="col">Actions</th>
+                <th scope="col" colspan="2">Actions</th>
               </tr>
             </thead>
             <tbody>

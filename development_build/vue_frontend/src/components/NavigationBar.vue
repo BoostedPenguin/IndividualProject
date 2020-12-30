@@ -196,8 +196,8 @@ export default {
     },
     // Log the user out
     logout() {
-      // Remove suggestions from this person..
-      //this.$store.commit('SET_Suggestions', null)
+      //Set all user specific information to null on logout
+      this.$store.commit("SET_RemoveUserSpecificInformation");
       this.$auth.logout({
         returnTo: window.location.origin,
       });
