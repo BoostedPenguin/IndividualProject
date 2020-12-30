@@ -61,6 +61,24 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpGet("admin")]
+        [Authorize]
+        public async Task<IActionResult> AdminGetAllTickets()
+        {
+            try
+            {
+                var result = await _context.AdminGetAllTickets();
+
+                var dto = mapper.Map<SupportTicketViewModel[]>(result);
+
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("message/{ticket_id}")]
         [Authorize]
         public async Task<IActionResult> CreateMessage([FromRoute]int ticket_id, [FromBody]TicketChat chat)

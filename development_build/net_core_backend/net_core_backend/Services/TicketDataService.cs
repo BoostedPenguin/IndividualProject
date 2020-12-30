@@ -47,6 +47,18 @@ namespace net_core_backend.Services
             }
         }
 
+        public async Task<SupportTicket[]> AdminGetAllTickets()
+        {
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var user = await a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                
+                if (user.Role != "Admin") throw new ArgumentException("Only admins can access this resource!");
+
+                return await a.SupportTicket.ToArrayAsync();
+            }
+        }
+
         public async Task<List<SupportTicket>> GetAllUserTickets()
         {
             using (var _context = contextFactory.CreateDbContext())
@@ -64,9 +76,13 @@ namespace net_core_backend.Services
 
             using (var _context = contextFactory.CreateDbContext())
             {
-                var ticket = await _context.SupportTicket.Include(x => x.User).Where(x => x.Id == ticket_id && x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var auth = httpContext.GetCurrentAuth();
 
-                if (ticket == null) return null;
+                var currentUser = await _context.Users.Where(x => x.Auth == auth).FirstOrDefaultAsync();
+
+                var ticket = await _context.SupportTicket.Include(x => x.User).Where(x => x.Id == ticket_id && (x.User.Auth == httpContext.GetCurrentAuth() || currentUser.Role == "Admin") ).FirstOrDefaultAsync();
+
+                if (ticket == null) return throw new ArgumentException("There isn't a ticket with that id for this person!");
 
                 chat.CreatorId = userId;
 
