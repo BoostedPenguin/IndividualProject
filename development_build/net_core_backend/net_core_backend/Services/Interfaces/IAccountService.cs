@@ -10,6 +10,7 @@ namespace net_core_backend.Services.Interfaces
     {
         Task<Users> ChangeAddress(Users entity);
         Task<Users> GetUserInfo(int id);
+        Task<bool> ValidateIfAdmin();
         Task<Users> ValidateUser(Users entity);
     }
 }

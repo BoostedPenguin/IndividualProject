@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using static net_core_backend.Services.WishListDataService;
 
 namespace net_core_backend.Services
 {
@@ -21,6 +22,36 @@ namespace net_core_backend.Services
         {
             contextFactory = _contextFactory;
             httpContext = httpContextAccessor;
+        }
+
+        public async Task<SimpleLocation[]> GetSimpleTripLocations(int tripId)
+        {
+            if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
+            {
+                throw new ArgumentException("Administrators cannot interact with their own wishlist!");
+            }
+
+            using (var a = contextFactory.CreateDbContext())
+            {
+                var trip = await a.UserTrips
+                    .Include(x => x.Locations)
+                    .Where(x => x.User.Auth == httpContext.GetCurrentAuth() && x.Id == tripId)
+                    .FirstOrDefaultAsync();
+
+                if (trip == null) throw new ArgumentException("There isn't a trip with that id for this user");
+
+                List<SimpleLocation> sl = new List<SimpleLocation>();
+                foreach (var b in trip.Locations)
+                {
+                    if (b.Origin_Destination == "ORIGIN" || b.Origin_Destination == "DESTINATION")
+                    {
+                        sl.Add(new SimpleLocation() { Latitude = b.Lang, Longitude = b.Long, Origin_Destination = b.Origin_Destination });
+                        continue;
+                    }
+                    sl.Add(new SimpleLocation() { Latitude = b.Lang, Longitude = b.Long });
+                }
+                return sl.ToArray();
+            }
         }
 
         public async Task<Locations> AddLocation(int trip_id, Locations location)
@@ -69,7 +100,7 @@ namespace net_core_backend.Services
             }
         }
 
-        public async Task<UserTrips> DeleteTrip(int trip_id)
+        public async Task<UserTrips[]> DeleteTrip(int trip_id)
         {
             if (await CurrentExtensions.RestrictAdministratorResource(contextFactory, httpContext))
             {
@@ -78,16 +109,21 @@ namespace net_core_backend.Services
 
             using (var a = contextFactory.CreateDbContext())
             {
-                var trip = await a.UserTrips.Where(x => x.Id == trip_id && x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
+                var trip = await a.UserTrips.Include(x => x.User).Where(x => x.Id == trip_id && x.User.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
                 if (trip == null) throw new ArgumentException("There isn't a trip with that id!");
 
                 var locations = await a.Locations.Where(x => x.TripId == trip.Id && x.WishlistId == null).ToListAsync();
                 
                 a.RemoveRange(locations);
+
                 a.Remove(trip);
 
-                return trip;
+                await a.SaveChangesAsync();
+
+                var trips = await a.UserTrips.Include(x => x.User).Where(x => x.User.Auth == httpContext.GetCurrentAuth()).ToArrayAsync();
+
+                return trips;
             }
         }
 
@@ -96,14 +132,17 @@ namespace net_core_backend.Services
             using(var a = contextFactory.CreateDbContext())
             {
                 var trip = await a.UserTrips
+                    .Include(x => x.User)
                     .Include(x => x.Locations)
-                    .Where(x => x.Id == id)
+                    .Where(x => x.Id == id && x.User.Auth == httpContext.GetCurrentAuth())
                     .FirstOrDefaultAsync();
 
+                if (trip == null) throw new ArgumentException("There isn't a trip with that id for this user");
 
-                if (CurrentExtensions.HasPrivileges(trip.UserId, httpContext, contextFactory)) return trip;
+                return trip;
+                //if (CurrentExtensions.HasPrivileges(trip.UserId, httpContext, contextFactory)) return trip;
 
-                throw new ArgumentException("Access forbidden!");
+                //throw new ArgumentException("Access forbidden!");
             }
         }
 

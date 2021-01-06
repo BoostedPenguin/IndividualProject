@@ -8,6 +8,7 @@ namespace net_core_backend.ViewModel
 {
     public class UserTripsViewModel
     {
+        public int Id { get; set; }
         public int UserId { get; set; }
         public string Name { get; set; }
         public string Transportation { get; set; }

@@ -21,12 +21,14 @@ namespace backend_testing_xunit
         private IWishListService service;
         private WishListController controller;
         private readonly IMapper mapper;
+        private readonly IGoogleService googleService;
 
-        public WishListControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper) : base(http, factory)
+        public WishListControllerTest(IHttpContextAccessor http, IContextFactory factory, IMapper mapper, IGoogleService googleService) : base(http, factory)
         {
             //Configure identity
             CreateIdentity(Users[0].Auth);
             this.mapper = mapper;
+            this.googleService = googleService;
         }
 
         protected override void CreateIdentity(string auth)
@@ -36,7 +38,7 @@ namespace backend_testing_xunit
 
             // Inject
 
-            service = new WishListDataService(factory, http);
+            service = new WishListDataService(factory, http, googleService);
             controller = new WishListController(service, null, mapper)
             {
                 ControllerContext = controllerContext,
@@ -73,8 +75,8 @@ namespace backend_testing_xunit
             // Arrange
             using (var a = factory.CreateDbContext())
             {
-                await a.AddAsync(new Locations() { Lang = 12, Long = 31, Name = "kdfvc", TripId = null, WishlistId = WishLists[0].Id });
-                await a.AddAsync(new Locations() { Lang = 55, Long = 321, Name = "zawsga", TripId = null, WishlistId = WishLists[0].Id });
+                await a.AddAsync(new Locations() { Lang = 12, PlaceId = "PlaceId1", Long = 31, Name = "kdfvc", TripId = null, WishlistId = WishLists[0].Id });
+                await a.AddAsync(new Locations() { Lang = 55, PlaceId = "PlaceId2", Long = 321, Name = "zawsga", TripId = null, WishlistId = WishLists[0].Id });
                 await a.SaveChangesAsync();
             }
 

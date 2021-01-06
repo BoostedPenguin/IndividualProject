@@ -9,6 +9,7 @@ namespace net_core_backend.Services.Interfaces
 {
     public interface ITicketService
     {
+        Task<SupportTicket[]> AdminGetAllTickets();
         Task<TicketChat> CreateMessage(int ticket_id, TicketChat chat);
         Task<SupportTicket> CreateTicket(SupportTicket entity);
         Task<List<SupportTicket>> GetAllUserTickets();

@@ -48,7 +48,7 @@ namespace net_core_backend.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetTrip(int id)
+        public async Task<IActionResult> GetTrip([FromRoute]int id)
         {
             try
             {
@@ -64,15 +64,15 @@ namespace net_core_backend.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("{trip_id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteTrip(int trip_id)
+        public async Task<IActionResult> DeleteTrip([FromRoute]int trip_id)
         {
             try
             {
                 var trip = await _context.DeleteTrip(trip_id);
 
-                var dto = mapper.Map<UserTripsViewModel>(trip);
+                var dto = mapper.Map<UserTripsViewModel[]>(trip);
 
                 return Ok(dto);
             }
@@ -84,7 +84,7 @@ namespace net_core_backend.Controllers
 
         [HttpPatch("/add/{trip_id}")]
         [Authorize]
-        public async Task<IActionResult> AddLocation(int trip_id, Locations location)
+        public async Task<IActionResult> AddLocation([FromRoute]int trip_id, [FromBody]Locations location)
         {
             try
             {
@@ -100,9 +100,25 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpGet("trip/{tripId}")]
+        [Authorize]
+        public async Task<IActionResult> GetSimpleTripLocations([FromRoute]int tripId)
+        {
+            try
+            {
+                var result = await _context.GetSimpleTripLocations(tripId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPatch("/remove/{trip_id}")]
         [Authorize]
-        public async Task<IActionResult> RemoveLocation(int trip_id, int location_id )
+        public async Task<IActionResult> RemoveLocation([FromRoute]int trip_id, [FromBody]int location_id )
         {
             try
             {

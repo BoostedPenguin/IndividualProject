@@ -31,7 +31,7 @@ namespace net_core_backend.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateAddress(Users entity)
+        public async Task<IActionResult> UpdateAddress([FromBody]Users entity)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace net_core_backend.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetUserInfo(int id)
+        public async Task<IActionResult> GetUserInfo([FromRoute] int id)
         {
             try
             {
@@ -62,6 +62,22 @@ namespace net_core_backend.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ValidateIfAdmin()
+        {
+            try
+            {
+                var result = await _context.ValidateIfAdmin();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         /// <summary>
         /// Gets called on post-registration callback
@@ -70,7 +86,7 @@ namespace net_core_backend.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> ValidateUser(Users entity)
+        public async Task<IActionResult> ValidateUser([FromBody] Users entity)
         {
             try
             {

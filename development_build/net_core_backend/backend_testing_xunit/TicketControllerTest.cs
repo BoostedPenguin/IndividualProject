@@ -109,8 +109,12 @@ namespace backend_testing_xunit
                 ticket = await a.SupportTicket.Include(x => x.User).Where(x => x.Id == ticket.Id).FirstOrDefaultAsync();
             }
 
-            var expected = mapper.Map<TicketChatViewModel>(message);
-
+            var expected = mapper.Map<SupportTicketViewModel>(ticket);
+            foreach(var a in expected.TicketChat)
+            {
+                a.IsCurrentUser = true;
+                a.CreatorId = 1;
+            }
             // Act
             var result = await controller.CreateMessage(ticket.Id, message);
 

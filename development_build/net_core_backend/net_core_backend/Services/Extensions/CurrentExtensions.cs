@@ -42,7 +42,7 @@ namespace net_core_backend.Services.Extensions
             {
                 var user = a.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
 
-                if(user.Result.Role == Role.User)
+                if(user.Result.Role == "User")
                 {
                     return false;
                 }
@@ -76,9 +76,19 @@ namespace net_core_backend.Services.Extensions
             using (var _context = contextFactory.CreateDbContext())
             {
                 var creator = await _context.Users.Where(x => x.Auth == httpContext.GetCurrentAuth()).FirstOrDefaultAsync();
-                if (creator.Role == Role.Admin) return true;
+                if (creator.Role == "Admin") return true;
                 return false;
             }
+        }
+
+        public static bool CheckTransportation(this string transportation)
+        {
+            if(transportation == "WALKING" || transportation == "BICYCLING" || transportation == "DRIVING")
+            {
+                return true;
+            }
+
+            throw new ArgumentException("You must enter a valid transportation method!");
         }
     }
 }

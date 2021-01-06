@@ -27,7 +27,11 @@ jobs:
     - name: dotnet publish
       working-directory: ./development_build/net_core_backend
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
+      
+    - name: Testing
+      working-directory: ./development_build/net_core_backend/backend_testing_xunit
+      run: dotnet test
+      
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:

@@ -27,7 +27,7 @@ namespace net_core_backend.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetTicket(int id)
+        public async Task<IActionResult> GetTicket([FromRoute]int id)
         {
             try
             {
@@ -61,15 +61,35 @@ namespace net_core_backend.Controllers
             }
         }
 
-        [HttpPost("/message")]
+        [HttpGet("admin")]
         [Authorize]
-        public async Task<IActionResult> CreateMessage(int ticket_id, TicketChat chat)
+        public async Task<IActionResult> AdminGetAllTickets()
+        {
+            try
+            {
+                var result = await _context.AdminGetAllTickets();
+
+                var dto = mapper.Map<SupportTicketViewModel[]>(result);
+
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("message/{ticket_id}")]
+        [Authorize]
+        public async Task<IActionResult> CreateMessage([FromRoute]int ticket_id, [FromBody]TicketChat chat)
         {
             try
             {
                 var result = await _context.CreateMessage(ticket_id, chat);
 
-                var dto = mapper.Map<TicketChatViewModel>(result);
+                var ticket = await _context.GetTicket(ticket_id);
+
+                var dto = mapper.Map<SupportTicketViewModel>(ticket);
 
                 return Ok(dto);
             }
@@ -82,7 +102,7 @@ namespace net_core_backend.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateTicket(SupportTicket ticket)
+        public async Task<IActionResult> CreateTicket([FromBody]SupportTicket ticket)
         {
             try
             {

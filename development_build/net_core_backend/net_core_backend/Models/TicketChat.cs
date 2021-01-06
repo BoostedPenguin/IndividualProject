@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace net_core_backend.Models
 {
@@ -10,6 +11,8 @@ namespace net_core_backend.Models
         public string Message { get; set; }
         public DateTime? CreatedAt { get; set; }
 
+        [NotMapped]
+        public bool IsCurrentUser { get; set; } = false;
         public virtual SupportTicket Ticket { get; set; }
     }
 }

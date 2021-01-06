@@ -10,8 +10,12 @@ namespace net_core_backend.Services.Interfaces
     {
         Task<WishList> GetWishlist();
         Task<WishList> ClearWishlist();
-        Task<Locations> AddLocation(Locations location);
-        Task<Locations> RemoveLocation(int location_id);
-        Task<UserTrips> CreateTrip();
+        Task<WishList> AddLocation(Locations location);
+        Task<WishList> RemoveLocation(int location_id);
+        Task<GoogleDataService.GoogleDirectionsObject[]> GetWaypointsFromWishlist();
+        Task<WishListDataService.SimpleLocation[]> GetSimpleWishlistLocations();
+        Task SetOriginDestination(int locationId, string od);
+        Task<bool> CheckOriginDestination();
+        Task<UserTrips> CreateTrip(string name, string transportation);
     }
 }

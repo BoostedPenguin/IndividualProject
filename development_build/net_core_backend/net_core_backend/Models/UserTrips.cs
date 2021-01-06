@@ -12,7 +12,7 @@ namespace net_core_backend.Models
 
         public int UserId { get; set; }
         public string Name { get; set; }
-        public Transportation Transportation { get; set; }
+        public string Transportation { get; set; }
         public int? Distance { get; set; }
         public double? Duration { get; set; }
         public DateTime? UpdatedAt { get; set; }
