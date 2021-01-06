@@ -31,6 +31,8 @@ jobs:
     - name: Testing
       working-directory: ./development_build/net_core_backend/backend_testing_xunit
       run: dotnet test
+      env:
+        GOOGLE_APP_KEY: ${{ secrets.GOOGLE_APP_KEY }}
       
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2

@@ -47,9 +47,8 @@ namespace backend_testing_xunit
 
             services.AddSingleton<ISearchDataService, SearchDataService>();
 
-            GoogleDataService.GoogleKey = Configuration.GetValue<string>("AppIdentitySettings:GoogleApiKey");
 
-
+            GoogleDataService.GoogleKey = Environment.GetEnvironmentVariable("GOOGLE_APP_KEY");
 
             // Comment this if you don't want to seed the database
             // WARNING: It may cause unexpected database errors
