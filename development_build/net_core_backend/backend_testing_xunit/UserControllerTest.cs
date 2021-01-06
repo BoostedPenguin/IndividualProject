@@ -86,7 +86,7 @@ namespace backend_testing_xunit
                 await a.AddAsync(user);
                 await a.SaveChangesAsync();
 
-                var trip = new UserTrips() { Name = "To Paris", Transportation = Transportation.Bus, UserId = user.Id };
+                var trip = new UserTrips() { Name = "To Paris", Transportation = "BICYCLING", UserId = user.Id };
 
                 var ticket = new SupportTicket() { UserId = user.Id, Title = "Something", Description = "Some desc" };
                 await a.AddAsync(ticket);

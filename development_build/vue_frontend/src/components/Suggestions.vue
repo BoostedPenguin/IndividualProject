@@ -116,7 +116,7 @@ export default {
       }
       await instance.getTokenSilently().then((authToken) => {
         // do authorized API calls with auth0 authToken here
-
+        console.log(authToken);
         axios
           .get(`${this.$store.state.base_url}/search/suggestions`, {
             headers: {

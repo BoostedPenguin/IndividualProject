@@ -66,20 +66,20 @@ namespace backend_testing_xunit
             Assert.Equal(typeof(GoogleDataObject), result.GetType());
         }
 
-        [Fact]
-        public async Task DistanceDurationBetweenLocations()
-        {
-            // Inject
-            // Arrange
-            var expected = new GoogleDataObject() { Distance = "130 km", Duration = "2 hours 4 mins" };
+        //[Fact]
+        //public async Task DistanceDurationBetweenLocations()
+        //{
+        //    // Inject
+        //    // Arrange
+        //    var expected = new GoogleDataObject() { Distance = "130 km", Duration = "2 hours 4 mins" };
 
 
-            // Act
-            var result = await service.DistanceDurationBetweenLocations("Burgas", "Varna");
+        //    // Act
+        //    var result = await service.DistanceDurationBetweenLocations("Burgas", "Varna");
             
-            // Assert
-            Assert.Equal(Serialize(expected), Serialize(result));
-        }
+        //    // Assert
+        //    Assert.Equal(Serialize(expected), Serialize(result));
+        //}
 
         [Fact]
         public async Task DistanceDurationBetweenLocationsCoordinates()
@@ -100,47 +100,47 @@ namespace backend_testing_xunit
         }
 
 
-        [Fact]
-        public async Task DistanceBetweenMultipleLocations()
-        {
-            // Inject
-            // Arrange
-            var origin = await service.LocationFromLandmark("Paris");
-            List<GoogleDataObject> destinations = new List<GoogleDataObject>
-            {
-                await service.LocationFromLandmark("Berlin"),
-                await service.LocationFromLandmark("Moscow"),
-                await service.LocationFromLandmark("Sofia"),
-                await service.LocationFromLandmark("Eindhoven"),
-            };
+        //[Fact]
+        //public async Task DistanceBetweenMultipleLocations()
+        //{
+        //    // Inject
+        //    // Arrange
+        //    var origin = await service.LocationFromLandmark("Paris");
+        //    List<GoogleDataObject> destinations = new List<GoogleDataObject>
+        //    {
+        //        await service.LocationFromLandmark("Berlin"),
+        //        await service.LocationFromLandmark("Moscow"),
+        //        await service.LocationFromLandmark("Sofia"),
+        //        await service.LocationFromLandmark("Eindhoven"),
+        //    };
 
-            // Act
-            await service.DistanceBetweenMultipleLocations(origin.PlaceId, destinations.Select(x => x.PlaceId).ToArray());
+        //    // Act
+        //    await service.DistanceBetweenMultipleLocations(origin.PlaceId, destinations.Select(x => x.PlaceId).ToArray());
 
-            // Assert
-        }
+        //    // Assert
+        //}
 
-        [Fact]
-        public async Task DirectionsServiceTest()
-        {
-            // Inject
-            // Arrange
-            var origin = await service.LocationFromLandmark("Paris");
-            List<GoogleDataObject> waypoints = new List<GoogleDataObject>
-            {
-                await service.LocationFromLandmark("Berlin"),
-                await service.LocationFromLandmark("Moscow"),
-                await service.LocationFromLandmark("Sofia"),
-                await service.LocationFromLandmark("Eindhoven"),
-            };
+        //[Fact]
+        //public async Task DirectionsServiceTest()
+        //{
+        //    // Inject
+        //    // Arrange
+        //    var origin = await service.LocationFromLandmark("Paris");
+        //    List<GoogleDataObject> waypoints = new List<GoogleDataObject>
+        //    {
+        //        await service.LocationFromLandmark("Berlin"),
+        //        await service.LocationFromLandmark("Moscow"),
+        //        await service.LocationFromLandmark("Sofia"),
+        //        await service.LocationFromLandmark("Eindhoven"),
+        //    };
 
-            var destination = await service.LocationFromLandmark("Madrid");
+        //    var destination = await service.LocationFromLandmark("Madrid");
 
-            // Act
-            await service.DirectionsServiceTest(origin.PlaceId, destination.PlaceId, waypoints.Select(x => x.PlaceId).ToArray());
+        //    // Act
+        //    await service.DirectionsServiceTest(origin.PlaceId, destination.PlaceId, waypoints.Select(x => x.PlaceId).ToArray());
 
-            // Assert
-        }
+        //    // Assert
+        //}
 
         //[Fact]
         //public async Task Testing()

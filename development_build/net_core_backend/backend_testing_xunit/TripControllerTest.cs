@@ -87,17 +87,21 @@ namespace backend_testing_xunit
 
             // Arrange
             UserTrips trip;
+            UserTrips[] remaining;
             using(var a = factory.CreateDbContext())
             {
-                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere", Transportation = Transportation.Bus };
-                trip.Locations.Add(new Locations() { WishlistId = null, TripId = trip.Id, Name = "kfg", Lang = 5, Long = 3 });
-                trip.Locations.Add(new Locations() { WishlistId = null, TripId = trip.Id, Name = "aweawe", Lang = 15, Long = 33 });
+                remaining = await a.UserTrips.Include(x => x.User).Where(x => x.User.Id == Users[0].Id).ToArrayAsync();
+
+                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere", Transportation = "BICYCLING" };
+                trip.Locations.Add(new Locations() { WishlistId = null, PlaceId = "PlaceId4", TripId = trip.Id, Name = "kfg", Lang = 5, Long = 3 });
+                trip.Locations.Add(new Locations() { WishlistId = null, PlaceId = "PlaceId5", TripId = trip.Id, Name = "aweawe", Lang = 15, Long = 33 });
 
                 await a.AddAsync(trip);
                 await a.SaveChangesAsync();
             }
 
-            var expected = mapper.Map<UserTripsViewModel>(trip);
+
+            var expected = mapper.Map<UserTripsViewModel[]>(remaining);
 
             // Act
             var result = await controller.DeleteTrip(trip.Id);
@@ -118,9 +122,9 @@ namespace backend_testing_xunit
             Locations locations;
             using (var a = factory.CreateDbContext())
             {
-                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere 2", Transportation = Transportation.Bus };
+                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere 2", Transportation = "BICYCLING" };
 
-                locations = new Locations() { Lang = 5, Long = 3, Name = "aweawezsS", TripId = trip.Id };
+                locations = new Locations() { Lang = 5, Long = 3, PlaceId = "PlaceId6", Name = "aweawezsS", TripId = trip.Id };
                 trip.Locations.Add(locations);
 
                 await a.AddAsync(trip);
@@ -149,9 +153,9 @@ namespace backend_testing_xunit
             Locations locations;
             using (var a = factory.CreateDbContext())
             {
-                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere 2", Transportation = Transportation.Bus };
+                trip = new UserTrips() { UserId = Users[0].Id, Name = "Trip to somewhere 2", Transportation = "BICYCLING" };
 
-                locations = new Locations() { Lang = 5, Long = 3, Name = "aweawezsS", TripId = trip.Id };
+                locations = new Locations() { Lang = 5, PlaceId = "PlaceId3", Long = 3, Name = "aweawezsS", TripId = trip.Id };
                 trip.Locations.Add(locations);
 
                 await a.AddAsync(trip);

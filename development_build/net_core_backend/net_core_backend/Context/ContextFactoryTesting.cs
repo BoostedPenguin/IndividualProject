@@ -17,7 +17,7 @@ namespace net_core_backend.Context
         public IndividualProjectContext CreateDbContext(string[] args = null)
         {
             var options = new DbContextOptionsBuilder<IndividualProjectContext>();
-            options.UseSqlServer(connectionString);
+            options.UseInMemoryDatabase("TestingDatabase");
 
             return new IndividualProjectContext(options.Options);
         }

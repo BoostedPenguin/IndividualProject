@@ -64,7 +64,7 @@ namespace backend_testing_xunit
                 Users = new Users[4]
                 {
                 new Users() {Auth = "George"},
-                new Users() {Auth = "SecondAuth", Role = Role.Admin},
+                new Users() {Auth = "SecondAuth", Role = "Admin"},
                 new Users() {Auth = "ThirdAuth"},
                 new Users() {Auth = "auth0|5f955e7b9b8822006ee06870", Name = "RealAccount"},
                 };
@@ -76,9 +76,9 @@ namespace backend_testing_xunit
                 // Seeds wishlist
                 WishLists = new WishList[3]
                 {
-                    new WishList() {Transportation = Transportation.Bus, UserId = Users[0].Id},
-                    new WishList() {Transportation = Transportation.Car, UserId = Users[1].Id},
-                    new WishList() {Transportation = Transportation.Walk, UserId = Users[2].Id},
+                    new WishList() {Transportation = "BICYCLING", UserId = Users[0].Id},
+                    new WishList() {Transportation = "DRIVING", UserId = Users[1].Id},
+                    new WishList() {Transportation = "WALKING", UserId = Users[2].Id},
                 };
 
                 a.AddRange(WishLists);
@@ -110,9 +110,9 @@ namespace backend_testing_xunit
 
                 UserTrips = new UserTrips[3]
                 {
-                new UserTrips() { Distance = 50, Duration = 12, Name = "trip to bg", Transportation = Transportation.Car, UserId = Users[0].Id },
-                new UserTrips() { Distance = 510, Duration = 122, Name = "trip to en", Transportation = Transportation.Bus, UserId = Users[0].Id },
-                new UserTrips() { Distance = 540, Duration = 1222, Name = "trip to nl", Transportation = Transportation.Walk, UserId = Users[1].Id },
+                new UserTrips() { Distance = 50, Duration = 12, Name = "trip to bg", Transportation = "DRIVING", UserId = Users[0].Id },
+                new UserTrips() { Distance = 510, Duration = 122, Name = "trip to en", Transportation = "BICYCLING", UserId = Users[0].Id },
+                new UserTrips() { Distance = 540, Duration = 1222, Name = "trip to nl", Transportation = "WALKING", UserId = Users[1].Id },
                 };
 
 

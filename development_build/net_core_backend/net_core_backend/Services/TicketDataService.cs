@@ -82,7 +82,7 @@ namespace net_core_backend.Services
 
                 var ticket = await _context.SupportTicket.Include(x => x.User).Where(x => x.Id == ticket_id && (x.User.Auth == httpContext.GetCurrentAuth() || currentUser.Role == "Admin") ).FirstOrDefaultAsync();
 
-                if (ticket == null) return throw new ArgumentException("There isn't a ticket with that id for this person!");
+                if (ticket == null) throw new ArgumentException("There isn't a ticket with that id for this person!");
 
                 chat.CreatorId = userId;
 

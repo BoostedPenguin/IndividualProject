@@ -75,8 +75,8 @@ namespace backend_testing_xunit
             // Arrange
             using (var a = factory.CreateDbContext())
             {
-                await a.AddAsync(new Locations() { Lang = 12, Long = 31, Name = "kdfvc", TripId = null, WishlistId = WishLists[0].Id });
-                await a.AddAsync(new Locations() { Lang = 55, Long = 321, Name = "zawsga", TripId = null, WishlistId = WishLists[0].Id });
+                await a.AddAsync(new Locations() { Lang = 12, PlaceId = "PlaceId1", Long = 31, Name = "kdfvc", TripId = null, WishlistId = WishLists[0].Id });
+                await a.AddAsync(new Locations() { Lang = 55, PlaceId = "PlaceId2", Long = 321, Name = "zawsga", TripId = null, WishlistId = WishLists[0].Id });
                 await a.SaveChangesAsync();
             }
 
