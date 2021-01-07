@@ -85,7 +85,7 @@ namespace net_core_backend.Controllers
         {
             try
             {
-                var result = await _context.CreateMessage(ticket_id, chat);
+                await _context.CreateMessage(ticket_id, chat);
 
                 var ticket = await _context.GetTicket(ticket_id);
 

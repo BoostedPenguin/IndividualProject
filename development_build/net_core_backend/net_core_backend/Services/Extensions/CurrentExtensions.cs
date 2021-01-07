@@ -81,6 +81,11 @@ namespace net_core_backend.Services.Extensions
             }
         }
 
+        public static void IsNull(this object input)
+        {
+            if (input == null) throw new ArgumentException("Empty input string");
+        }
+
         public static bool CheckTransportation(this string transportation)
         {
             if(transportation == "WALKING" || transportation == "BICYCLING" || transportation == "DRIVING")

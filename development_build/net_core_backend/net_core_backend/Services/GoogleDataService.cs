@@ -23,7 +23,7 @@ namespace net_core_backend.Services
 
         public async Task<GoogleDataObject> CoordinatesFromLocation(string location)
         {
-            if (location == null) throw new ArgumentException("Empty location");
+            location.IsNull();
 
             string responseBody = await GetStringAsync($"https://maps.google.com/maps/api/geocode/json?address={location}");
             
@@ -41,7 +41,7 @@ namespace net_core_backend.Services
 
         public async Task<GoogleDataObject> LocationFromLandmark(string landmark, string[] givenType = null)
         {
-            if (landmark == null) throw new ArgumentException("Empty string");
+            landmark.IsNull();
 
             //Creates a types string
             string outputType = "&types=";
@@ -119,10 +119,6 @@ namespace net_core_backend.Services
                 }
             }
 
-            //foreach (var type in result.results[0].types)
-            //{
-            //    data.Types.Add((string)type);
-            //}
 
             data.Latitude = result.geometry.location.lat;
             data.Longitude = result.geometry.location.lng;
@@ -155,7 +151,8 @@ namespace net_core_backend.Services
 
         public async Task<GoogleDataObject> LocationFromCoordinates(GoogleDataObject coordinates)
         {
-            if (coordinates.Latitude == null || coordinates.Longitude == null) throw new ArgumentException("Empty coordinates");
+            coordinates.Latitude.IsNull();
+            coordinates.Longitude.IsNull();
 
             string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/geocode/json?latlng={coordinates.Latitude},{coordinates.Longitude}");
 
@@ -215,7 +212,6 @@ namespace net_core_backend.Services
         public async Task DistanceBetweenMultipleLocations(string origin, string[] destination)
         {
             string destinationString = string.Join("|place_id:", destination);
-            //string destinationString = destination[0];
 
             string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=place_id:{origin}&destinations=place_id:{destinationString}");
 
@@ -270,31 +266,18 @@ namespace net_core_backend.Services
         }
 
 
-        //public async Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2, string transportation)
-        //{
-        //    if (location1 == null || location2 == null) throw new ArgumentException("You need to fill in a valid location!");
-            
-        //    var city1 = await CoordinatesFromLocation(location1);
-        //    var city2 = await CoordinatesFromLocation(location2);
-
-        //    string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/distancematrix/json?origins={city1.Latitude},{city1.Longitude}&destinations={city2.Latitude},{city2.Longitude}&mode={transportation.SetTransportation()}");
-
-        //    dynamic result = JsonConvert.DeserializeObject(responseBody);
-
-        //    if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
-
-
-        //    string distance = result.rows[0].elements[0].distance.text;
-        //    string duration = result.rows[0].elements[0].duration.text;
-
-        //    return new GoogleDataObject() { Distance = distance, Duration = duration };
-        //}
+        public Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2)
+        {
+            throw new NotImplementedException();
+        }
 
 
         public async Task<GoogleDataObject> DistanceDurationBetweenLocations(GoogleDataObject latLngLocation1, GoogleDataObject latLngLocation2)
         {
-            if (latLngLocation1.Latitude == null || latLngLocation1.Longitude == null || latLngLocation2.Latitude == null || latLngLocation2.Longitude == null) 
-                throw new ArgumentException("You need to fill in a valid location!");
+            latLngLocation1.Latitude.IsNull();
+            latLngLocation1.Longitude.IsNull();
+            latLngLocation2.Latitude.IsNull();
+            latLngLocation2.Longitude.IsNull();
 
             string responseBody = await GetStringAsync($"https://maps.googleapis.com/maps/api/distancematrix/json?origins={latLngLocation1.Latitude},{latLngLocation1.Longitude}&destinations={latLngLocation2.Latitude},{latLngLocation2.Longitude}");
 
@@ -315,8 +298,6 @@ namespace net_core_backend.Services
             // keyword - name type address etc.
             // rankny prominence
             // type - ONLY ONE TYPE MAY BE SUPPLIED
-
-            //if (input.Keyword == null) throw new ArgumentException("Keyword name is missing");
 
             GoogleDataObject coordinates;
             if (input.KeywordAddress.Latitude == null || input.KeywordAddress.Longitude == null)
@@ -394,11 +375,6 @@ namespace net_core_backend.Services
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsStringAsync();
-        }
-
-        public Task<GoogleDataObject> DistanceDurationBetweenLocations(string location1, string location2)
-        {
-            throw new NotImplementedException();
         }
     }
 }

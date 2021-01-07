@@ -11,7 +11,7 @@ import VTooltip from 'v-tooltip'
 import { domain, clientId, audience } from "../auth_config.json"
 import store from "./store/store"
 
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import { BootstrapVue } from 'bootstrap-vue'
 
 // Import the plugin here
 import { Auth0Plugin } from "./auth"
@@ -22,7 +22,7 @@ Vue.use(ToggleButton)
 // Install BootstrapVue
 Vue.use(BootstrapVue)
 // Optionally install the BootstrapVue icon components plugin
-Vue.use(IconsPlugin)
+//Vue.use(IconsPlugin)
 
 
 let base_url = process.env.VUE_APP_BASE_BACKEND_ROOT

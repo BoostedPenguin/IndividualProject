@@ -140,9 +140,7 @@ namespace net_core_backend.Services
                 if (trip == null) throw new ArgumentException("There isn't a trip with that id for this user");
 
                 return trip;
-                //if (CurrentExtensions.HasPrivileges(trip.UserId, httpContext, contextFactory)) return trip;
 
-                //throw new ArgumentException("Access forbidden!");
             }
         }
 

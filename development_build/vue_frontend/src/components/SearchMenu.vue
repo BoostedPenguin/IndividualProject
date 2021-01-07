@@ -127,7 +127,7 @@ export default {
             });
           })
           .catch((error) => {
-          this.error = error.response.data;
+            this.error = error.response.data;
           });
         this.loading = false;
       } else {
@@ -142,7 +142,7 @@ export default {
 .main-search {
   min-height: 600px;
   height: 1vh;
-  background-image: url("../assets/main-background.png");
+  background-image: url("../assets/main-background2.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
