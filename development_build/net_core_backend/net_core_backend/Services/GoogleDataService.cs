@@ -217,7 +217,7 @@ namespace net_core_backend.Services
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
 
-            if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API");
+            if (result.status != "OK") throw new ArgumentException("An unexpected error occured while contacting google API.");
         }
 
         public async Task<GoogleDirectionsObject[]> DirectionsServiceTest(string origin, string destination, string[] locations)
