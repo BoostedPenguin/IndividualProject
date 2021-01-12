@@ -8,6 +8,7 @@
           <!-- Input group -->
           <div class="input-group mb-3">
             <b-form-input
+              name="main-search-item"
               maxlength="40"
               v-model="location"
               type="text"
